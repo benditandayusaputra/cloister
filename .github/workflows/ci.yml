@@ -28,7 +28,7 @@ jobs:
           --health-cmd "pg_isready -U cloister" --health-interval 5s
           --health-timeout 5s --health-retries 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Versi pnpm diambil dari field packageManager di package.json
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -65,7 +65,7 @@ jobs:
   keamanan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Larang {@html} di luar AmanMarkdown
         run: |
           liar=$(grep -rln '{@html' src --include='*.svelte' \
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: { security-events: write, actions: read, contents: read }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: github/codeql-action/init@v3
         with: { languages: javascript-typescript }
       - uses: github/codeql-action/analyze@v3
