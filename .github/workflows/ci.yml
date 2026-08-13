@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v4
       # Versi pnpm diambil dari field packageManager di package.json
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: pnpm }
 
       - run: pnpm install --frozen-lockfile
