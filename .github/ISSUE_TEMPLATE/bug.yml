@@ -1,0 +1,21 @@
+name: Laporan bug
+description: Ada yang tidak jalan seperti seharusnya
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Apa yang terjadi
+    validations: { required: true }
+  - type: textarea
+    attributes:
+      label: Langkah reproduksi
+    validations: { required: true }
+  - type: input
+    attributes:
+      label: Peramban dan versi
+  - type: checkboxes
+    attributes:
+      label: Konfirmasi
+      options:
+        - label: Ini bukan laporan keamanan (kalau iya, lihat SECURITY.md)
+          required: true

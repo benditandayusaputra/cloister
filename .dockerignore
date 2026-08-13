@@ -1,0 +1,10 @@
+node_modules
+.svelte-kit
+build
+.env
+.env.*
+!.env.example
+tests
+.blobstore
+test-results
+playwright-report

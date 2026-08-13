@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /baca
+Disallow: /app
+Disallow: /pengaturan
+Disallow: /bukti
+Disallow: /api

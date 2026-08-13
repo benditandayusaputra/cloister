@@ -1,0 +1,9 @@
+# Perubahan kriptografi dan Penyaring Identitas butuh review maintainer.
+#
+# PRD menyebut dua maintainer. Repositori ini masih satu orang, jadi aturannya
+# dicantumkan apa adanya alih-alih menulis nama yang tidak ada. Aturan dua
+# maintainer berlaku begitu ada maintainer kedua.
+/src/lib/crypto/        @benditandayusaputra
+/tests/crypto-vectors/  @benditandayusaputra
+/src/lib/redact/        @benditandayusaputra
+/tests/redaction-eval/  @benditandayusaputra

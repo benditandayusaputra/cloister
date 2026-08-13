@@ -1,0 +1,641 @@
+@import 'tailwindcss';
+@import './lib/styles/tokens.css';
+@import './lib/styles/fonts.css';
+
+@layer base {
+	* {
+		box-sizing: border-box;
+	}
+	html {
+		background: var(--room-wall);
+	}
+	body {
+		margin: 0;
+		background: var(--room-wall);
+		-webkit-font-smoothing: antialiased;
+		font-family: var(--f-display);
+		color: var(--ink-on-board);
+	}
+	a {
+		color: var(--accent-hi);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-thickness: 1px;
+	}
+	a:hover {
+		color: var(--pin-brass);
+	}
+	:focus-visible {
+		outline: 2px solid var(--accent-hi);
+		outline-offset: 2px;
+	}
+	::selection {
+		background: rgb(192 138 46 / 0.35);
+	}
+}
+
+@keyframes bd-pulse {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.4;
+		transform: scale(0.8);
+	}
+}
+@keyframes bd-drop {
+	0% {
+		opacity: 0;
+		transform: translateY(-30px);
+	}
+	70% {
+		opacity: 1;
+		transform: translateY(3px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+@keyframes bd-thread {
+	from {
+		stroke-dashoffset: var(--len);
+	}
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+@keyframes bd-skel {
+	0%,
+	100% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 0.7;
+	}
+}
+@keyframes bd-kunci {
+	0% {
+		clip-path: inset(0 100% 0 0);
+	}
+	100% {
+		clip-path: inset(0 0 0 0);
+	}
+}
+@keyframes bd-kilau {
+	0%,
+	100% {
+		opacity: 0.35;
+	}
+	50% {
+		opacity: 0.9;
+	}
+}
+@keyframes bd-masuk {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 1ms !important;
+	}
+}
+
+/* ============ ruangan ============ */
+.ruangan {
+	min-height: 100vh;
+	font-family: var(--f-display);
+	background-image: var(--tex-wall), var(--room-glow),
+		linear-gradient(168deg, var(--room-wall-warm), var(--room-wall) 60%);
+	background-blend-mode: soft-light, normal, normal;
+	background-repeat: repeat, no-repeat, no-repeat;
+	background-attachment: fixed;
+	color: var(--ink-on-board);
+}
+
+.shell {
+	width: 100%;
+	max-width: 1250px;
+	margin: 0 auto;
+	padding: var(--s-6) var(--s-5) var(--s-9);
+}
+.shell-sempit {
+	max-width: 1000px;
+}
+
+/* ============ tipografi ============ */
+.t-judul {
+	margin: 0;
+	font-family: var(--f-display);
+	font-variation-settings: 'wdth' 85;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	line-height: 1.05;
+	color: var(--ink-on-board);
+}
+.t-2xl {
+	font-size: var(--text-2xl);
+	line-height: 0.9;
+}
+.t-xl {
+	font-size: var(--text-xl);
+}
+.t-lg {
+	font-size: var(--text-lg);
+}
+.t-data {
+	font-family: var(--f-data);
+	font-size: var(--text-2xs);
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	color: var(--ink-on-board-dim);
+}
+.t-data-ink {
+	color: var(--ink-soft);
+}
+.t-baca {
+	margin: 0;
+	font-family: var(--f-read);
+	font-size: var(--text-md);
+	line-height: 1.72;
+	color: var(--ink);
+	text-wrap: pretty;
+}
+.t-hand {
+	font-family: var(--f-hand);
+	font-weight: 500;
+	color: var(--ink);
+}
+
+/* ============ permukaan ============ */
+.kertas {
+	background-image: var(--paper-fill), linear-gradient(var(--paper-bone), var(--paper-bone));
+	background-blend-mode: multiply, normal, normal;
+	border-radius: var(--r-paper);
+	box-shadow: var(--sh-contact), var(--sh-pinned);
+	color: var(--ink);
+}
+.kertas-angkat {
+	box-shadow: var(--sh-contact), var(--sh-lifted);
+}
+.kertas-manila {
+	background-image: var(--paper-fill), linear-gradient(var(--paper-manila), var(--paper-manila));
+}
+.kertas-buram {
+	background-image: var(--paper-fill), linear-gradient(var(--paper-buram), var(--paper-buram));
+}
+.kertas-biru {
+	background-image: var(--paper-fill), linear-gradient(var(--paper-biru), var(--paper-biru));
+}
+.kertas-mawar {
+	background-image: var(--paper-fill), linear-gradient(var(--paper-mawar), var(--paper-mawar));
+}
+.kartu-indeks {
+	background-image: var(--kartu-indeks), linear-gradient(var(--paper-bone), var(--paper-bone));
+	background-blend-mode: multiply, normal, normal, normal;
+	border-left: 2px solid rgb(168 48 43 / 0.45);
+	padding-left: 58px;
+}
+
+.bingkai-kayu {
+	padding: 15px;
+	border-radius: 3px;
+	background-image: var(--wood-bg);
+	background-blend-mode: var(--wood-blend);
+	box-shadow:
+		0 2px 0 rgb(255 255 255 / 0.07) inset,
+		0 -3px 0 rgb(0 0 0 / 0.4) inset,
+		14px 26px 52px -14px rgb(0 0 0 / 0.62);
+}
+.papan-flanel {
+	position: relative;
+	padding: 56px;
+	overflow: hidden;
+	background-image: var(--felt-bg);
+	background-blend-mode: var(--felt-blend);
+	box-shadow:
+		inset 0 4px 14px rgb(0 0 0 / 0.55),
+		inset 0 -3px 8px rgb(0 0 0 / 0.32);
+}
+.meja-kayu {
+	border-radius: 3px;
+	background-image: var(--desk-bg);
+	background-blend-mode: soft-light, normal, normal;
+	box-shadow:
+		inset 0 2px 0 rgb(255 255 255 / 0.06),
+		14px 26px 52px -14px rgb(0 0 0 / 0.6);
+}
+
+/* ============ kontrol ============ */
+.tbl {
+	cursor: pointer;
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 0 20px;
+	border: none;
+	border-radius: var(--r-control);
+	background: var(--accent);
+	color: var(--accent-ink);
+	font-family: var(--f-display);
+	font-size: var(--text-base);
+	font-weight: 600;
+	box-shadow:
+		0 2px 0 rgb(0 0 0 / 0.35),
+		3px 6px 12px -3px rgb(0 0 0 / 0.45);
+	transition: transform var(--dur-fast) var(--ease-lift), background var(--dur-fast) var(--ease-quiet);
+}
+.tbl:hover:not(:disabled) {
+	background: var(--accent-hi);
+	transform: translateY(-1px);
+}
+.tbl:active:not(:disabled) {
+	transform: translateY(1px);
+}
+.tbl:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+	background: var(--ink-faint);
+}
+
+.tbl-garis {
+	cursor: pointer;
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 0 18px;
+	border: 1px solid rgb(27 27 23 / 0.32);
+	border-radius: var(--r-control);
+	background: transparent;
+	color: var(--ink);
+	font-family: var(--f-display);
+	font-size: var(--text-base);
+}
+.tbl-garis:hover:not(:disabled) {
+	background: rgb(27 27 23 / 0.06);
+}
+.tbl-garis:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+}
+
+.tbl-papan {
+	cursor: pointer;
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0 14px;
+	border: 1px solid var(--garis-ruang);
+	border-radius: var(--r-control);
+	background: var(--isi-ruang);
+	color: var(--ink-on-board-dim);
+	font-family: var(--f-display);
+	font-size: var(--text-sm);
+	transition: color var(--dur-fast), border-color var(--dur-fast);
+}
+.tbl-papan:hover {
+	color: var(--ink-on-board);
+	border-color: var(--garis-ruang-kuat);
+}
+.tbl-papan-aktif {
+	border-color: var(--pin-brass);
+	background: rgb(192 138 46 / 0.2);
+	color: var(--ink-on-board);
+}
+
+.tbl-bahaya {
+	cursor: pointer;
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 14px;
+	border: 1px solid rgb(158 59 52 / 0.6);
+	border-radius: var(--r-control);
+	background: transparent;
+	color: var(--danger);
+	font-family: var(--f-display);
+	font-size: var(--text-sm);
+}
+.tbl-bahaya:hover {
+	background: rgb(158 59 52 / 0.09);
+}
+
+.tbl-ikon {
+	cursor: pointer;
+	width: 44px;
+	height: 44px;
+	display: grid;
+	place-items: center;
+	border: none;
+	background: transparent;
+	color: var(--ink-on-board-dim);
+}
+.tbl-ikon:hover {
+	color: var(--ink-on-board);
+}
+
+.isian {
+	min-height: 44px;
+	width: 100%;
+	border: none;
+	border-bottom: 2px solid rgb(27 27 23 / 0.45);
+	background: transparent;
+	font-family: var(--f-read);
+	font-size: var(--text-md);
+	color: var(--ink);
+	padding: 0 2px;
+}
+.isian:focus {
+	border-bottom-color: var(--accent);
+	outline: none;
+}
+.isian-data {
+	font-family: var(--f-data);
+}
+.isian-salah {
+	border-bottom-color: var(--danger);
+}
+.isian-benar {
+	border-bottom-color: var(--ok);
+}
+
+.label-medan {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.tag-cip {
+	min-height: 22px;
+	display: inline-flex;
+	align-items: center;
+	padding: 0 7px;
+	border: 1px solid rgb(27 27 23 / 0.26);
+	border-radius: var(--r-control);
+	background: transparent;
+	font-family: var(--f-display);
+	font-size: 0.74rem;
+	color: var(--ink-soft);
+	transition: all var(--dur-fast) var(--ease-quiet);
+	cursor: pointer;
+}
+.tag-cip-aktif {
+	border-color: var(--thread);
+	background: rgb(168 48 43 / 0.12);
+	color: var(--thread);
+}
+
+/* ============ papan pin ============ */
+.pin-bulat {
+	border-radius: var(--r-pin);
+	box-shadow:
+		1px 2px 0 rgb(0 0 0 / 0.3),
+		4px 6px 9px -2px rgb(0 0 0 / 0.55),
+		inset -1px -1px 2px rgb(0 0 0 / 0.35);
+}
+.lubang-pin {
+	width: 9px;
+	height: 9px;
+	border-radius: var(--r-pin);
+	background-image: radial-gradient(circle at 62% 68%, rgb(255 255 255 / 0.07), transparent 62%),
+		linear-gradient(var(--board-felt-lo), var(--board-felt-lo));
+	box-shadow:
+		inset 1px 1px 2px rgb(0 0 0 / 0.65),
+		0 1px 0 rgb(255 255 255 / 0.05);
+	transition: transform var(--dur-fast) var(--ease-pin);
+}
+button:hover > .lubang-pin {
+	transform: scale(1.6);
+}
+
+.washi {
+	background-image: repeating-linear-gradient(
+			115deg,
+			rgb(255 255 255 / 0.18) 0 4px,
+			transparent 4px 9px
+		),
+		linear-gradient(rgb(221 179 176 / 0.72), rgb(221 179 176 / 0.72));
+	box-shadow: 0 2px 6px -1px rgb(0 0 0 / 0.45);
+	border-radius: var(--r-tape);
+}
+
+.kartu-papan {
+	cursor: pointer;
+	padding: 14px 13px 11px;
+	background-image: var(--paper-fill), linear-gradient(var(--kertas), var(--kertas));
+	background-blend-mode: multiply, normal, normal;
+	border-radius: var(--r-card);
+	box-shadow: var(--sh-contact), var(--sh-pinned);
+	transition:
+		transform var(--dur-fast) var(--ease-lift),
+		box-shadow var(--dur-fast) var(--ease-lift),
+		opacity var(--dur-base) var(--ease-quiet);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	border: none;
+	text-align: left;
+	width: 100%;
+	color: var(--ink);
+}
+.kartu-papan:hover {
+	box-shadow: var(--sh-contact), var(--sh-hover);
+}
+
+.stempel {
+	transform: rotate(-4.5deg);
+	padding: 6px 12px;
+	border: 2px solid var(--thread);
+	border-radius: 2px;
+	font-family: var(--f-data);
+	font-size: var(--text-2xs);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--thread);
+	opacity: 0.7;
+	white-space: nowrap;
+}
+
+.map-bulan {
+	cursor: pointer;
+	position: relative;
+	border: none;
+	background: transparent;
+	padding: 0;
+	text-align: left;
+	transition: transform var(--dur-base) var(--ease-lift);
+}
+.map-lidah {
+	position: relative;
+	z-index: 1;
+	width: 74px;
+	height: 20px;
+	margin-left: 12px;
+	background-image: var(--tex-grain), linear-gradient(160deg, #e2cea4, var(--paper-manila));
+	background-blend-mode: multiply, normal;
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+.map-badan {
+	position: relative;
+	z-index: 1;
+	padding: 14px;
+	background-image: var(--tex-grain),
+		linear-gradient(158deg, #e2cea4 0%, var(--paper-manila) 40%, #c9b084 100%);
+	background-blend-mode: multiply, normal;
+	border-radius: var(--r-paper);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.map-label {
+	align-self: flex-start;
+	padding: 4px 10px;
+	background: #f6f2e6;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+	transform: rotate(-1.4deg);
+	font-family: var(--f-hand);
+	font-weight: 600;
+	font-size: 1.05rem;
+	color: var(--ink);
+}
+
+/* ============ overlay ============ */
+.tirai {
+	position: fixed;
+	inset: 0;
+	z-index: 60;
+	background: rgb(8 10 11 / 0.82);
+	padding: var(--s-6) var(--s-5);
+	overflow: auto;
+}
+.toast {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 70;
+	padding: 13px 16px;
+	transform: rotate(-2.2deg);
+	background-image: var(--tex-grain),
+		linear-gradient(147deg, rgb(255 255 255 / 0.5), transparent 42%),
+		linear-gradient(var(--paper-mawar), var(--paper-mawar));
+	background-blend-mode: multiply, normal, normal;
+	box-shadow: var(--sh-contact), var(--sh-hover);
+	max-width: 300px;
+	font-family: var(--f-read);
+	font-size: var(--text-sm);
+	line-height: 1.5;
+	color: var(--ink);
+	animation: bd-masuk var(--dur-base) var(--ease-pin) both;
+}
+.pita-peringatan {
+	padding: 9px 12px;
+	background: rgb(176 122 34 / 0.16);
+	border-left: 3px solid var(--warn);
+	font-family: var(--f-data);
+	font-size: var(--text-2xs);
+	letter-spacing: 0.06em;
+	color: var(--warn-ink);
+}
+/* Pita ini dipakai di kertas maupun di dinding ruangan. Kertas selalu terang di
+   mode mana pun, jadi ia membawa tintanya sendiri alih-alih ikut mode. */
+.kertas {
+	--warn-ink: var(--warn-ink-kertas);
+}
+
+/* background-color, bukan shorthand: shorthand menghapus kertasnya kalau
+   kelas ini dipasang bareng .kertas, dan tinta gelap jadi jatuh ke papan. */
+.kotak-bahaya {
+	border: 2px solid var(--danger);
+	border-radius: var(--r-control);
+	background-color: rgb(158 59 52 / 0.07);
+	padding: var(--s-4);
+}
+.kotak-warn {
+	border: 2px solid var(--warn);
+}
+
+.prosa :where(h1, h2, h3) {
+	font-family: var(--f-display);
+	font-variation-settings: 'wdth' 85;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	color: var(--ink);
+	margin: var(--s-5) 0 var(--s-3);
+	line-height: 1.15;
+}
+.prosa h1 {
+	font-size: var(--text-xl);
+}
+.prosa h2 {
+	font-size: var(--text-lg);
+}
+.prosa h3 {
+	font-size: var(--text-md);
+}
+.prosa p,
+.prosa li {
+	font-family: var(--f-read);
+	font-size: var(--text-md);
+	line-height: 1.72;
+	color: var(--ink);
+	text-wrap: pretty;
+}
+.prosa p {
+	margin: 0 0 var(--s-4);
+}
+.prosa ul,
+.prosa ol {
+	margin: 0 0 var(--s-4);
+	padding-left: 1.4em;
+}
+.prosa blockquote {
+	margin: 0 0 var(--s-4);
+	padding-left: var(--s-4);
+	border-left: 3px solid var(--thread);
+	color: var(--ink-soft);
+}
+.prosa code {
+	font-family: var(--f-data);
+	font-size: 0.9em;
+	background: rgb(27 27 23 / 0.08);
+	padding: 1px 5px;
+}
+.prosa pre {
+	background: rgb(27 27 23 / 0.08);
+	padding: var(--s-4);
+	overflow-x: auto;
+	margin: 0 0 var(--s-4);
+}
+.prosa pre code {
+	background: none;
+	padding: 0;
+}
+.prosa img {
+	max-width: 100%;
+	height: auto;
+}
+.prosa a {
+	color: var(--accent);
+}
+.prosa hr {
+	border: none;
+	border-top: 1px solid rgb(27 27 23 / 0.2);
+	margin: var(--s-5) 0;
+}

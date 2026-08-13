@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  SERVER_AUTH_PEPPER: ci-pepper-tidak-dipakai-di-produksi
+  SALT_HMAC_SECRET: ci-salt-hmac-tidak-dipakai-di-produksi
+  IP_HMAC_SECRET: ci-ip-hmac-tidak-dipakai-di-produksi
+  JWT_SECRET: ci-jwt-secret-tidak-dipakai-di-produksi-000000
+  DATABASE_URL: postgres://cloister:cloister@localhost:5432/cloister
+  DATABASE_URL_UNPOOLED: postgres://cloister:cloister@localhost:5432/cloister
+
+jobs:
+  mutu:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: cloister
+          POSTGRES_PASSWORD: cloister
+          POSTGRES_DB: cloister
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U cloister" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      # Versi pnpm diambil dari field packageManager di package.json
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm check
+      - name: Test vector kriptografi dan unit
+        run: pnpm test
+      - name: Migrasi database
+        run: pnpm db:migrate
+      - name: Build
+        run: pnpm build
+      - name: Manifest verifikasi build
+        run: pnpm manifest
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-manifest
+          path: build-manifest.json
+          retention-days: 30
+
+      - name: Pasang peramban Playwright
+        run: pnpm exec playwright install --with-deps chromium
+      - name: E2E
+        run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  keamanan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Larang {@html} di luar AmanMarkdown
+        run: |
+          liar=$(grep -rln '{@html' src --include='*.svelte' \
+            | grep -v 'components/markdown/AmanMarkdown.svelte' \
+            | grep -v 'components/publik/LembarPublik.svelte' || true)
+          if [ -n "$liar" ]; then
+            echo "::error::{@html} hanya boleh di AmanMarkdown dan LembarPublik: $liar"
+            exit 1
+          fi
+      - name: Larang plaintext di route sinkronisasi
+        run: |
+          if grep -rnE '\b(body|title|plaintext)\s*:' src/routes/api/sync 2>/dev/null; then
+            echo "::error::route sync tidak boleh menyentuh field plaintext"
+            exit 1
+          fi
+      - name: Larang CDN pihak ketiga
+        run: |
+          if grep -rn 'https://fonts.googleapis.com\|cdn.jsdelivr\|unpkg.com' src static; then
+            echo "::error::tidak boleh ada aset pihak ketiga"
+            exit 1
+          fi
+      - name: Larang jaringan di Penyaring Identitas
+        run: |
+          # Klaim "pemindaian berjalan di perangkat" hanya bernilai kalau ditegakkan.
+          # Komentar dibuang dulu supaya penjelasan di kepala berkas tidak ikut tertangkap.
+          for f in src/lib/redact/*.ts; do
+            kode=$(perl -0pe 's{/\*.*?\*/}{}gs; s{^\s*//.*$}{}gm' "$f")
+            if printf '%s' "$kode" | grep -nE 'fetch\(|XMLHttpRequest|WebSocket|sendBeacon|importScripts|EventSource|https?://'; then
+              echo "::error::$f memuat jalur jaringan"
+              exit 1
+            fi
+          done
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions: { security-events: write, actions: read, contents: read }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with: { languages: javascript-typescript }
+      - uses: github/codeql-action/analyze@v3
