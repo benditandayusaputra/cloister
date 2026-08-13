@@ -52,7 +52,7 @@
 		"isomorphic-dompurify": "^3.20.0",
 		"jose": "^6.2.5",
 		"libsodium-wrappers-sumo": "^0.8.4",
-		"marked": "^18.0.7",
+		"marked": "^18.0.9",
 		"postgres": "^3.4.9",
 		"qrcode": "^1.5.4",
 		"uuidv7": "^1.2.1",
