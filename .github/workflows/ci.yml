@@ -45,7 +45,7 @@ jobs:
         run: pnpm build
       - name: Manifest verifikasi build
         run: pnpm manifest
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: build-manifest
           path: build-manifest.json
@@ -55,7 +55,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
       - name: E2E
         run: pnpm test:e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
