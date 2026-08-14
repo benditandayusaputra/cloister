@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PreviewTema from '$components/pengaturan/PreviewTema.svelte';
-	import { tema, TEMA, type TemaId } from '$lib/state/tema.svelte.ts';
+	import { tema, TEMA, type TemaId, type Gaya } from '$lib/state/tema.svelte.ts';
 	import { accountApi } from '$lib/api/endpoints.ts';
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
@@ -24,6 +24,31 @@
 
 <div style="display:flex;flex-direction:column;gap:var(--s-5)">
 	<h1 class="t-judul t-lg">{i18n.t.pengaturan.tampilan}</h1>
+
+	<div style="display:flex;flex-direction:column;gap:var(--s-3)">
+		<span class="t-data">Gaya aplikasi</span>
+		<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:var(--s-3)">
+			{#each [
+				{ id: 'flat', nama: 'Flat', isi: 'Kertas, tekstur, dan bayangan seperti papan sungguhan.' },
+				{ id: 'liquid-glass', nama: 'Liquid Glass', isi: 'Panel kaca bening dengan blur, mengambang di atas ruangan.' },
+				{ id: 'line-art', nama: 'Line Art', isi: 'Garis tinta tegas tanpa bayangan. Ringan dan fokus.' }
+			] as Array<{ id: Gaya; nama: string; isi: string }> as g (g.id)}
+				<button
+					type="button"
+					class="tbl-papan {tema.gaya === g.id ? 'tbl-papan-aktif' : ''}"
+					style="min-height:88px;flex-direction:column;align-items:flex-start;gap:6px;padding:14px 16px;text-align:left;white-space:normal"
+					aria-pressed={tema.gaya === g.id}
+					onclick={() => tema.setGaya(g.id)}
+				>
+					<strong style="font-family:var(--f-display);font-size:var(--text-base)">{g.nama}</strong>
+					<span style="font-family:var(--f-read);font-size:var(--text-2xs);opacity:0.8;line-height:1.5">{g.isi}</span>
+				</button>
+			{/each}
+		</div>
+		<span class="t-data" style="color:var(--ink-on-board-dim);text-transform:none;letter-spacing:0.02em">
+			Gaya mengubah seluruh aplikasi — kartu, papan, folder, sampai navigasi. Tema warna di bawah tetap berlaku.
+		</span>
+	</div>
 
 	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--s-4)">
 		{#each TEMA as t (t.id)}

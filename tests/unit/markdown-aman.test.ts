@@ -57,6 +57,31 @@ describe('renderAman menolak vektor XSS', () => {
 		expect(html).toContain('href="https://contoh.id"');
 	});
 
+	it('daftar centang GFM dirender sebagai checkbox mati', () => {
+		const html = renderAman('- [x] simpan 24 kata\n- [ ] pasang passkey');
+		expect(html).toContain('type="checkbox"');
+		expect(html).toContain('disabled');
+		expect(html).toContain('checked');
+	});
+
+	it('input selain checkbox dipaksa jadi checkbox mati tanpa atribut liar', () => {
+		const html = renderAman('<input type="text" name="sandi" onfocus="alert(1)" value="x">');
+		expect(html).not.toContain('type="text"');
+		expect(html).not.toContain('name=');
+		expect(html).not.toContain('value=');
+		expect(html).not.toContain('onfocus');
+		if (html.includes('<input')) {
+			expect(html).toContain('type="checkbox"');
+			expect(html).toContain('disabled');
+		}
+	});
+
+	it('form tetap terlarang meski input diizinkan', () => {
+		const html = renderAman('<form action="https://jahat.example"><input></form>');
+		expect(html).not.toContain('<form');
+		expect(html).not.toContain('action=');
+	});
+
 	it('tautan eksternal selalu diberi rel noopener noreferrer nofollow', () => {
 		const html = renderAman('[x](https://contoh.id)');
 		expect(html).toContain('rel="noopener noreferrer nofollow"');

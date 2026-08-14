@@ -11,12 +11,17 @@
 		| 'tebal'
 		| 'miring'
 		| 'coret'
+		| 'kode'
 		| 'h2'
 		| 'h3'
 		| 'kutip'
 		| 'daftar'
 		| 'daftar-angka'
+		| 'centang'
 		| 'tautan'
+		| 'tabel'
+		| 'blok-kode'
+		| 'emoji'
 		| 'garis';
 
 	interface Props {
@@ -38,7 +43,8 @@
 		[
 			{ aksi: 'tebal', label: 'B', gaya: 'font-weight:700', judul: 'Tebal (Ctrl+B)' },
 			{ aksi: 'miring', label: 'I', gaya: 'font-style:italic', judul: 'Miring (Ctrl+I)' },
-			{ aksi: 'coret', label: 'S', gaya: 'text-decoration:line-through', judul: 'Coret' }
+			{ aksi: 'coret', label: 'S', gaya: 'text-decoration:line-through', judul: 'Coret' },
+			{ aksi: 'kode', label: '<>', gaya: 'font-family:var(--f-data);font-size:0.72rem', judul: 'Kode sebaris' }
 		],
 		[
 			{ aksi: 'h2', label: 'H2', gaya: 'font-weight:600;font-size:0.78rem', judul: 'Judul bagian' },
@@ -47,10 +53,14 @@
 		[
 			{ aksi: 'kutip', label: '”', judul: 'Kutipan' },
 			{ aksi: 'daftar', label: '•', judul: 'Daftar' },
-			{ aksi: 'daftar-angka', label: '1.', gaya: 'font-size:0.78rem', judul: 'Daftar berangka' }
+			{ aksi: 'daftar-angka', label: '1.', gaya: 'font-size:0.78rem', judul: 'Daftar berangka' },
+			{ aksi: 'centang', label: '☑', gaya: 'font-size:0.85rem', judul: 'Daftar centang' }
 		],
 		[
+			{ aksi: 'tabel', label: '⊞', gaya: 'font-size:0.95rem', judul: 'Sisipkan tabel' },
+			{ aksi: 'blok-kode', label: '{ }', gaya: 'font-family:var(--f-data);font-size:0.68rem', judul: 'Blok kode' },
 			{ aksi: 'tautan', label: '\u{1F517}', gaya: 'font-size:0.82rem', judul: 'Tautan (Ctrl+K)' },
+			{ aksi: 'emoji', label: '☺', gaya: 'font-size:0.95rem', judul: 'Emoji' },
 			{ aksi: 'garis', label: '—', judul: 'Garis pemisah' }
 		]
 	];

@@ -8,6 +8,7 @@
 	import PeringatanPasskey from '$components/dasar/PeringatanPasskey.svelte';
 	import PitaOffline from '$components/nav/PitaOffline.svelte';
 	import { entri } from '$lib/state/entri.svelte.ts';
+	import { ikonMap } from '$lib/state/ikon-map.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { layarKecil } from '$lib/utils/perangkat.ts';
 	import { pindah } from '$lib/utils/transisi.ts';
@@ -18,6 +19,7 @@
 	let cariTerbuka = $state(false);
 
 	onMount(() => {
+		ikonMap.muat();
 		mobile = layarKecil();
 		addEventListener('resize', () => (mobile = layarKecil()));
 	});
@@ -56,6 +58,8 @@
 				{tahun + 1} &#8594;
 			</button>
 			<span class="t-data" style="margin-left:auto">{total} tulisan di {tahun}</span>
+			<a href="/app/linimasa" class="tbl-papan" style="text-decoration:none">Linimasa</a>
+			<a href="/app/hari-ini" class="tbl" style="text-decoration:none">{i18n.t.app.tulisHariIni}</a>
 		</div>
 
 		<RakTahun
@@ -65,10 +69,7 @@
 			onbuka={(bulan) => pindah(() => goto(`/app/${tahun}/${String(bulan).padStart(2, '0')}`))}
 		/>
 
-		<div style="display:flex;gap:var(--s-3);justify-content:flex-end;padding:0 var(--s-2);flex-wrap:wrap">
-			<a href="/app/linimasa" class="tbl-papan" style="text-decoration:none">Linimasa</a>
-			<a href="/app/hari-ini" class="tbl" style="text-decoration:none">{i18n.t.app.tulisHariIni}</a>
-		</div>
+
 	</div>
 </div>
 

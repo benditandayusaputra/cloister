@@ -96,6 +96,17 @@ const PENULIS = [
 			}
 		]
 	}
+	,{
+		email: 'saraswati@contoh.id',
+		sandi: sandiAcak(),
+		penName: 'saraswati',
+		displayName: 'Saraswati',
+		bio: 'Guru SD yang menulis untuk mengingat, bukan untuk dikenang.',
+		privat: [
+			{ mundur: 1, judul: '', mood: 4, isi: 'Murid-murid hari ini riuh sekali, tapi riuh yang menyenangkan.' },
+			{ mundur: 6, judul: 'Rapor', mood: 3, isi: 'Menulis komentar rapor tiga puluh anak. Tanganku pegal, hatiku penuh.' }
+		]
+	}
 ];
 
 /* ------------------------------------------------------------------ *
@@ -230,6 +241,168 @@ Setelah terkirim, aku duduk agak lama. Tidak melakukan apa-apa. Rasanya seperti 
 Besok pasti ada tumpukan baru. Tapi malam ini ruangannya kosong, dan aku mau duduk dulu di dalamnya.`,
 		dibaca: 132,
 		reaksi: 11
+	}
+];
+
+PUBLIK.push(
+	{
+		pen: 'saraswati',
+		mundur: 0,
+		mood: 5,
+		tags: ['sekolah', 'anak'],
+		judul: 'Tiga puluh nama',
+		isi: `Menjelang pembagian rapor, aku menulis komentar untuk tiga puluh anak. Aturan yang kupegang: satu kalimat tentang angka, dua kalimat tentang orangnya.
+
+Karena sepuluh tahun lagi, tidak ada yang ingat nilai matematikanya. Yang mereka ingat: ada yang pernah memperhatikan.
+
+Tanganku pegal. Hatiku penuh. 🌱`,
+		dibaca: 221,
+		reaksi: 27
+	},
+	{
+		pen: 'kelana',
+		mundur: 3,
+		mood: 4,
+		tags: ['kota', 'kereta'],
+		judul: 'Gerbong paling depan',
+		isi: `Kereta pagi kosong. Aku duduk di gerbong paling depan dan memandang rel bertemu di satu titik yang tidak pernah benar-benar sampai.
+
+## Yang kuperhatikan pagi ini
+
+- Masinis menyapa petugas peron dengan dua jari
+- Ada yang tertidur sebelum kereta berangkat
+- Kabut tipis di atas sawah, hilang sebelum stasiun ketiga
+
+Kota ini punya banyak cara memberi tahu bahwa hari baru saja mulai.`,
+		dibaca: 143,
+		reaksi: 14
+	},
+	{
+		pen: 'arunika',
+		mundur: 4,
+		mood: 3,
+		tags: ['menulis', 'rutinitas'],
+		judul: 'Ritual sebelum menulis',
+		isi: `Orang sering tanya bagaimana caranya menulis tiap malam. Jawabannya membosankan: ritual.
+
+| Jam | Ritual | Lama |
+| --- | --- | --- |
+| 21.30 | Matikan notifikasi | 1 menit |
+| 21.35 | Seduh teh, bukan kopi | 5 menit |
+| 21.45 | Tulis apa saja tanpa hapus | 15 menit |
+
+Tabelnya kaku, prosesnya tidak. Yang penting kursinya diduduki. ✍️`,
+		dibaca: 189,
+		reaksi: 21
+	},
+	{
+		pen: 'bendi',
+		mundur: 5,
+		mood: 4,
+		tags: ['teknis', 'privasi'],
+		judul: 'Daftar periksa sebelum menerbitkan',
+		isi: `Kebiasaan kecil sebelum menekan tombol Terbitkan:
+
+- [x] Baca ulang sekali, pelan
+- [x] Cek nama orang lain — sudah kuubah jadi inisial?
+- [x] Jalankan Penyaring Identitas
+- [ ] Ragu? Simpan dulu semalam
+
+Kotak terakhir sengaja tidak pernah kucentang. Keraguan adalah fitur, bukan bug. ✅`,
+		dibaca: 167,
+		reaksi: 19
+	},
+	{
+		pen: 'saraswati',
+		mundur: 9,
+		mood: 2,
+		tags: ['hujan', 'sekolah'],
+		judul: 'Upacara batal',
+		isi: `Hujan deras sejak subuh. Upacara batal, anak-anak berlarian dari gerbang ke teras dengan tas di atas kepala.
+
+Aku berdiri di pintu kelas memegang handuk kecil, mengeringkan kepala satu-satu yang lewat. Ada yang bilang terima kasih, ada yang cuma nyengir.
+
+Hari yang basah. Bukan hari yang buruk. 🌧️`,
+		dibaca: 154,
+		reaksi: 18
+	},
+	{
+		pen: 'kelana',
+		mundur: 13,
+		mood: 5,
+		tags: ['makanan', 'kota'],
+		judul: 'Peta soto pribadi',
+		isi: `Lima tahun di kota ini, aku akhirnya punya peta soto pribadi:
+
+1. **Soto pak tua dekat stasiun** — kuah paling bening, buka jam lima pagi
+2. **Warung ujung gang** — sambalnya juara, pemiliknya hafal nama
+3. **Gerobak depan kantor pos** — bukan yang terenak, tapi yang paling setia
+
+Kota jadi rumah bukan karena alamat. Karena peta-peta kecil seperti ini. 🍜`,
+		dibaca: 176,
+		reaksi: 23
+	},
+	{
+		pen: 'arunika',
+		mundur: 16,
+		mood: 4,
+		tags: ['keluarga'],
+		judul: 'Resep tanpa takaran',
+		isi: `Minta resep ayam goreng ke Ibu. Jawabannya: "bumbunya secukupnya, gorengnya sampai kuning cantik."
+
+> Secukupnya itu berapa, Bu?
+> "Ya sampai baunya benar."
+
+Kutulis di sini supaya tidak hilang: masakan Ibu tidak pernah punya takaran, hanya punya perasaan. Mungkin itu kenapa tidak pernah bisa kutiru persis. 🧡`,
+		dibaca: 243,
+		reaksi: 31
+	},
+	{
+		pen: 'bendi',
+		mundur: 20,
+		mood: 3,
+		tags: ['malam', 'tenang'],
+		judul: 'Jam sebelas malam',
+		isi: `Papan flanel ini kubayangkan menyala di ruangan yang lampunya cuma satu, jam sebelas malam.
+
+Bukan kantor kreatif yang terang benderang. Ruang kecil tempat orang jujur pada dirinya sendiri sebelum tidur.
+
+Kalau kamu membaca ini jam sebelas malam: selamat menulis. Dindingnya tebal. 🌙`,
+		dibaca: 198,
+		reaksi: 26
+	}
+);
+
+const KOMENTAR = [
+	{
+		judul: 'Tiga puluh nama',
+		utas: [
+			{ pen: 'arunika', isi: 'Dua kalimat tentang orangnya — kuambil prinsip ini untuk tulisanku juga. Terima kasih, Bu Guru. 🙏' },
+			{ pen: 'saraswati', balas: 0, isi: 'Silakan! Anak-anak (dan orang dewasa) tumbuh dari yang diperhatikan, bukan dari yang dinilai.' },
+			{ pen: 'kelana', isi: 'Guru SD-ku dulu menulis "suka menolong teman" di raporku. Masih kuingat sampai sekarang — kamu benar soal sepuluh tahun itu.' }
+		]
+	},
+	{
+		judul: 'Peta soto pribadi',
+		utas: [
+			{ pen: 'saraswati', isi: 'Nomor dua itu di gang mana?? Demi ilmu pengetahuan. 🍜' },
+			{ pen: 'kelana', balas: 0, isi: 'Rahasia dapur kota 😄 Petunjuknya: cari gang yang antre sebelum jam tujuh.' },
+			{ pen: 'bendi', isi: 'Peta-peta kecil seperti ini yang bikin kota jadi rumah — setuju sekali.' }
+		]
+	},
+	{
+		judul: 'Resep tanpa takaran',
+		utas: [
+			{ pen: 'bendi', isi: '"Sampai baunya benar" adalah dokumentasi teknis terbaik yang pernah kubaca.' },
+			{ pen: 'arunika', balas: 0, isi: 'Dan tidak bisa di-versioning 😄 Terima kasih sudah mampir!' }
+		]
+	},
+	{
+		judul: 'Daftar periksa sebelum menerbitkan',
+		utas: [
+			{ pen: 'arunika', isi: 'Kotak terakhir yang tidak pernah dicentang itu bijak. Kuadopsi mulai malam ini.' },
+			{ pen: 'bendi', balas: 0, isi: 'Semoga membantu — keraguan semalam lebih murah daripada penyesalan setahun.' }
+		]
 	}
 ];
 
@@ -412,6 +585,35 @@ async function main() {
 			dibuat++;
 			console.log(`Terbit: "@${c.pen}" — ${c.judul}`);
 		}
+
+		let komentarDibuat = 0;
+		for (const grup of KOMENTAR) {
+			const [entri] = await sql`
+				SELECT id, user_id FROM public_entries WHERE title = ${grup.judul} LIMIT 1
+			`;
+			if (!entri) continue;
+			const idUtas = [];
+			for (const k of grup.utas) {
+				const userId = idPen[k.pen];
+				if (!userId) continue;
+				const [sudah] = await sql`
+					SELECT id FROM comments WHERE public_entry_id = ${entri.id} AND body = ${k.isi} LIMIT 1
+				`;
+				if (sudah) {
+					idUtas.push(sudah.id);
+					continue;
+				}
+				const idKomentar = randomUUID();
+				const parentId = typeof k.balas === 'number' ? (idUtas[k.balas] ?? null) : null;
+				await sql`
+					INSERT INTO comments (id, public_entry_id, user_id, parent_id, body)
+					VALUES (${idKomentar}, ${entri.id}, ${userId}, ${parentId}, ${k.isi})
+				`;
+				idUtas.push(idKomentar);
+				komentarDibuat++;
+			}
+		}
+		console.log(`${komentarDibuat} komentar dibuat.`);
 
 		console.log(`\n${dibuat} catatan publik dibuat.`);
 

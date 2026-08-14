@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import LayarKunci from '$components/dasar/LayarKunci.svelte';
 	import NavBawah from '$components/nav/NavBawah.svelte';
+	import TombolTulis from '$components/nav/TombolTulis.svelte';
 	import { sesi } from '$lib/state/sesi.svelte.ts';
 	import { kunci } from '$lib/state/kunci.svelte.ts';
 	import { sync } from '$lib/sync/mesin.svelte.ts';
@@ -46,4 +47,5 @@
 {:else}
 	{@render children()}
 	<NavBawah />
+	<TombolTulis />
 {/if}

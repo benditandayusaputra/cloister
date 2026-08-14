@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TombolReaksi from './TombolReaksi.svelte';
+	import Komentar from './Komentar.svelte';
 	import ModalLapor from './ModalLapor.svelte';
 	import type { EntriPublikView } from '$lib/server/publik.ts';
 	import { pinOf, moodLabel } from '$lib/utils/kertas.ts';
@@ -71,6 +72,8 @@
 			</div>
 		{/if}
 	</article>
+
+	<Komentar entriId={entri.id} />
 </div>
 
 <ModalLapor terbuka={lapor} id={entri.id} ontutup={() => (lapor = false)} />

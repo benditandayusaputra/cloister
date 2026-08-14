@@ -98,5 +98,28 @@ export const reports = pgTable(
 	(t) => [index('idx_reports_open').on(t.state, t.createdAt)]
 );
 
+export const comments = pgTable(
+	'comments',
+	{
+		id: uuid('id').primaryKey(),
+		publicEntryId: uuid('public_entry_id')
+			.notNull()
+			.references(() => publicEntries.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		parentId: uuid('parent_id'),
+		body: text('body').notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true }),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(t) => [
+		index('idx_comments_entry').on(t.publicEntryId, t.createdAt),
+		index('idx_comments_parent').on(t.parentId)
+	]
+);
+
+export type Comment = typeof comments.$inferSelect;
+
 export type PublicEntry = typeof publicEntries.$inferSelect;
 export type Report = typeof reports.$inferSelect;

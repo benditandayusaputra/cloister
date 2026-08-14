@@ -36,6 +36,13 @@
 
 	type ModeEditor = 'tulis' | 'berdampingan' | 'preview';
 	let mode = $state<ModeEditor>('tulis');
+	let emojiTerbuka = $state(false);
+
+	const EMOJI = [
+		'😀','😄','😅','😂','🥲','😊','😍','🤩','😎','🤔','😴','😭','😤','🥳','🤗','🙃',
+		'❤️','🧡','💛','💚','💙','💜','🖤','✨','⭐','🔥','🌱','🌸','🌧️','☀️','🌙','⛰️',
+		'☕','🍜','🍰','🎂','🎉','🎧','📚','✏️','📌','📷','🚲','✈️','🏠','💼','💡','✅'
+	];
 	// Layar sempit tidak muat dua kolom; jatuhkan ke mode tulis.
 	$effect(() => {
 		if (mobile && mode === 'berdampingan') mode = 'tulis';
@@ -122,8 +129,18 @@
 		tulis(teks, kursor, kursor);
 	}
 
+	const TABEL_TEMPLATE =
+		'\n| Layanan | Akun | Catatan |\n| --- | --- | --- |\n| Kampus | nama@kampus.ac.id | ganti sandi tiap semester |\n|  |  |  |\n\n';
+
+	function sisipEmoji(e: string) {
+		if (!area) return;
+		const { selectionStart: s, value } = area;
+		tulis(value.slice(0, s) + e + value.slice(area.selectionEnd), s + e.length, s + e.length);
+	}
+
 	function aksi(a: AksiEditor) {
 		if (mode === 'preview') mode = 'tulis';
+		if (a !== 'emoji') emojiTerbuka = false;
 		switch (a) {
 			case 'tebal':
 				return bungkus('**', '**', 'teks tebal');
@@ -131,6 +148,8 @@
 				return bungkus('_', '_', 'teks miring');
 			case 'coret':
 				return bungkus('~~', '~~', 'dicoret');
+			case 'kode':
+				return bungkus('`', '`', 'kode');
 			case 'h2':
 				return awalanBaris('## ');
 			case 'h3':
@@ -141,8 +160,17 @@
 				return awalanBaris('- ');
 			case 'daftar-angka':
 				return daftarAngka();
+			case 'centang':
+				return awalanBaris('- [ ] ');
 			case 'tautan':
 				return bungkus('[', '](https://)', 'teks tautan');
+			case 'tabel':
+				return sisipBlok(TABEL_TEMPLATE);
+			case 'blok-kode':
+				return bungkus('\n```\n', '\n```\n', 'tulis kodenya di sini');
+			case 'emoji':
+				emojiTerbuka = !emojiTerbuka;
+				return;
 			case 'garis':
 				return sisipBlok('\n---\n\n');
 		}
@@ -239,7 +267,31 @@
 		/>
 
 		{#if menulis}
-			<BilahAlat onaksi={aksi} />
+			<div style="position:relative">
+				<BilahAlat onaksi={aksi} />
+				{#if emojiTerbuka}
+					<div
+						role="listbox"
+						aria-label="Pilih emoji"
+						class="kertas kertas-angkat muncul"
+						style="position:absolute;z-index:30;top:calc(100% + 6px);left:0;max-width:100%;width:340px;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:2px"
+					>
+						{#each EMOJI as e (e)}
+							<button
+								type="button"
+								role="option"
+								aria-selected="false"
+								aria-label="Emoji {e}"
+								style="cursor:pointer;min-height:34px;border:none;border-radius:var(--r-control);background:transparent;font-size:1.15rem;line-height:1"
+								onmousedown={(ev) => {
+									ev.preventDefault();
+									sisipEmoji(e);
+								}}>{e}</button
+							>
+						{/each}
+					</div>
+				{/if}
+			</div>
 		{/if}
 
 		{#if entri.body.trim().length === 0 && menulis}

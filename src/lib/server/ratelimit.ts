@@ -23,7 +23,8 @@ export const LIMITS = {
 	report: { limit: 10, windowSec: 3600 },
 	react: { limit: 60, windowSec: 3600 },
 	presign: { limit: 60, windowSec: 3600 },
-	bukti: { limit: 30, windowSec: 60 }
+	bukti: { limit: 30, windowSec: 60 },
+	komentar: { limit: 20, windowSec: 3600 }
 } satisfies Record<string, Limit>;
 
 interface Bucket {

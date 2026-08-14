@@ -10,6 +10,7 @@ export type TemaId =
 	| 'senja'
 	| 'terminal';
 export type Mode = 'malam' | 'siang';
+export type Gaya = 'flat' | 'liquid-glass' | 'line-art';
 
 export interface TemaDef {
 	id: TemaId;
@@ -86,17 +87,22 @@ export const TEMA: TemaDef[] = [
 ];
 
 const KEY_TEMA = 'cloister:tema';
+const KEY_GAYA = 'cloister:gaya';
 const KEY_MODE = 'cloister:mode';
 const KEY_SISTEM = 'cloister:ikut-sistem';
 
 class TemaState {
 	tema = $state<TemaId>('flanel');
+	gaya = $state<Gaya>('flat');
 	mode = $state<Mode>('malam');
 	ikutSistem = $state(false);
 	reduceMotion = $state(false);
 
 	init() {
 		if (!browser) return;
+		const g = localStorage.getItem(KEY_GAYA);
+		if (g === 'liquid-glass' || g === 'line-art') this.gaya = g;
+		document.documentElement.dataset.gaya = this.gaya;
 		const t = localStorage.getItem(KEY_TEMA) as TemaId | null;
 		if (t && TEMA.some((x) => x.id === t)) this.tema = t;
 		const m = localStorage.getItem(KEY_MODE);
@@ -121,6 +127,13 @@ class TemaState {
 		const root = document.documentElement;
 		root.dataset.theme = this.tema;
 		root.dataset.mode = this.mode;
+	}
+
+	setGaya(g: Gaya) {
+		this.gaya = g;
+		if (!browser) return;
+		localStorage.setItem(KEY_GAYA, g);
+		document.documentElement.dataset.gaya = g;
 	}
 
 	setTema(t: TemaId) {

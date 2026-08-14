@@ -22,11 +22,19 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
 		const src = node.getAttribute('src') ?? '';
 		if (!/^(?:https?:|blob:|\/(?!\/))/i.test(src)) node.removeAttribute('src');
 	}
+	if (node.tagName === 'INPUT') {
+		const dicentang = node.hasAttribute('checked');
+		for (const a of [...node.attributes]) node.removeAttribute(a.name);
+		node.setAttribute('type', 'checkbox');
+		node.setAttribute('disabled', '');
+		if (dicentang) node.setAttribute('checked', '');
+	}
 });
 
 const ALLOWED_TAGS = [
 	'p', 'br', 'hr', 'h1', 'h2', 'h3', 'h4', 'strong', 'em', 'del', 'blockquote',
-	'ul', 'ol', 'li', 'code', 'pre', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
+	'ul', 'ol', 'li', 'code', 'pre', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
+	'input'
 ];
 
 /**
@@ -45,9 +53,9 @@ export function renderAman(md: string): string {
 	const raw = marked.parse(md ?? '', { async: false, gfm: true, breaks: true });
 	return DOMPurify.sanitize(raw, {
 		ALLOWED_TAGS,
-		ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'rel', 'target'],
+		ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'rel', 'target', 'type', 'checked', 'disabled'],
 		ALLOWED_URI_REGEXP: /^(?:https?:|mailto:|#|\/(?!\/)|blob:)/i,
-		FORBID_TAGS: ['style', 'script', 'iframe', 'object', 'embed', 'form', 'input'],
+		FORBID_TAGS: ['style', 'script', 'iframe', 'object', 'embed', 'form'],
 		FORBID_ATTR: ['style', 'onerror', 'onload', 'onclick']
 	}).replace(
 		/<a\s+href="(https?:\/\/[^"]+)"/gi,

@@ -80,6 +80,9 @@ tahun depan.
 | GET | `/api/baca/search?q=` | Pencarian entri publik, bentuk ringkas tanpa saringan |
 | POST | `/api/baca/:id/react` | Reaksi, toggle |
 | POST | `/api/baca/:id/report` | Laporan |
+| GET | `/api/baca/:id/komentar` | Daftar komentar berutas (induk + balasan), tanpa auth |
+| POST | `/api/baca/:id/komentar` | Kirim komentar atau balasan (`parentId`), butuh login. Komentar dari pemilik catatan diberi tanda `penulis`; kalau catatannya anonim, nama pena penulis ikut disembunyikan |
+| DELETE | `/api/baca/:id/komentar?komentarId=` | Hapus komentar (soft delete, ikut balasannya). Boleh: penulis komentar atau pemilik catatan |
 
 ## Bukti
 
@@ -143,4 +146,5 @@ membaca isinya.
 | `POST /api/publish` | 5 per jam, 20 per hari per akun |
 | `POST /api/baca/:id/report` | 10 per jam per IP |
 | `GET /api/bukti/rows` | 30 per menit per akun |
+| `POST /api/baca/:id/komentar` | 20 per jam per akun |
 | `GET /api/devices/transfer/:id` | 5 total per sesi, dicatat di database |
