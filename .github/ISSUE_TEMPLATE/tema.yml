@@ -1,0 +1,18 @@
+name: Tema baru
+description: Usul atau kirim tema visual baru
+labels: [theme, good first issue]
+body:
+  - type: input
+    attributes:
+      label: Nama tema
+    validations: { required: true }
+  - type: textarea
+    attributes:
+      label: Metafora visual
+      description: Papannya apa, kertasnya apa, penandanya apa
+    validations: { required: true }
+  - type: checkboxes
+    attributes:
+      label: Kontras
+      options:
+        - label: Sudah dicek lulus WCAG AA (4.5:1) di mode malam dan siang

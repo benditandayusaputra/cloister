@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Laporan keamanan
+    url: https://github.com/benditandayusaputra/cloister/security/advisories/new
+    about: Jangan buka issue publik untuk kerentanan. Lihat SECURITY.md.

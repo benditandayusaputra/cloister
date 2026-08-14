@@ -1,0 +1,377 @@
+/* Token sistem Cloister - disalin dari file desain */
+:root,
+[data-mode='malam'] {
+	--room-wall: #14171a;
+	--room-wall-warm: #1b1e1f;
+	--room-glow: radial-gradient(
+		120% 90% at 18% 8%,
+		rgb(255 232 190 / 0.09) 0%,
+		rgb(255 232 190 / 0.02) 42%,
+		transparent 72%
+	);
+	--board-felt: #2a3630;
+	--board-felt-hi: #35443c;
+	--board-felt-lo: #1f2924;
+	--board-frame: #4a3524;
+	--board-frame-hi: #6b4e33;
+	--board-frame-lo: #2c1f14;
+	--paper-bone: #ede7d6;
+	--paper-manila: #dcc79b;
+	--paper-buram: #cfc4ac;
+	--paper-biru: #c2d4d8;
+	--paper-mawar: #ddb3b0;
+	--ink: #1b1b17;
+	--ink-soft: #4c4a3f;
+	--ink-faint: #7a7768;
+	--ink-on-board: #c7d2c7;
+	--ink-on-board-dim: #7e8d82;
+	--pin-brass: #c08a2e;
+	--pin-mood-1: #8e2f2a;
+	--pin-mood-2: #a85b32;
+	--pin-mood-3: #c08a2e;
+	--pin-mood-4: #7a8f4a;
+	--pin-mood-5: #4f7f53;
+	--accent: #2b4f8e;
+	--accent-hi: #3d68ae;
+	--accent-ink: #ede7d6;
+	--thread: #a8302b;
+	--ok: #4f7f53;
+	--warn: #b07a22;
+	--danger: #9e3b34;
+	--danger-hi: #c04a42;
+	--s-1: 4px;
+	--s-2: 8px;
+	--s-3: 12px;
+	--s-4: 16px;
+	--s-5: 24px;
+	--s-6: 32px;
+	--s-7: 48px;
+	--s-8: 64px;
+	--s-9: 96px;
+	--s-10: 144px;
+	--r-paper: 1px;
+	--r-card: 2px;
+	--r-control: 3px;
+	--r-pin: 50%;
+	--r-tape: 0px;
+	--sh-pinned: 1px 1px 0 rgb(0 0 0 / 0.22), 4px 7px 14px -3px rgb(0 0 0 / 0.42);
+	--sh-hover: 1px 2px 0 rgb(0 0 0 / 0.24), 9px 15px 26px -5px rgb(0 0 0 / 0.5);
+	--sh-lifted: 2px 3px 0 rgb(0 0 0 / 0.2), 18px 30px 54px -10px rgb(0 0 0 / 0.58);
+	--sh-contact: inset 0 1px 0 rgb(255 255 255 / 0.24);
+	--ease-pin: cubic-bezier(0.18, 0.89, 0.32, 1.12);
+	--ease-lift: cubic-bezier(0.22, 0.61, 0.24, 1);
+	--ease-quiet: cubic-bezier(0.4, 0, 0.2, 1);
+	--dur-fast: 140ms;
+	--dur-base: 220ms;
+	--dur-lift: 300ms;
+	--dur-slow: 420ms;
+	--text-2xs: 0.694rem;
+	--text-xs: 0.8rem;
+	--text-sm: 0.9rem;
+	--text-base: 1rem;
+	--text-md: clamp(1.05rem, 0.98rem + 0.35vw, 1.19rem);
+	--text-lg: clamp(1.3rem, 1.15rem + 0.7vw, 1.56rem);
+	--text-xl: clamp(1.7rem, 1.4rem + 1.4vw, 2.44rem);
+	--text-2xl: clamp(2.2rem, 1.6rem + 2.8vw, 3.81rem);
+	--text-3xl: clamp(3rem, 2rem + 4.6vw, 5.96rem);
+	--f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+	--f-read: 'Newsreader', Georgia, serif;
+	--f-hand: 'Shantell Sans', system-ui, cursive;
+	--f-data: 'IBM Plex Mono', ui-monospace, monospace;
+	--tex-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.42'/%3E%3C/svg%3E");
+	--tex-felt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)' opacity='0.55'/%3E%3C/svg%3E");
+	--tex-wall: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23w)' opacity='0.5'/%3E%3C/svg%3E");
+	--tex-wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23d)' opacity='0.5'/%3E%3C/svg%3E");
+	--felt-bg:
+		var(--tex-felt),
+		repeating-linear-gradient(90deg, rgb(255 255 255 / 0.022) 0 1px, transparent 1px 3px),
+		repeating-linear-gradient(0deg, rgb(0 0 0 / 0.05) 0 1px, transparent 1px 3px),
+		radial-gradient(
+			130% 100% at 12% 0%,
+			var(--board-felt-hi) 0%,
+			var(--board-felt) 42%,
+			var(--board-felt-lo) 100%
+		);
+	--felt-blend: soft-light, normal, normal, normal;
+	--wood-bg:
+		var(--tex-wood),
+		repeating-linear-gradient(91deg, rgb(0 0 0 / 0.2) 0 2px, transparent 2px 11px),
+		repeating-linear-gradient(89deg, rgb(255 255 255 / 0.045) 0 1px, transparent 1px 17px),
+		linear-gradient(158deg, var(--board-frame-hi) 0%, var(--board-frame) 48%, var(--board-frame-lo) 100%);
+	--wood-blend: soft-light, normal, normal, normal;
+	--desk-bg:
+		var(--tex-wood),
+		repeating-linear-gradient(93deg, rgb(0 0 0 / 0.16) 0 3px, transparent 3px 16px),
+		linear-gradient(160deg, #4c3826 0%, #33251a 55%, #241a12 100%);
+	--paper-fill: var(--tex-grain), linear-gradient(147deg, rgb(255 255 255 / 0.55), transparent 42%);
+	--kartu-indeks:
+		var(--tex-grain),
+		repeating-linear-gradient(0deg, transparent 0 27px, rgb(43 79 142 / 0.16) 27px 28px),
+		linear-gradient(90deg, transparent 0 40px, rgb(168 48 43 / 0.14) 40px 41px, transparent 41px);
+	/* Garis, isi, dan tinta peringatan di atas dinding ruangan. Nilainya ikut mode. */
+	--garis-ruang: rgb(255 255 255 / 0.13);
+	--garis-ruang-kuat: rgb(255 255 255 / 0.26);
+	--isi-ruang: rgb(255 255 255 / 0.03);
+	--isi-ruang-kuat: rgb(255 255 255 / 0.06);
+	--warn-ink: #e6d3a8;
+	--warn-ink-kertas: #6b4d12;
+	--centang-biru: #3d8fdd;
+
+	--card-w: 184px;
+	--card-h: 204px;
+	--row-h: 238px;
+}
+
+[data-mode='siang'] {
+	--room-wall: #cfc7b6;
+	--room-wall-warm: #dcd5c4;
+	--room-glow: radial-gradient(
+		120% 90% at 18% 8%,
+		rgb(255 250 235 / 0.55) 0%,
+		rgb(255 250 235 / 0.12) 45%,
+		transparent 75%
+	);
+	--board-felt: #33413a;
+	--board-felt-hi: #405047;
+	--board-felt-lo: #26312b;
+	/* Dinding jadi terang, jadi tinta di atasnya harus gelap.
+	   Kontras terhadap #cfc7b6: 8.56:1 dan 4.90:1, keduanya lolos WCAG AA. */
+	--ink-on-board: #232c26;
+	--ink-on-board-dim: #48514a;
+	--garis-ruang: rgb(27 27 23 / 0.22);
+	--garis-ruang-kuat: rgb(27 27 23 / 0.42);
+	--isi-ruang: rgb(27 27 23 / 0.04);
+	--isi-ruang-kuat: rgb(27 27 23 / 0.08);
+	--warn-ink: #6b4d12;
+	--centang-biru: #1d6fc4;
+}
+
+/*
+ * Permukaan yang selalu gelap di kedua mode membawa tintanya sendiri.
+ * Tanpa ini, tinta ruangan yang gelap di mode siang akan hilang di atas
+ * papan flanel, meja kayu, dan tirai.
+ */
+.papan-flanel,
+.bingkai-kayu,
+.meja-kayu,
+.tirai,
+.panel-gelap {
+	--ink-on-board: #c7d2c7;
+	/* Dinaikkan dari #93a197: nilai lama gagal AA di atas felt tema Meja dan Buku tulis. */
+	--ink-on-board-dim: #a8b4aa;
+	--garis-ruang: rgb(255 255 255 / 0.13);
+	--garis-ruang-kuat: rgb(255 255 255 / 0.26);
+	--isi-ruang: rgb(255 255 255 / 0.03);
+	--isi-ruang-kuat: rgb(255 255 255 / 0.06);
+	--warn-ink: #e6d3a8;
+}
+
+/* ---------- Tema ---------- */
+[data-theme='buku-tulis'] {
+	--board-felt: #26365e;
+	--board-felt-hi: #31447212;
+	--board-felt-lo: #17223c;
+	--board-frame: #3a2c48;
+	--board-frame-hi: #574269;
+	--board-frame-lo: #221a2c;
+	--paper-bone: #f1eee2;
+	--paper-manila: #e6e2d2;
+	--paper-buram: #dcd9cb;
+	--paper-biru: #dde6f0;
+	--paper-mawar: #efdcdd;
+	--accent: #3a5cc4;
+	--accent-hi: #5478e0;
+	--r-card: 1px;
+	--f-read: 'Newsreader', Georgia, serif;
+	--felt-bg:
+		repeating-linear-gradient(0deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 7px),
+		linear-gradient(160deg, #26365e, #17223c);
+	--felt-blend: normal, normal;
+	--paper-fill:
+		var(--tex-grain),
+		repeating-linear-gradient(0deg, transparent 0 25px, rgb(58 92 196 / 0.16) 25px 26px);
+}
+
+[data-theme='polaroid'] {
+	--board-felt: #4a2e28;
+	--board-felt-hi: #5c3a32;
+	--board-felt-lo: #2b1a16;
+	--board-frame: #3b2a20;
+	--board-frame-hi: #57402f;
+	--board-frame-lo: #221812;
+	--paper-bone: #faf8f2;
+	--paper-manila: #f2ece0;
+	--paper-buram: #e7e1d6;
+	--paper-biru: #e6eef1;
+	--paper-mawar: #f5e0df;
+	--accent: #2f6f6a;
+	--accent-hi: #3f9089;
+	--r-card: 0px;
+	--felt-bg:
+		repeating-linear-gradient(0deg, rgb(0 0 0 / 0.18) 0 11px, transparent 11px 13px),
+		linear-gradient(160deg, #4a2e28, #2b1a16);
+	--felt-blend: normal, normal;
+	--sh-pinned: 2px 3px 6px -1px rgb(0 0 0 / 0.5);
+}
+
+[data-theme='meja'] {
+	--warn-ink-kertas: #432f08;
+	/* Kertas manila tema ini paling gelap, jadi tinta lembutnya digelapkan
+	   supaya tetap lolos AA (#4c4a3f hanya 3.56:1 di atas #c79c6a). */
+	--ink-soft: #3a382e;
+	--board-felt: #4c3826;
+	--board-felt-hi: #5e462f;
+	--board-felt-lo: #241a12;
+	--paper-bone: #e4d4ae;
+	--paper-manila: #c79c6a;
+	--paper-buram: #d6c8a6;
+	--paper-biru: #cbd3c4;
+	--paper-mawar: #d9b9a4;
+	--accent: #7a4a22;
+	--accent-hi: #9c6330;
+	--f-display: 'Newsreader', Georgia, serif;
+	--felt-bg:
+		repeating-linear-gradient(93deg, rgb(0 0 0 / 0.16) 0 3px, transparent 3px 16px),
+		linear-gradient(160deg, #4c3826, #241a12);
+	--felt-blend: normal, normal;
+}
+
+[data-theme='terminal'] {
+	--warn-ink: #d8b45c;
+	--warn-ink-kertas: #d8b45c;
+	--room-wall: #050505;
+	--room-wall-warm: #070707;
+	--room-glow: none;
+	--board-felt: #050505;
+	--board-felt-hi: #0a0a0a;
+	--board-felt-lo: #000;
+	--board-frame: #111;
+	--board-frame-hi: #1c1c1c;
+	--board-frame-lo: #000;
+	--paper-bone: #0b0f0c;
+	--paper-manila: #0b0f0c;
+	--paper-buram: #0b0f0c;
+	--paper-biru: #0b0f0c;
+	--paper-mawar: #0b0f0c;
+	--ink: #7ee08d;
+	--ink-soft: #4e9a5c;
+	--ink-faint: #3a6d44;
+	--ink-on-board: #7ee08d;
+	/* #3e7f4e hanya 4.22:1 di atas hitam pekat; dinaikkan supaya lolos AA. */
+	--ink-on-board-dim: #4a9660;
+	--accent: #1d5c2c;
+	--accent-hi: #2a7f3f;
+	--accent-ink: #d6ffdd;
+	--thread: #3e7f4e;
+	--r-card: 0px;
+	--r-control: 0px;
+	--f-display: 'IBM Plex Mono', ui-monospace, monospace;
+	--f-read: 'IBM Plex Mono', ui-monospace, monospace;
+	--f-hand: 'IBM Plex Mono', ui-monospace, monospace;
+	--felt-bg:
+		repeating-linear-gradient(0deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 3px),
+		linear-gradient(#050505, #050505);
+	--felt-blend: normal, normal;
+	--paper-fill: linear-gradient(#0b0f0c, #0b0f0c);
+	--sh-pinned: inset 0 0 0 1px #3e7f4e;
+	--sh-hover: inset 0 0 0 1px #7ee08d;
+	--sh-lifted: inset 0 0 0 1px #7ee08d;
+	--sh-contact: none;
+}
+
+/*
+ * Batik: papan indigo dengan garis parang diagonal yang samar, kertas krem
+ * sogan, dan aksen cokelat sogan. Dinding ruangan mengikuti mode, jadi tinta
+ * ruangan tidak perlu dibawa sendiri.
+ */
+[data-theme='batik'] {
+	--board-felt: #263457;
+	--board-felt-hi: #31426b;
+	--board-felt-lo: #16203a;
+	--board-frame: #4a3524;
+	--board-frame-hi: #6b4e33;
+	--board-frame-lo: #2c1f14;
+	--paper-bone: #f3ead3;
+	--paper-manila: #e7d3a4;
+	--paper-buram: #dfd6be;
+	--paper-biru: #d3dee8;
+	--paper-mawar: #e9cfc0;
+	--accent: #7a4e1f;
+	--accent-hi: #9a6529;
+	--pin-brass: #c9973b;
+	--thread: #b03a2e;
+	--felt-bg:
+		var(--tex-felt),
+		repeating-linear-gradient(135deg, rgb(255 255 255 / 0.055) 0 2px, transparent 2px 15px),
+		repeating-linear-gradient(45deg, rgb(0 0 0 / 0.10) 0 1px, transparent 1px 22px),
+		linear-gradient(160deg, #263457, #16203a);
+	--felt-blend: overlay, normal, normal, normal;
+	--paper-fill:
+		var(--tex-grain),
+		radial-gradient(circle at 8px 8px, rgb(122 78 31 / 0.045) 1.5px, transparent 1.5px);
+}
+
+/*
+ * Kamar gelap: studio cetak foto dengan lampu pengaman merah. Dinding hampir
+ * hitam di kedua mode, jadi seluruh tinta ruangan dibawa sendiri — pola yang
+ * sama dengan tema Terminal.
+ */
+[data-theme='kamar-gelap'] {
+	--room-wall: #191014;
+	--room-wall-warm: #211318;
+	--room-glow: radial-gradient(
+		120% 90% at 18% 8%,
+		rgb(255 96 72 / 0.12) 0%,
+		rgb(255 96 72 / 0.03) 45%,
+		transparent 75%
+	);
+	--board-felt: #2a181c;
+	--board-felt-hi: #352025;
+	--board-felt-lo: #1a0e11;
+	--board-frame: #402328;
+	--board-frame-hi: #5a3138;
+	--board-frame-lo: #241114;
+	--paper-bone: #f5f2ea;
+	--paper-manila: #eae4d6;
+	--paper-buram: #dfd9cc;
+	--paper-biru: #e2e8ea;
+	--paper-mawar: #f0dcda;
+	--ink-on-board: #e3d3cd;
+	--ink-on-board-dim: #b3a09a;
+	--warn-ink: #e8c9a0;
+	--accent: #a03428;
+	--accent-hi: #c14a3c;
+	--pin-brass: #c96a4a;
+	--thread: #d6543c;
+	--felt-bg:
+		var(--tex-felt),
+		radial-gradient(120% 90% at 15% 0%, rgb(214 84 60 / 0.12), transparent 60%),
+		linear-gradient(160deg, #2a181c, #1a0e11);
+	--felt-blend: overlay, normal, normal;
+	--sh-pinned: 1px 1px 0 rgb(0 0 0 / 0.4), 4px 7px 14px -3px rgb(0 0 0 / 0.6);
+}
+
+[data-theme='senja'] {
+	--board-felt: #4a2b44;
+	--board-felt-hi: #5c3651;
+	--board-felt-lo: #2a1727;
+	--board-frame: #503427;
+	--board-frame-hi: #714a36;
+	--board-frame-lo: #2e1d15;
+	--paper-bone: #f6e9d4;
+	--paper-manila: #efd9ae;
+	--paper-buram: #e6d9c2;
+	--paper-biru: #dcdce8;
+	--paper-mawar: #f2d4c4;
+	--accent: #a34d2c;
+	--accent-hi: #c26236;
+	--pin-brass: #d89a3e;
+	--felt-bg:
+		var(--tex-felt),
+		radial-gradient(120% 70% at 50% 108%, rgb(224 122 62 / 0.28), transparent 62%),
+		linear-gradient(168deg, #432a40 0%, #5a3145 52%, #77402f 100%);
+	--felt-blend: overlay, normal, normal;
+	--paper-fill:
+		var(--tex-grain),
+		linear-gradient(176deg, rgb(255 214 156 / 0.10), transparent 55%);
+}
