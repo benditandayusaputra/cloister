@@ -3,6 +3,7 @@
 	import { crypto as kripto } from '$crypto/client.ts';
 	import { keEntryPayload } from '$lib/sync/payload.ts';
 	import { entriesRepo } from '$lib/db/local/repo.ts';
+	import { urlLampiran } from '$lib/lampiran/simpan.ts';
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import type { PercobaanKunciSalah, SealedParts } from '$crypto/protocol.ts';
 	import { api } from '$lib/api/client.ts';
@@ -24,6 +25,7 @@
 	}
 
 	let daftar = $state<LocalEntry[]>([]);
+	let urls = $state<Record<string, string>>({});
 	let pilihan = $state<LocalEntry | null>(null);
 	let amplop = $state<SealedParts | null>(null);
 	let barisDb = $state<BarisBukti | null>(null);
@@ -41,6 +43,12 @@
 
 	async function pilih(e: LocalEntry) {
 		pilihan = e;
+		for (const a of e.attachments) {
+			if (a.kind !== 'image' || urls[a.id]) continue;
+			void urlLampiran(a).then((u) => {
+				if (u) urls = { ...urls, [a.id]: u };
+			});
+		}
 		amplop = null;
 		barisDb = null;
 		errorDb = '';
@@ -182,7 +190,7 @@
 						{pilihan.title || 'Tanpa judul'}
 					</h2>
 					<div class="prosa" style="color:var(--ink)">
-						<AmanMarkdown md={pilihan.body} />
+						<AmanMarkdown md={pilihan.body} {urls} />
 					</div>
 					{#if pilihan.tags.length}
 						<div style="display:flex;flex-wrap:wrap;gap:6px">

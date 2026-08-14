@@ -12,7 +12,7 @@
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { metaRepo } from '$lib/db/local/repo.ts';
-	import { namaPerangkat, platformPerangkat } from '$lib/utils/perangkat.ts';
+	import { deviceIdUntuk, namaPerangkat, platformPerangkat } from '$lib/utils/perangkat.ts';
 	import { verifikasiPasskey } from '$lib/auth/passkey.ts';
 
 	let email = $state('');
@@ -45,7 +45,8 @@
 			});
 			langkah = 'kunci';
 
-			const deviceId = await metaRepo.get<string | null>('deviceId', null);
+			const deviceId =
+				deviceIdUntuk(email) ?? (await metaRepo.get<string | null>('deviceId', null));
 			const res = await authApi.login({
 				email,
 				authKey,

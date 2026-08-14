@@ -1,12 +1,13 @@
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import { authApi, toKdfParams, type SessionInfo } from '$lib/api/endpoints.ts';
-import { tokenStore, ensureFreshToken } from '$lib/api/client.ts';
+import { tokenStore, ensureFreshToken, refreshGagalKarenaJaringan } from '$lib/api/client.ts';
 import { crypto } from '$crypto/client.ts';
 import { metaRepo } from '$lib/db/local/repo.ts';
 import { localDb, resetLocalDb } from '$lib/db/local/db.ts';
 import { polos } from '$lib/utils/polos.ts';
 import { i18n } from './i18n.svelte.ts';
+import { ingatDeviceId } from '$lib/utils/perangkat.ts';
 import { tema, type TemaId, type Mode } from './tema.svelte.ts';
 
 export type FaseSesi = 'memuat' | 'tamu' | 'terkunci' | 'siap';
@@ -41,35 +42,81 @@ class SesiState {
 		return this.info?.role === 'moderator' || this.info?.role === 'admin';
 	}
 
-	/** Bangunkan sesi: refresh token, ambil info, lalu coba buka brankas sesi. */
+	/**
+	 * Bangunkan sesi: refresh token, ambil info, lalu coba buka brankas sesi.
+	 *
+	 * Tanpa jaringan, refresh token tidak bisa diverifikasi — tapi itu bukan
+	 * alasan mengusir pengguna dari tulisannya sendiri. Selama ada salinan info
+	 * sesi terakhir dan brankas sesi masih bisa dibuka dari IndexedDB, aplikasi
+	 * bangun dalam mode offline penuh; otentikasi ulang terjadi otomatis begitu
+	 * jaringan kembali.
+	 */
 	async bangun() {
 		if (!browser) return;
 		this.deviceId = await metaRepo.get<string | null>('deviceId', null);
 
 		if (!(await ensureFreshToken())) {
+			if (refreshGagalKarenaJaringan() && (await this.bangunOffline())) return;
 			this.fase = 'tamu';
 			return;
 		}
 		try {
-			this.terapkan(await authApi.session());
-		} catch {
+			await this.terapkan(await authApi.session());
+		} catch (err) {
+			if (err instanceof TypeError && (await this.bangunOffline())) return;
 			this.fase = 'tamu';
 			return;
 		}
 
 		const status = await crypto.status();
 		if (status.unlocked) {
+			await this.simpanBrankas();
 			this.fase = 'siap';
 			return;
 		}
 		this.fase = (await this.pulihkanBrankas()) ? 'siap' : 'terkunci';
 	}
 
-	terapkan(info: SessionInfo) {
+	/**
+	 * Jalur bangun tanpa jaringan: pakai info tersimpan + brankas sesi lokal.
+	 * Sengaja tidak memeriksa navigator.onLine — nilainya sering bohong (tetap
+	 * true di jaringan yang mati); yang dipercaya adalah jenis kegagalan fetch.
+	 */
+	private async bangunOffline(): Promise<boolean> {
+		const tersimpan = await metaRepo.get<SessionInfo | null>('sesiInfoCache', null);
+		if (!tersimpan) return false;
+		if (!(await this.pulihkanBrankas())) return false;
+		this.info = tersimpan;
+		const p = tersimpan.profile;
+		if (p.locale === 'id' || p.locale === 'en') i18n.set(p.locale);
+		tema.setTema(p.theme as TemaId);
+		tema.setMode(p.mode as Mode);
+		this.fase = 'siap';
+		return true;
+	}
+
+	/**
+	 * Terapkan info sesi, dengan satu penjagaan yang tidak boleh dilewati:
+	 * database lokal terikat ke SATU akun. Kalau akun yang masuk berbeda dari
+	 * pemilik data lokal, seluruh data lokal dibuang lebih dulu — tanpa ini,
+	 * catatan dan antrean sinkronisasi akun lama akan terbawa (dan terdorong)
+	 * ke akun yang baru masuk di perangkat yang sama.
+	 */
+	async terapkan(info: SessionInfo) {
+		const pemilik = await metaRepo.get<string | null>('pemilikAkun', null);
+		if (pemilik && pemilik !== info.userId) {
+			await resetLocalDb();
+			this.deviceId = null;
+		}
+		await metaRepo.set('pemilikAkun', info.userId);
+
 		this.info = info;
+		const { wrappedMk: _mk, mkNonce: _nonce, ...tanpaKunci } = info;
+		void metaRepo.set('sesiInfoCache', polos(tanpaKunci));
 		if (info.deviceId) {
 			this.deviceId = info.deviceId;
 			void metaRepo.set('deviceId', info.deviceId);
+			ingatDeviceId(info.email, info.deviceId);
 		}
 		const p = info.profile;
 		if (p.locale === 'id' || p.locale === 'en') i18n.set(p.locale);
@@ -126,6 +173,7 @@ class SesiState {
 		await authApi.logout().catch(() => {});
 		await crypto.lock();
 		await this.buangBrankas();
+		await metaRepo.set('sesiInfoCache', null);
 		tokenStore.set(null);
 		this.info = null;
 		this.fase = 'tamu';

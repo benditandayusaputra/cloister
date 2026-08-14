@@ -1,13 +1,15 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 
+const DB_E2E = process.env.DATABASE_URL ?? 'postgresql://localhost:5432/cloister';
+
 test.describe.configure({ timeout: 240_000 });
 
 const unik = () => Math.random().toString(36).slice(2, 10);
 const SANDI = 'Sandi-Cloister-2026!';
 
 function sql(perintah: string) {
-	execFileSync('psql', ['-d', 'Cloister', '-c', perintah]);
+	execFileSync('psql', [DB_E2E, '-c', perintah]);
 }
 
 async function halamanBaru(browser: Browser): Promise<Page> {

@@ -21,22 +21,35 @@ export const tokenStore = {
 	}
 };
 
+export type HasilRefresh = 'ok' | 'unauth' | 'jaringan';
+
+let alasanRefresh: HasilRefresh = 'unauth';
+
 async function doRefresh(): Promise<boolean> {
 	if (!refreshing) {
 		refreshing = fetch('/api/auth/refresh', { method: 'POST', credentials: 'same-origin' })
 			.then(async (r) => {
-				if (!r.ok) return false;
+				if (!r.ok) {
+					alasanRefresh = 'unauth';
+					return false;
+				}
 				const data = (await r.json()) as { accessToken: string };
 				accessToken = data.accessToken;
+				alasanRefresh = 'ok';
 				return true;
 			})
-			.catch(() => false)
+			.catch(() => {
+				alasanRefresh = 'jaringan';
+				return false;
+			})
 			.finally(() => {
 				refreshing = null;
 			});
 	}
 	return refreshing;
 }
+
+export const refreshGagalKarenaJaringan = () => alasanRefresh === 'jaringan';
 
 interface Options extends Omit<RequestInit, 'body'> {
 	body?: unknown;

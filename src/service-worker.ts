@@ -12,8 +12,12 @@ const BATAS_LAMPIRAN = 200 * 1024 * 1024;
 
 const PRECACHE = [...build, ...files];
 
+const HALAMAN_SHELL = ['/app', '/'];
+
 sw.addEventListener('install', (event) => {
-	event.waitUntil(caches.open(SHELL).then((c) => c.addAll(PRECACHE)));
+	event.waitUntil(
+		caches.open(SHELL).then((c) => c.addAll([...PRECACHE, ...HALAMAN_SHELL]))
+	);
 });
 
 sw.addEventListener('activate', (event) => {

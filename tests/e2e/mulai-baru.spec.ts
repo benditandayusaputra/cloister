@@ -1,6 +1,8 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 
+const DB_E2E = process.env.DATABASE_URL ?? 'postgresql://localhost:5432/cloister';
+
 test.describe.configure({ timeout: 240_000 });
 
 const unik = () => Math.random().toString(36).slice(2, 10);
@@ -9,8 +11,7 @@ const SANDI = 'Sandi-Cloister-2026!';
 /** Fixture: tandai email sudah terverifikasi tanpa lewat kotak masuk. */
 function tandaiTerverifikasi(email: string) {
 	execFileSync('psql', [
-		'-d',
-		'Cloister',
+		DB_E2E,
 		'-c',
 		`update users set email_verified_at = now() where email = '${email}'`
 	]);
@@ -21,8 +22,7 @@ function kodeTerakhir(email: string, purpose: string): string {
 	const out = execFileSync(
 		'psql',
 		[
-			'-d',
-			'Cloister',
+			DB_E2E,
 			'-t',
 			'-A',
 			'-c',
