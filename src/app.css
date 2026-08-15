@@ -903,6 +903,22 @@ button:hover > .lubang-pin {
 [data-gaya='liquid-glass'] .tbl {
 	box-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 8px 20px -8px rgb(0 0 0 / 0.5);
 }
+[data-gaya='liquid-glass'] .map-label {
+	background: rgb(255 255 255 / 0.14);
+	border: 1px solid rgb(255 255 255 / 0.28);
+	box-shadow: none;
+	color: var(--ink);
+}
+[data-gaya='liquid-glass'][data-mode='siang'] .map-label {
+	background: rgb(255 255 255 / 0.6);
+	border-color: rgb(255 255 255 / 0.8);
+}
+[data-gaya='liquid-glass'] .map-badan .t-data {
+	color: var(--ink-soft) !important;
+}
+[data-gaya='liquid-glass'] .map-bulan[data-kosong='1'] .map-badan .t-data {
+	color: var(--ink-faint) !important;
+}
 [data-gaya='liquid-glass'] .nav-bawah,
 [data-gaya='liquid-glass'] .menu-panel {
 	background-image: var(--kaca);
@@ -998,4 +1014,19 @@ button:hover > .lubang-pin {
 [data-gaya='line-art'] .prosa img {
 	box-shadow: none;
 	border: var(--garis-tinta-halus);
+}
+[data-gaya='line-art'] .map-label {
+	background: transparent;
+	border: var(--garis-tinta-halus);
+	box-shadow: none;
+	color: var(--ink-on-board);
+}
+[data-gaya='line-art'] .map-badan .t-data {
+	color: var(--ink-on-board-dim) !important;
+}
+[data-gaya='line-art'] .map-bulan[data-kosong='1'] .map-badan .t-data {
+	color: color-mix(in srgb, var(--ink-on-board-dim) 60%, transparent) !important;
+}
+[data-gaya='line-art'] .map-bulan[data-kosong='1'] {
+	opacity: 0.75 !important;
 }

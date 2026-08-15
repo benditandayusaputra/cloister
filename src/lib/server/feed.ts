@@ -1,4 +1,4 @@
-import { and, eq, or, desc, lt, sql, ilike, inArray, isNotNull } from 'drizzle-orm';
+import { and, eq, or, desc, lt, sql, ilike, inArray, isNotNull, count } from 'drizzle-orm';
 import { db, publicEntries, publicTags, users } from '$lib/db/server/index.ts';
 
 export interface FeedItem {
@@ -29,6 +29,8 @@ export interface FeedQuery {
 	/** 1 sampai 5, sesuai warna paku pin. */
 	mood?: number | undefined;
 	limit?: number;
+	/** Halaman bernomor (mulai 1). Kalau diisi, kursor diabaikan. */
+	hal?: number | undefined;
 }
 
 /** % dan _ punya arti khusus di ILIKE, jadi harus dinetralkan dulu. */
@@ -62,18 +64,30 @@ export function bacaParamFeed(url: URL): FeedQuery & { sort: Urutan; q: string }
 		q: (p.get('q') ?? '').trim().slice(0, 120),
 		mood:
 			Number.isInteger(moodAngka) && moodAngka >= 1 && moodAngka <= 5 ? moodAngka : undefined,
-		cursor: p.get('cursor') ?? undefined
+		cursor: p.get('cursor') ?? undefined,
+		hal: (() => {
+			const n = Number(p.get('hal'));
+			return Number.isInteger(n) && n >= 1 && n <= 500 ? n : undefined;
+		})()
 	};
 }
 
-export async function loadFeed(
-	q: FeedQuery
-): Promise<{ items: FeedItem[]; nextCursor: string | null }> {
+export interface HasilFeed {
+	items: FeedItem[];
+	nextCursor: string | null;
+	total: number;
+	hal: number;
+	totalHal: number;
+}
+
+export async function loadFeed(q: FeedQuery): Promise<HasilFeed> {
 	const limit = Math.min(q.limit ?? 24, 50);
 	const sort: Urutan = q.sort === 'populer' ? 'populer' : 'terbaru';
+	const hal = q.hal ?? 1;
+	const pakaiHalaman = q.hal !== undefined;
 	const filters = [eq(publicEntries.visibility, 'public'), eq(publicEntries.moderationState, 'ok')];
 
-	if (q.cursor) {
+	if (q.cursor && !pakaiHalaman) {
 		const batas = bacaKursor(q.cursor, sort);
 		if (batas) filters.push(batas);
 	}
@@ -94,9 +108,15 @@ export async function loadFeed(
 			.where(eq(publicTags.tag, q.tag.toLowerCase()))
 			.limit(500);
 		const ids = tagged.map((t) => t.id);
-		if (ids.length === 0) return { items: [], nextCursor: null };
+		if (ids.length === 0) return { items: [], nextCursor: null, total: 0, hal: 1, totalHal: 1 };
 		filters.push(inArray(publicEntries.id, ids));
 	}
+
+	const [{ n: total }] = (await db
+		.select({ n: count() })
+		.from(publicEntries)
+		.where(and(...filters))) as [{ n: number }];
+	const totalHal = Math.max(1, Math.ceil(Number(total) / limit));
 
 	const rows = await db
 		.select()
@@ -107,7 +127,8 @@ export async function loadFeed(
 				? [desc(publicEntries.viewCount), desc(publicEntries.id)]
 				: [desc(publicEntries.publishedAt)])
 		)
-		.limit(limit + 1);
+		.limit(limit + 1)
+		.offset(pakaiHalaman ? (hal - 1) * limit : 0);
 
 	const page = rows.slice(0, limit);
 	const tagRows = page.length
@@ -154,7 +175,10 @@ export async function loadFeed(
 			? null
 			: sort === 'populer'
 				? `${akhir.viewCount}|${akhir.id}`
-				: akhir.publishedAt.toISOString()
+				: akhir.publishedAt.toISOString(),
+		total: Number(total),
+		hal,
+		totalHal
 	};
 }
 

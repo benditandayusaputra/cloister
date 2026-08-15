@@ -85,6 +85,15 @@ latin dan latin-ext.
 Salinan lisensi OFL menyertai file font di repositori masing-masing dan berlaku pada file
 `.woff2` yang disubset di sini.
 
+## 3b. Gambar demo di ruang publik
+
+Enam foto di `static/demo/` (kopi tubruk, terasering Tegallalang, batik parang klithik, langit
+mendung Wediombo, commuter line, mendoan) berasal dari **Wikimedia Commons** dengan lisensi
+**CC BY-SA 3.0/4.0**, dikecilkan ke 1200 px dan dikonversi ke WebP tanpa perubahan lain. Daftar
+sumber, pembuat, dan tautan halaman aslinya ada di [`static/demo/ATRIBUSI.md`](static/demo/ATRIBUSI.md),
+dan setiap catatan contoh yang memakainya mencantumkan atribusi di badan tulisannya. Gambar-gambar
+ini hanya dipakai sebagai isi catatan contoh, bukan bagian dari antarmuka produk.
+
 ## 4. Layanan yang dipanggil langsung dari browser
 
 | Layanan | Dipakai untuk | Catatan privasi |

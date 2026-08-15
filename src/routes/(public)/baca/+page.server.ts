@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	const param = bacaParamFeed(url);
 
 	const [feed, tags] = await Promise.all([
-		loadFeed({ ...param, q: param.q || undefined }),
+		loadFeed({ ...param, q: param.q || undefined, hal: param.hal ?? 1, limit: 12 }),
 		popularTags()
 	]);
 

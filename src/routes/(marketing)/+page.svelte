@@ -50,16 +50,34 @@
 
 	const persona = [
 		{
-			nama: 'Yang menulis tiap malam',
-			isi: 'Butuh tempat yang cepat dibuka dari HP dan tidak terasa seperti aplikasi kantor — dengan jaminan tidak ada yang bisa ikut membaca.'
+			ikon: '📓',
+			nama: 'Diary harian',
+			isi: 'Tempat yang cepat dibuka dari HP kapan pun, terasa seperti buku catatan pribadi — dan yang kamu tulis benar-benar cuma kamu yang bisa baca.'
 		},
 		{
-			nama: 'Yang paham teknis',
-			isi: 'Mau sinkronisasi tanpa menyerahkan isi ke SaaS. Kode terbuka, bisa self-host, dan klaim kriptografinya bisa diuji sendiri.'
+			ikon: '🧠',
+			nama: 'Second brain',
+			isi: 'Ide, kutipan, hasil bacaan, hal yang mau kamu ingat lima tahun lagi. Cari cepat, kelompokkan dengan tag, semuanya tetap milikmu.'
 		},
 		{
-			nama: 'Yang suka berbagi',
-			isi: 'Sebagian tulisan layak dibaca orang. Pilah privat dan publik di satu tempat, dengan nama pena dan kendali penuh per catatan.'
+			ikon: '🔑',
+			nama: 'Brankas catatan penting',
+			isi: 'Nomor rekening, akun, PIN, dokumen — dalam tabel yang rapi. Server tidak bisa membacanya, jadi tidak ada yang bocor walau server dibobol.'
+		},
+		{
+			ikon: '📝',
+			nama: 'Catatan sehari-hari',
+			isi: 'Daftar belanja, resep, rencana perjalanan, daftar centang. Sederhana, offline, tersinkron ke semua perangkatmu.'
+		},
+		{
+			ikon: '🌱',
+			nama: 'Berbagi yang layak dibagi',
+			isi: 'Sebagian tulisan pantas dibaca orang. Terbitkan yang kamu pilih ke halaman publik dengan nama pena — sisanya tetap di balik dinding.'
+		},
+		{
+			ikon: '🧑‍💻',
+			nama: 'Untuk yang mau memeriksa',
+			isi: 'Kode terbuka, bisa dijalankan sendiri, dan klaim enkripsinya bisa kamu uji langsung di halaman Bukti. Bukan sekadar janji.'
 		}
 	];
 
@@ -341,19 +359,27 @@
 </section>
 
 <section style="display:flex;flex-direction:column;gap:var(--s-4);padding-bottom:var(--s-8)">
-	<h2 class="t-judul t-lg" use:reveal>Untuk siapa ruang ini</h2>
+	<h2 class="t-judul t-lg" use:reveal>Satu ruang, banyak kegunaan</h2>
+	<p
+		use:reveal
+		style="margin:0;font-family:var(--f-read);font-size:var(--text-sm);color:var(--ink-on-board-dim);max-width:64ch"
+	>
+		Cloister bukan cuma buat curhat malam hari. Apa pun yang terlalu pribadi untuk ditaruh di
+		aplikasi catatan biasa, di sini tempatnya.
+	</p>
 	<div
 		style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:var(--s-4)"
 	>
 		{#each persona as p, i (p.nama)}
-			<div use:reveal={{ tunda: i * 110 }}>
+			<div use:reveal={{ tunda: (i % 3) * 110 }}>
 				<Kertas
 					kelas="angkat"
-					warna={i === 1 ? 'manila' : 'buram'}
+					warna={i % 3 === 1 ? 'manila' : i % 3 === 2 ? 'bone' : 'buram'}
 					rot={i % 2 === 0 ? 0.5 : -0.5}
 					padding="var(--s-5)"
 				>
-					<h3 class="t-judul" style="color:var(--ink);font-size:var(--text-base);margin-bottom:8px">
+					<span aria-hidden="true" style="font-size:1.6rem;line-height:1">{p.ikon}</span>
+					<h3 class="t-judul" style="color:var(--ink);font-size:var(--text-base);margin:10px 0 8px">
 						{p.nama}
 					</h3>
 					<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">{p.isi}</p>
@@ -369,11 +395,11 @@
 			style="display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between"
 		>
 			<div style="display:flex;flex-direction:column;gap:8px;max-width:52ch">
-				<h2 class="t-judul t-lg" style="color:var(--ink)">Mulai malam ini</h2>
+				<h2 class="t-judul t-lg" style="color:var(--ink)">Mulai menulis kapan saja</h2>
 				<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">
-					Gratis, tanpa iklan, dan kodenya terbuka untuk diperiksa siapa pun. Kalau sandimu hilang,
-					24 kata pemulihan adalah satu-satunya jalan kembali — karena kami memang tidak menyimpan
-					apa pun yang bisa membuka tulisanmu.
+					Gratis, tanpa iklan, dan kodenya terbuka untuk diperiksa siapa pun. Pagi, siang, atau
+					malam — ruangnya selalu siap. Kalau sandimu hilang, 24 kata pemulihan adalah satu-satunya
+					jalan kembali, karena kami memang tidak menyimpan apa pun yang bisa membuka tulisanmu.
 				</p>
 			</div>
 			<a href="/daftar" class="tbl" style="text-decoration:none;white-space:nowrap">Buat akun</a>

@@ -373,6 +373,107 @@ Kalau kamu membaca ini jam sebelas malam: selamat menulis. Dindingnya tebal. �
 	}
 );
 
+PUBLIK.push(
+	{
+		pen: 'kelana',
+		mundur: 2,
+		mood: 5,
+		tags: ['kopi', 'pagi'],
+		judul: 'Kopi tubruk dan ampas yang mengendap',
+		isi: `Pagi ini kopi tubruk lagi. Bukan yang cepat larut — yang harus ditunggu ampasnya turun sebelum boleh diminum.
+
+![Segelas kopi tubruk dengan ampas mengendap di dasar](/demo/kopi.webp)
+
+Menunggu ampas itu tiga menit paling jujur dalam sehari. Tidak ada yang bisa dipercepat, tidak ada yang perlu dilakukan. Cuma duduk, cuma menunggu, cuma pagi.
+
+_Foto: Gunawan Kartapranata, Wikimedia Commons, CC BY-SA 3.0._`,
+		dibaca: 212,
+		reaksi: 24
+	},
+	{
+		pen: 'arunika',
+		mundur: 7,
+		mood: 5,
+		tags: ['perjalanan', 'bali'],
+		judul: 'Terasering di Tegallalang',
+		isi: `Setelah tiga bulan menunda, akhirnya berdiri di tepi sawah bertingkat itu. Fotonya sudah sering kulihat; yang tidak pernah kulihat adalah suaranya — air yang turun dari petak ke petak, pelan, tanpa henti.
+
+![Sawah terasering hijau berundak di Tegallalang, Ubud](/demo/sawah.webp)
+
+Petani di bawah tidak menoleh ke turis di atas. Dia punya urusan yang lebih tua dari kami semua.
+
+_Foto: Yurianto76, Wikimedia Commons, CC BY-SA 4.0._`,
+		dibaca: 298,
+		reaksi: 35
+	},
+	{
+		pen: 'saraswati',
+		mundur: 10,
+		mood: 4,
+		tags: ['batik', 'sekolah'],
+		judul: 'Parang klithik di kelas empat',
+		isi: `Hari Batik. Aku bawa kain parang klithik warisan nenek ke kelas, dan meminta anak-anak menebak apa yang mereka lihat.
+
+![Kain batik motif parang klithik dengan garis-garis diagonal berulang](/demo/batik.webp)
+
+"Ombak, Bu." "Keris." "Pisang goreng!" Yang terakhir dapat tepuk tangan paling ramai.
+
+Motif ini dulu hanya boleh dipakai keluarga keraton. Sekarang dipandangi tiga puluh anak sambil menebak pisang goreng. Kupikir nenek akan setuju: begitulah cara warisan tetap hidup. 🌸
+
+_Foto: Alteaven, Wikimedia Commons, CC BY-SA 3.0._`,
+		dibaca: 187,
+		reaksi: 22
+	},
+	{
+		pen: 'kelana',
+		mundur: 15,
+		mood: 3,
+		tags: ['hujan', 'pantai'],
+		judul: 'Sebentar lagi hujan',
+		isi: `Langit di atas Wediombo menggelap dari arah laut. Semua orang di pantai tahu apa yang akan datang, dan tidak ada yang bergegas.
+
+![Langit mendung gelap menggantung di atas pantai Wediombo, Yogyakarta](/demo/hujan.webp)
+
+Ada jeda sebelum hujan yang tidak bisa dibeli: angin berubah arah, bau garam menguat, dan semua percakapan mengecil. Aku menutup buku dan menunggu bersama yang lain. 🌧️
+
+_Foto: Agung Purnoatmojo, Wikimedia Commons, CC BY-SA 4.0._`,
+		dibaca: 164,
+		reaksi: 19
+	},
+	{
+		pen: 'bendi',
+		mundur: 19,
+		mood: 3,
+		tags: ['kota', 'kereta', 'kerja'],
+		judul: 'Enam gerbong menuju hari yang sama',
+		isi: `Commuter line jam tujuh. Enam gerbong, satu arah, ribuan hari yang berbeda dibawa ke tempat yang sama.
+
+![Rangkaian kereta commuter line berhenti di peron stasiun](/demo/kereta.webp)
+
+Aku selalu berdiri dekat pintu supaya bisa lihat peron lewat. Kebiasaan bodoh — tidak ada yang kutunggu di peron mana pun. Tapi rasanya seperti tetap punya pilihan untuk turun.
+
+_Foto: Muhammad Pascal Fajrin, Wikimedia Commons, CC BY-SA 4.0._`,
+		dibaca: 141,
+		reaksi: 16
+	},
+	{
+		pen: 'saraswati',
+		mundur: 23,
+		mood: 5,
+		tags: ['makanan', 'keluarga'],
+		judul: 'Mendoan sore dan kopi tubruk bapak',
+		isi: `Pulang kampung sehari. Belum juga duduk, bapak sudah menaruh sepiring mendoan dan kopi tubruk di meja teras. Tidak bertanya mau atau tidak — di rumah ini pertanyaan seperti itu tidak pernah ada.
+
+![Sepiring tempe mendoan hangat bersama segelas kopi tubruk di meja](/demo/mendoan.webp)
+
+Kami tidak banyak bicara. Mendoan habis, kopi tinggal ampas, matahari turun di balik pohon rambutan. Semua kabar yang tidak sempat diucapkan sudah tersampaikan lewat piring yang kosong. ☕
+
+_Foto: Hersy ardianty a, Wikimedia Commons, CC BY-SA 4.0._`,
+		dibaca: 233,
+		reaksi: 29
+	}
+);
+
 const KOMENTAR = [
 	{
 		judul: 'Tiga puluh nama',

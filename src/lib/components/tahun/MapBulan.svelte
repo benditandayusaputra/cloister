@@ -55,6 +55,7 @@
 <button
 	type="button"
 	class="map-bulan"
+	data-kosong={jumlah === 0 ? '1' : '0'}
 	style="width:100%;opacity:{jumlah === 0 ? 0.6 : 1};transform:rotate({rot}deg)"
 	onclick={() => onbuka(bulan)}
 >
@@ -96,7 +97,7 @@
 		</span>
 		<span
 			class="t-data"
-			style="color:{jumlah === 0 ? 'rgb(27 27 23 / 0.35)' : 'var(--ink-soft)'}">{meta}</span
+			style="color:{jumlah === 0 ? 'var(--ink-faint)' : 'var(--ink-soft)'}">{meta}</span
 		>
 	</div>
 </button>

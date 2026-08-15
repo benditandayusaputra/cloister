@@ -2,21 +2,36 @@
 	import KartuFeed from '$components/publik/KartuFeed.svelte';
 	import SaringanFeed from '$components/publik/SaringanFeed.svelte';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
+	import { reveal } from '$lib/utils/reveal.ts';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	/** Halaman berikutnya harus membawa saringan yang sedang aktif. */
-	const tautanLanjut = $derived.by(() => {
-		if (!data.nextCursor) return null;
+	function tautanHal(n: number): string {
 		const p = new URLSearchParams();
 		if (data.sort === 'populer') p.set('sort', 'populer');
 		if (data.tagAktif) p.set('tag', data.tagAktif);
 		if (data.moodAktif) p.set('mood', String(data.moodAktif));
 		if (data.penulisAktif) p.set('penulis', data.penulisAktif);
 		if (data.cari) p.set('q', data.cari);
-		p.set('cursor', data.nextCursor);
-		return `/baca?${p.toString()}`;
+		if (n > 1) p.set('hal', String(n));
+		const qs = p.toString();
+		return qs ? `/baca?${qs}` : '/baca';
+	}
+
+	const halaman = $derived.by(() => {
+		const total = data.totalHal;
+		const kini = data.hal;
+		const set = new Set<number>([1, total, kini, kini - 1, kini + 1]);
+		const urut = [...set].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+		const keluar: Array<number | '…'> = [];
+		for (let i = 0; i < urut.length; i++) {
+			const n = urut[i]!;
+			const sebelumnya = urut[i - 1];
+			if (sebelumnya !== undefined && n - sebelumnya > 1) keluar.push('…');
+			keluar.push(n);
+		}
+		return keluar;
 	});
 
 	const kosong = $derived(
@@ -69,18 +84,56 @@
 				{data.items.length} tulisan cocok dengan "{data.cari}"
 			</p>
 		{/if}
-		<div style="columns:auto 320px;column-gap:var(--s-5)">
-			{#each data.items as item, i (item.id)}
-				<div class="muncul" style="break-inside:avoid;margin-bottom:var(--s-5);--tunda:{Math.min(i, 8) * 60}ms">
-					<KartuFeed {item} />
-				</div>
-			{/each}
-		</div>
+		{#key data.hal + (data.cari ?? '') + (data.tagAktif ?? '') + data.sort}
+			<div style="columns:auto 320px;column-gap:var(--s-5)">
+				{#each data.items as item, i (item.id)}
+					<div
+						use:reveal={{ tunda: Math.min(i, 8) * 70 }}
+						style="break-inside:avoid;margin-bottom:var(--s-5)"
+					>
+						<KartuFeed {item} />
+					</div>
+				{/each}
+			</div>
+		{/key}
 	{/if}
 
-	{#if tautanLanjut}
-		<a href={tautanLanjut} class="tbl-papan" style="align-self:center;text-decoration:none">
-			Lebih lama
-		</a>
+	{#if data.totalHal > 1}
+		<nav
+			aria-label="Halaman"
+			style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding-top:var(--s-4)"
+		>
+			{#if data.hal > 1}
+				<a
+					href={tautanHal(data.hal - 1)}
+					class="tbl-papan"
+					style="text-decoration:none;min-width:44px"
+					aria-label="Halaman sebelumnya">&larr;</a
+				>
+			{/if}
+			{#each halaman as h, i (typeof h === 'number' ? h : `e${i}`)}
+				{#if h === '…'}
+					<span class="t-data" style="padding:0 6px;color:var(--ink-on-board-dim)">…</span>
+				{:else}
+					<a
+						href={tautanHal(h)}
+						class="tbl-papan {h === data.hal ? 'tbl-papan-aktif' : ''}"
+						style="text-decoration:none;min-width:44px;justify-content:center"
+						aria-current={h === data.hal ? 'page' : undefined}>{h}</a
+					>
+				{/if}
+			{/each}
+			{#if data.hal < data.totalHal}
+				<a
+					href={tautanHal(data.hal + 1)}
+					class="tbl-papan"
+					style="text-decoration:none;min-width:44px"
+					aria-label="Halaman berikutnya">&rarr;</a
+				>
+			{/if}
+			<span class="t-data" style="width:100%;text-align:center;color:var(--ink-on-board-dim);padding-top:6px">
+				Halaman {data.hal} dari {data.totalHal} · {data.total} tulisan
+			</span>
+		</nav>
 	{/if}
 </div>

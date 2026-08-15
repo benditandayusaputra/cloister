@@ -5,6 +5,7 @@
 	import Lampiran from './Lampiran.svelte';
 	import Konteks from './Konteks.svelte';
 	import PromptHarian from './PromptHarian.svelte';
+	import PembangunTabel from './PembangunTabel.svelte';
 	import AmanMarkdown from '$components/markdown/AmanMarkdown.svelte';
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import type { AttachmentMeta } from '$crypto/protocol.ts';
@@ -37,6 +38,8 @@
 	type ModeEditor = 'tulis' | 'berdampingan' | 'preview';
 	let mode = $state<ModeEditor>('tulis');
 	let emojiTerbuka = $state(false);
+	let tabelTerbuka = $state(false);
+	let posisiTabel = 0;
 
 	const EMOJI = [
 		'😀','😄','😅','😂','🥲','😊','😍','🤩','😎','🤔','😴','😭','😤','🥳','🤗','🙃',
@@ -129,8 +132,36 @@
 		tulis(teks, kursor, kursor);
 	}
 
-	const TABEL_TEMPLATE =
-		'\n| Layanan | Akun | Catatan |\n| --- | --- | --- |\n| Kampus | nama@kampus.ac.id | ganti sandi tiap semester |\n|  |  |  |\n\n';
+	function sisipDiPosisi(blok: string, posisi: number) {
+		if (!area) return;
+		const value = area.value;
+		const perluBaris = posisi > 0 && value[posisi - 1] !== '\n' ? '\n' : '';
+		const teks = value.slice(0, posisi) + perluBaris + blok + value.slice(posisi);
+		const kursor = posisi + perluBaris.length + blok.length;
+		tulis(teks, kursor, kursor);
+	}
+
+	function lanjutkanDaftar(e: KeyboardEvent) {
+		if (e.key !== 'Enter' || e.shiftKey || e.metaKey || e.ctrlKey || !area) return;
+		const { selectionStart: s, value } = area;
+		const mulai = value.lastIndexOf('\n', s - 1) + 1;
+		const barisIni = value.slice(mulai, s);
+		const m = /^(\s*)([-*+]\s\[[ x]\]\s|[-*+]\s|(\d+)\.\s|>\s)(.*)$/.exec(barisIni);
+		if (!m) return;
+		e.preventDefault();
+		const [, indent, penanda, angka, isi] = m;
+		if (!isi?.trim()) {
+			const teks = value.slice(0, mulai) + value.slice(s);
+			tulis(teks, mulai, mulai);
+			return;
+		}
+		let berikut = penanda ?? '';
+		if (angka) berikut = `${Number(angka) + 1}. `;
+		if (/\[x\]/.test(berikut)) berikut = berikut.replace('[x]', '[ ]');
+		const sisipan = `\n${indent ?? ''}${berikut}`;
+		const teks = value.slice(0, s) + sisipan + value.slice(area.selectionEnd);
+		tulis(teks, s + sisipan.length, s + sisipan.length);
+	}
 
 	function sisipEmoji(e: string) {
 		if (!area) return;
@@ -165,7 +196,9 @@
 			case 'tautan':
 				return bungkus('[', '](https://)', 'teks tautan');
 			case 'tabel':
-				return sisipBlok(TABEL_TEMPLATE);
+				posisiTabel = area?.selectionStart ?? 0;
+				tabelTerbuka = true;
+				return;
 			case 'blok-kode':
 				return bungkus('\n```\n', '\n```\n', 'tulis kodenya di sini');
 			case 'emoji':
@@ -187,6 +220,8 @@
 	}
 
 	function pintasan(e: KeyboardEvent) {
+		lanjutkanDaftar(e);
+		if (e.defaultPrevented) return;
 		if (!(e.metaKey || e.ctrlKey)) return;
 		if (e.key === 'b') {
 			e.preventDefault();
@@ -369,3 +404,9 @@
 		<span class="t-data" style="margin-left:auto">{i18n.t.app.autosave}</span>
 	</div>
 </div>
+
+<PembangunTabel
+	terbuka={tabelTerbuka}
+	ontutup={() => (tabelTerbuka = false)}
+	onsisip={(md) => sisipDiPosisi(md, posisiTabel)}
+/>
