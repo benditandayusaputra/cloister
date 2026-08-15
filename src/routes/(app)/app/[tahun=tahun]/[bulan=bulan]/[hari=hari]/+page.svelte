@@ -6,6 +6,7 @@
 	import LembarBaca from '$components/entri/LembarBaca.svelte';
 	import SisiEntri from '$components/entri/SisiEntri.svelte';
 	import Editor from '$components/entri/Editor.svelte';
+	import Ikon from '$components/dasar/Ikon.svelte';
 	import ModalTerbit from '$components/publik/ModalTerbit.svelte';
 	import ModalTautanRahasia from '$components/publik/ModalTautanRahasia.svelte';
 	import PitaOffline from '$components/nav/PitaOffline.svelte';
@@ -215,6 +216,15 @@
 						<button type="button" class="tbl" onclick={() => (menyunting = true)}>
 							{i18n.t.app.sunting}
 						</button>
+						<button
+							type="button"
+							class="tbl-papan {aktif.pinned ? 'tbl-papan-aktif' : ''}"
+							aria-pressed={aktif.pinned}
+							onclick={togglePin}
+						>
+							<Ikon nama="pin" ukuran={15} />
+							{aktif.pinned ? 'Tersemat' : 'Sematkan'}
+						</button>
 						<button type="button" class="tbl-bahaya" onclick={hapus}>{i18n.t.app.hapus}</button>
 					</div>
 				</div>
@@ -225,6 +235,15 @@
 						<div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
 							<button type="button" class="tbl" onclick={() => (menyunting = true)}>
 								{i18n.t.app.sunting}
+							</button>
+							<button
+								type="button"
+								class="tbl-papan {aktif.pinned ? 'tbl-papan-aktif' : ''}"
+								aria-pressed={aktif.pinned}
+								onclick={togglePin}
+							>
+								<Ikon nama="pin" ukuran={15} />
+								{aktif.pinned ? 'Tersemat' : 'Sematkan'}
 							</button>
 							<button
 								type="button"
@@ -245,6 +264,7 @@
 						sudahTerbit={aktif.publicId !== null}
 						onterbit={() => (modalTerbit = true)}
 						onbagikan={() => (modalBagikan = true)}
+						onpin={togglePin}
 					/>
 				</div>
 			{/if}
