@@ -15,6 +15,7 @@
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { ukuranManusia } from '$lib/lampiran/gambar.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	let input = $state<HTMLInputElement | null>(null);
 	let sibuk = $state(false);
@@ -59,7 +60,13 @@
 
 	async function hapusAkun() {
 		if (!bisaHapus) return;
-		if (!confirm('Akun akan dihapus permanen dalam 7 hari. Lanjut?')) return;
+		const ok = await tanya({
+			judul: 'Hapus akun ini?',
+			pesan: 'Semua tulisan di server dihapus permanen dalam 7 hari. Kalau kamu masuk lagi sebelum itu, penghapusan dibatalkan. Salinan di perangkat ini tidak ikut terhapus.',
+			teksYa: 'Hapus akun',
+			bahaya: true
+		});
+		if (!ok) return;
 		const kdf = sesi.kdf();
 		if (!kdf) return;
 		try {

@@ -12,6 +12,7 @@
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { namaPerangkat } from '$lib/utils/perangkat.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	let daftar = $state<PasskeyDto[]>([]);
 	let memuat = $state(true);
@@ -47,10 +48,15 @@
 
 	async function hapus(p: PasskeyDto) {
 		const terakhir = daftar.length === 1;
-		const pesan = terakhir
-			? 'Ini passkey terakhir. Setelah dihapus, masuk cukup dengan sandi lagi. Lanjut?'
-			: `Hapus passkey "${p.nickname}"?`;
-		if (!confirm(pesan)) return;
+		const ok = await tanya({
+			judul: terakhir ? 'Hapus passkey terakhir?' : `Hapus passkey "${p.nickname}"?`,
+			pesan: terakhir
+				? 'Setelah dihapus, masuk cukup dengan sandi lagi tanpa faktor kedua.'
+				: 'Perangkat yang memakai passkey ini harus masuk ulang dengan cara lain.',
+			teksYa: 'Hapus passkey',
+			bahaya: true
+		});
+		if (!ok) return;
 
 		try {
 			await hapusPasskey(p.id);

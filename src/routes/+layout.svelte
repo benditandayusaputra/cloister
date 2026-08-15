@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
 	import Toaster from '$components/dasar/Toaster.svelte';
+	import DialogKonfirmasi from '$components/dasar/DialogKonfirmasi.svelte';
 	import { tema } from '$lib/state/tema.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 
@@ -38,3 +39,4 @@
 
 {@render children()}
 <Toaster />
+<DialogKonfirmasi />

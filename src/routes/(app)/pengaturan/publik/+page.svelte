@@ -7,6 +7,7 @@
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { penyaring } from '$lib/state/penyaring.svelte.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	interface TautanRahasia {
 		id: string;
@@ -45,7 +46,13 @@
 	}
 
 	async function tarik(e: PublicEntryDto) {
-		if (!confirm(`Tarik "${e.title}" dari halaman publik? Salinan di server dihapus permanen.`)) return;
+		const ok = await tanya({
+			judul: `Tarik "${e.title}" dari halaman publik?`,
+			pesan: 'Salinan publik di server dihapus permanen beserta komentar dan reaksinya. Catatan privatmu tidak ikut terhapus.',
+			teksYa: 'Tarik dari publik',
+			bahaya: true
+		});
+		if (!ok) return;
 		try {
 			await publishApi.remove(e.id);
 			if (e.sourceEntryId) {
@@ -64,8 +71,13 @@
 	}
 
 	async function cabutTautan(id: string) {
-		if (!confirm('Cabut tautan rahasia ini? Yang sudah punya tautannya tidak bisa membuka lagi.'))
-			return;
+		const ok = await tanya({
+			judul: 'Cabut tautan rahasia ini?',
+			pesan: 'Siapa pun yang sudah memegang tautannya tidak bisa membuka lagi.',
+			teksYa: 'Cabut tautan',
+			bahaya: true
+		});
+		if (!ok) return;
 		try {
 			await api<void>(`/api/share/${id}`, { method: 'DELETE' });
 			await muat();

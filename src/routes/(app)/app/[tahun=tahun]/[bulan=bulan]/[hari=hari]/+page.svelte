@@ -20,6 +20,7 @@
 	import { layarKecil } from '$lib/utils/perangkat.ts';
 	import { pindah } from '$lib/utils/transisi.ts';
 	import { mintaPersistensi } from '$lib/pwa/daftar.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	const tahun = $derived(Number(page.params.tahun));
 	const bulan = $derived(Number(page.params.bulan));
@@ -105,7 +106,13 @@
 			pindah(() => goto(`/app/${tahun}/${pad2(bulan)}`));
 			return;
 		}
-		if (!confirm('Hapus tulisan ini? Tindakan ini akan disinkronkan ke semua perangkat.')) return;
+		const ok = await tanya({
+			judul: 'Hapus tulisan ini?',
+			pesan: 'Tulisan dihapus dari perangkat ini dan dari semua perangkatmu yang lain saat sinkron berikutnya.',
+			teksYa: 'Hapus tulisan',
+			bahaya: true
+		});
+		if (!ok) return;
 		await entriesRepo.remove(aktif.id);
 		await toko.segarkan();
 		void sync.jalankan();
@@ -116,6 +123,20 @@
 	function tulisLagi() {
 		aktif = emptyEntry(iso);
 		menyunting = true;
+	}
+
+	async function togglePin() {
+		if (!aktif) return;
+		if (aktif.rev === 0 && !aktif.title.trim() && !aktif.body.trim()) {
+			toast.show('Tulis sesuatu dulu, baru bisa disematkan.');
+			return;
+		}
+		if (debounce) clearTimeout(debounce);
+		const pinned = !aktif.pinned;
+		aktif = await entriesRepo.save({ ...aktif, pinned });
+		await toko.segarkan();
+		void sync.jalankan();
+		toast.show(pinned ? 'Disematkan. Ada di folder Tersemat.' : 'Dilepas dari Tersemat.');
 	}
 
 	onDestroy(() => {
@@ -170,6 +191,7 @@
 					onubah={ubah}
 					onselesai={selesai}
 					onhapus={hapus}
+					onpin={togglePin}
 				/>
 			{:else if mobile}
 				<div style="display:flex;flex-direction:column;gap:var(--s-4)">
@@ -186,11 +208,15 @@
 							sudahTerbit={aktif.publicId !== null}
 							onterbit={() => (modalTerbit = true)}
 							onbagikan={() => (modalBagikan = true)}
+							onpin={togglePin}
 						/>
 					{/if}
-					<button type="button" class="tbl" onclick={() => (menyunting = true)}>
-						{i18n.t.app.sunting}
-					</button>
+					<div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+						<button type="button" class="tbl" onclick={() => (menyunting = true)}>
+							{i18n.t.app.sunting}
+						</button>
+						<button type="button" class="tbl-bahaya" onclick={hapus}>{i18n.t.app.hapus}</button>
+					</div>
 				</div>
 			{:else}
 				<div style="display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:var(--s-6);align-items:start">
@@ -208,6 +234,9 @@
 							>
 							<button type="button" class="tbl-papan" onclick={tulisLagi}>
 								Tulis lagi di tanggal ini
+							</button>
+							<button type="button" class="tbl-bahaya" style="margin-left:auto" onclick={hapus}>
+								{i18n.t.app.hapus}
 							</button>
 						</div>
 					</div>

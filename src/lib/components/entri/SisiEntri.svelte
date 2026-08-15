@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import PetaLokasi from './PetaLokasi.svelte';
+	import Ikon from '$components/dasar/Ikon.svelte';
 	import { ukuranManusia } from '$lib/lampiran/gambar.ts';
 	import { waktuRelatif } from '$lib/utils/tanggal.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
@@ -10,9 +11,10 @@
 		sudahTerbit: boolean;
 		onterbit: () => void;
 		onbagikan: () => void;
+		onpin?: () => void;
 	}
 
-	let { entri, sudahTerbit, onterbit, onbagikan }: Props = $props();
+	let { entri, sudahTerbit, onterbit, onbagikan, onpin }: Props = $props();
 
 	const totalLampiran = $derived(entri.attachments.reduce((n, a) => n + a.size, 0));
 	const lampiranTeks = $derived(
@@ -62,6 +64,12 @@
 	</div>
 
 	<div style="display:flex;flex-direction:column;gap:var(--s-2);margin-top:var(--s-2)">
+		{#if onpin}
+			<button type="button" class="tbl-garis" aria-pressed={entri.pinned} onclick={onpin}>
+				<Ikon nama="pin" ukuran={15} />
+				{entri.pinned ? 'Lepas dari Tersemat' : 'Sematkan jurnal ini'}
+			</button>
+		{/if}
 		<button type="button" class="tbl-garis" onclick={onterbit}>
 			{sudahTerbit ? 'Perbarui versi publik' : i18n.t.app.terbitkan}
 		</button>

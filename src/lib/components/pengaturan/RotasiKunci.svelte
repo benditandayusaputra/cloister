@@ -11,6 +11,7 @@
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { sandiCukup } from '$lib/utils/sandi.ts';
 	import { unduhTeks } from '$lib/utils/unduh.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	let buka = $state(false);
 	let sandiLama = $state('');
@@ -43,12 +44,14 @@
 		if (!bisa) return;
 		const kdf = sesi.kdf();
 		if (!kdf) return;
-		if (
-			!confirm(
-				'Semua tulisan akan dienkripsi ulang dengan kunci baru dan semua perangkat lain harus masuk ulang. Lanjut?'
-			)
-		)
-			return;
+		const ok = await tanya({
+			judul: 'Ganti kunci utama?',
+			pesan:
+				'Semua tulisan akan dienkripsi ulang dengan kunci baru dan semua perangkat lain harus masuk ulang. Kamu akan menerima 24 kata pemulihan yang baru.',
+			teksYa: 'Ya, ganti kunci',
+			bahaya: true
+		});
+		if (!ok) return;
 
 		try {
 			const hasil = await rotasi.jalankan(sandiLama, sandiBaru, kdf);

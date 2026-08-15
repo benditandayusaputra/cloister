@@ -14,6 +14,7 @@
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { sandiCukup } from '$lib/utils/sandi.ts';
 	import { unduhTeks } from '$lib/utils/unduh.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	let sidik = $state('—');
 	let bukaGanti = $state(false);
@@ -80,7 +81,13 @@
 	async function frasaBaruBuat() {
 		const kdf = sesi.kdf();
 		if (!kdf) return;
-		if (!confirm('Frasa lama akan berhenti berlaku. Lanjut?')) return;
+		const ok = await tanya({
+			judul: 'Buat 24 kata baru?',
+			pesan: 'Frasa lama langsung berhenti berlaku. Simpan yang baru di tempat aman sebelum menutup halaman ini.',
+			teksYa: 'Buat frasa baru',
+			bahaya: true
+		});
+		if (!ok) return;
 		try {
 			const r = await crypto.rewrapPhrase(kdf);
 			await authApi.rotateRecoveryPhrase({

@@ -7,6 +7,7 @@
 	import Konteks from './Konteks.svelte';
 	import PromptHarian from './PromptHarian.svelte';
 	import AmanMarkdown from '$components/markdown/AmanMarkdown.svelte';
+	import Ikon from '$components/dasar/Ikon.svelte';
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import type { AttachmentMeta } from '$crypto/protocol.ts';
 	import { urlLampiran } from '$lib/lampiran/simpan.ts';
@@ -28,6 +29,7 @@
 		onubah: (patch: Partial<LocalEntry>) => void;
 		onselesai: () => void;
 		onhapus: () => void;
+		onpin?: () => void;
 	}
 
 	let {
@@ -37,7 +39,8 @@
 		mobile = false,
 		onubah,
 		onselesai,
-		onhapus
+		onhapus,
+		onpin
 	}: Props = $props();
 
 	type ModeEditor = 'tulis' | 'preview';
@@ -196,6 +199,18 @@
 
 	<div style="display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
 		<button type="button" class="tbl" onclick={onselesai}>{i18n.t.app.tancapkan}</button>
+		{#if onpin}
+			<button
+				type="button"
+				class="tbl-papan {entri.pinned ? 'tbl-papan-aktif' : ''}"
+				aria-pressed={entri.pinned}
+				title={entri.pinned ? 'Lepas dari Tersemat' : 'Sematkan jurnal ini'}
+				onclick={onpin}
+			>
+				<Ikon nama="pin" ukuran={15} />
+				{entri.pinned ? 'Tersemat' : 'Sematkan'}
+			</button>
+		{/if}
 		<button type="button" class="tbl-papan" onclick={onhapus}>{i18n.t.app.hapus}</button>
 		<span class="t-data" style="margin-left:auto">{i18n.t.app.autosave}</span>
 	</div>

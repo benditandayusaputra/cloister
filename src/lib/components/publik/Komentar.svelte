@@ -4,6 +4,7 @@
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { waktuRelatif } from '$lib/utils/tanggal.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
+	import { tanya } from '$lib/state/konfirmasi.svelte.ts';
 
 	interface KomentarDto {
 		id: string;
@@ -70,7 +71,13 @@
 	}
 
 	async function hapus(k: KomentarDto) {
-		if (!confirm('Hapus komentar ini?')) return;
+		const ok = await tanya({
+			judul: 'Hapus komentar ini?',
+			pesan: 'Balasan di bawahnya ikut terhapus. Tindakan ini tidak bisa dibatalkan.',
+			teksYa: 'Hapus komentar',
+			bahaya: true
+		});
+		if (!ok) return;
 		try {
 			await api<{ dihapus: number }>(`/api/baca/${entriId}/komentar?komentarId=${k.id}`, {
 				method: 'DELETE'

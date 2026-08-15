@@ -3,6 +3,7 @@ import { uuidv7 } from 'uuidv7';
 import { crypto } from '$crypto/client.ts';
 import type { EntryPayload } from '$crypto/protocol.ts';
 import { syncApi, type RemoteEntry, type PushResult } from '$lib/api/endpoints.ts';
+import { ApiError } from '$lib/api/client.ts';
 import { entriesRepo, metaRepo, queueRepo } from '$lib/db/local/repo.ts';
 import { localDb } from '$lib/db/local/db.ts';
 import type { LocalEntry } from '$lib/db/local/types.ts';
@@ -26,6 +27,7 @@ function fromPayload(r: RemoteEntry, p: EntryPayload): LocalEntry {
 		weather: p.weather ?? null,
 		location: p.location ?? null,
 		attachments: p.attachments ?? [],
+		pinned: p.pinned === true,
 		createdAt: p.createdAt ?? r.clientUpdatedAt,
 		updatedAt: p.updatedAt ?? r.clientUpdatedAt,
 		rev: r.rev,
@@ -34,7 +36,7 @@ function fromPayload(r: RemoteEntry, p: EntryPayload): LocalEntry {
 		deletedAt: r.deletedAt,
 		conflictOf: null,
 		conflictLabel: null,
-		publicId: null
+		publicId: p.publicId ?? null
 	};
 }
 
@@ -164,8 +166,12 @@ class MesinSync {
 		}
 
 		for (const e of hapus) {
-			await syncApi.remove(e.id).catch(() => {});
-			await entriesRepo.purge(e.id);
+			try {
+				await syncApi.remove(e.id);
+				await entriesRepo.purge(e.id);
+			} catch (err) {
+				if (err instanceof ApiError && err.status === 404) await entriesRepo.purge(e.id);
+			}
 		}
 
 		if (batch.length === 0) return;
