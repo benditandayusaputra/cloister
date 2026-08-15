@@ -63,8 +63,8 @@
 			{#each data.profil.entri as e (e.id)}
 				{@const g = geometri(e.id)}
 				<article
-					class="kertas"
-					style="background-image:var(--paper-fill), linear-gradient({g.paper},{g.paper});padding:var(--s-5);transform:rotate({g.rot /
+					class="kertas kertas-warna"
+					style="--kertas:{g.paper};padding:var(--s-5);transform:rotate({g.rot /
 						2}deg);display:flex;flex-direction:column;gap:10px"
 				>
 					<span class="t-data t-data-ink">{stempelTanggal(e.entryDate, i18n.locale)}</span>

@@ -22,9 +22,10 @@
  * pantas punya data demo yang bocor sendiri.
  */
 import { chromium } from 'playwright';
-import { appendFileSync, existsSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import postgres from 'postgres';
+import { marked } from 'marked';
 
 const arg = (nama, bawaan) => {
 	const i = process.argv.indexOf(`--${nama}`);
@@ -726,7 +727,16 @@ async function daftarkan(page, p) {
 	await page.locator('input[type="password"]').nth(1).fill(p.sandi);
 	await page.getByRole('button', { name: 'Mulai menulis' }).click();
 
-	await page.waitForSelector('[data-testid=gulungan-frasa]', { timeout: 120_000 });
+	const hasil = await Promise.race([
+		page.waitForSelector('[data-testid=gulungan-frasa]', { timeout: 120_000 }).then(() => 'frasa'),
+		page
+			.locator('.toast')
+			.filter({ hasText: /sudah|terdaftar|dipakai/i })
+			.first()
+			.waitFor({ timeout: 120_000 })
+			.then(() => 'ada')
+	]);
+	if (hasil === 'ada') return null;
 	const frasa = await page.getByTestId('frasa-kata').allTextContents();
 	if (frasa.length !== 24) throw new Error(`frasa tidak lengkap (${frasa.length})`);
 
@@ -735,7 +745,16 @@ async function daftarkan(page, p) {
 	const uji = page.locator('input[type="text"]');
 	for (const [i, n] of [4, 11, 19].entries()) await uji.nth(i).fill(frasa[n - 1]);
 	await page.getByRole('button', { name: 'Selesai' }).click();
-	await page.waitForURL(/\/(verifikasi|app)/, { timeout: 120_000 });
+	const akhir = await Promise.race([
+		page.waitForURL(/\/(verifikasi|app)/, { timeout: 120_000 }).then(() => 'masuk'),
+		page
+			.locator('.toast')
+			.filter({ hasText: /sudah terdaftar|sudah dipakai/i })
+			.first()
+			.waitFor({ timeout: 120_000 })
+			.then(() => 'ada')
+	]);
+	if (akhir === 'ada') return null;
 
 	for (const e of p.privat) {
 		const iso = keTanggal(hariLalu(e.mundur));
@@ -749,10 +768,112 @@ async function daftarkan(page, p) {
 		await page.waitForURL(/\/app\/\d{4}\/\d{2}$/, { timeout: 30_000 });
 	}
 
-	// Biarkan mesin sinkronisasi mengirim antreannya.
 	await page.goto(`${URL}/app`);
 	await page.waitForTimeout(4000);
 	return frasa;
+}
+
+function simpanKredensial(daftar) {
+	const blok = daftar
+		.map((k) =>
+			[
+				'',
+				`AKUN PENULIS FEED — @${k.penName}`,
+				'-'.repeat(50),
+				`Email    : ${k.email}`,
+				`Sandi    : ${k.sandi}`,
+				'24 kata  : ' + k.frasa.join(' '),
+				''
+			].join('\n')
+		)
+		.join('\n');
+	appendFileSync('AKUN-CONTOH.txt', blok);
+}
+
+function frasaDariFile(email) {
+	if (!existsSync('AKUN-CONTOH.txt')) return null;
+	const teks = readFileSync('AKUN-CONTOH.txt', 'utf8');
+	const blok = teks.split(/\n(?=AKUN PENULIS FEED — @)/).find((b) => b.includes(`Email    : ${email}`));
+	const m = blok?.match(/24 kata\s*:\s*([a-z ]+)/);
+	if (!m) return null;
+	const kata = m[1].trim().split(/\s+/);
+	return kata.length === 24 ? kata : null;
+}
+
+async function bukaSesiPenulis(page, p) {
+	const kata = frasaDariFile(p.email);
+	if (!kata) return false;
+	console.log(`Membuka sesi ${p.email} lewat 24 kata …`);
+	await page.goto(`${URL}/pulih`);
+	await page.locator('input[type="email"]').fill(p.email);
+	const kotak = page.locator('input[type="text"]');
+	for (let i = 0; i < 24; i++) await kotak.nth(i).fill(kata[i]);
+	await page.locator('input[type="password"]').fill(p.sandi);
+	await page.getByRole('button', { name: /Buka tulisanku/ }).click();
+	await page.waitForURL(/\/app/, { timeout: 180_000 });
+	await page.waitForTimeout(3000);
+	return true;
+}
+
+async function tunggu(page) {
+	for (let i = 0; i < 60; i++) {
+		await page.waitForTimeout(700);
+		const t = await page.evaluate(() => document.body.innerText.slice(0, 300));
+		if (!/memuat…/i.test(t)) return;
+	}
+}
+
+async function terbitkanLewatBrowser(page, c, iso) {
+	const [y, m, d] = iso.split('-');
+	await page.goto(`${URL}/app/${y}/${m}`);
+	await tunggu(page);
+	await page.getByRole('button', { name: /Lewati/ }).click({ timeout: 2000 }).catch(() => {});
+	const kartuDenganJudul = () =>
+		page.locator('article.kartu-papan', { hasText: c.judul }).locator('[data-testid="kartu-buka"]').first();
+	if ((await kartuDenganJudul().count()) === 0) {
+		await page.goto(`${URL}/app/${y}/${m}/${d}?baru=1`);
+		await page.waitForURL(/\/app\/\d{4}\/\d{2}\/\d{2}/);
+		await page.getByRole('button', { name: /Lewati/ }).click({ timeout: 2000 }).catch(() => {});
+		const editor = page.getByLabel('Isi tulisan');
+		await editor.waitFor({ timeout: 60_000 });
+		await page.getByPlaceholder('Judul (opsional)').fill(c.judul);
+		await editor.click();
+		const html = marked.parse(c.isi, { async: false, gfm: true, breaks: true });
+		await page.evaluate((h) => {
+			const dt = new DataTransfer();
+			dt.setData('text/html', h);
+			const ev = new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true });
+			document.querySelector('[aria-label="Isi tulisan"]').dispatchEvent(ev);
+		}, html);
+		await page.waitForTimeout(500);
+		await page.getByRole('button', { name: MOOD_LABEL[c.mood], exact: true }).click();
+		for (const t of c.tags) {
+			const inTag = page.getByPlaceholder(/tag/i).first();
+			await inTag.fill(t);
+			await page.keyboard.press('Enter');
+		}
+		await page.getByRole('button', { name: 'Tancapkan ke papan' }).click();
+		await page.waitForURL(/\/app\/\d{4}\/\d{2}$/, { timeout: 30_000 });
+		await page.waitForTimeout(800);
+	}
+	await kartuDenganJudul().waitFor({ timeout: 30_000 });
+	await kartuDenganJudul().dispatchEvent('click');
+	await page.waitForURL(/\/app\/\d{4}\/\d{2}\/\d{2}/, { timeout: 30_000 });
+	const tombolTerbit = page.getByRole('button', { name: 'Terbitkan ke halaman publik' });
+	const sudahTerbit = page.getByRole('button', { name: 'Perbarui versi publik' });
+	await Promise.race([
+		tombolTerbit.waitFor({ timeout: 30_000 }),
+		sudahTerbit.waitFor({ timeout: 30_000 })
+	]);
+	if (await sudahTerbit.count()) return;
+	await tombolTerbit.click({ timeout: 30_000 });
+	await page.getByText('Penyaring Identitas').first().waitFor({ timeout: 30_000 });
+	await page.getByText('Saya mengerti tulisan ini keluar dari enkripsi').click({ timeout: 10_000 });
+	const paparan = page.getByText('Penyaring menemukan informasi yang bisa mengarah ke orang tertentu');
+	if (await paparan.count()) await paparan.click();
+	await page.getByRole('button', { name: 'Terbitkan', exact: true }).click();
+	await page.locator('.toast').filter({ hasText: /Terbit/ }).first().waitFor({ timeout: 30_000 });
+	await page.waitForTimeout(800);
 }
 
 /* ------------------------------------------------------------------ *
@@ -760,22 +881,34 @@ async function daftarkan(page, p) {
  * ------------------------------------------------------------------ */
 
 async function main() {
-	const sql = postgres(DB, { max: 1 });
+	const sql = postgres(DB, { max: 1, prepare: false });
 	const browser = await chromium.launch();
 
 	const kredensial = [];
+	const halaman = {};
 
 	try {
 		for (const p of PENULIS) {
-			const [ada] = await sql`SELECT id FROM users WHERE email = ${p.email}`;
-			if (ada) {
+			let [ada] = await sql`SELECT id FROM users WHERE lower(email) = lower(${p.email})`;
+			if (!ada) [ada] = await sql`SELECT id FROM users WHERE lower(email) = lower(${p.email})`;
+			if (ada || frasaDariFile(p.email)) {
 				console.log(`${p.email} sudah ada, lewati pendaftaran.`);
+				const page = await browser.newPage({ locale: 'id-ID' });
+				if (await bukaSesiPenulis(page, p)) halaman[p.penName] = page;
+				else await page.close();
 				continue;
 			}
 			const page = await browser.newPage({ locale: 'id-ID' });
 			const frasa = await daftarkan(page, p);
-			await page.close();
+			if (!frasa) {
+				console.log(`${p.email} ternyata sudah terdaftar, membuka sesi lewat 24 kata.`);
+				if (await bukaSesiPenulis(page, p)) halaman[p.penName] = page;
+				else await page.close();
+				continue;
+			}
+			halaman[p.penName] = page;
 			kredensial.push({ ...p, frasa });
+			simpanKredensial([{ ...p, frasa }]);
 		}
 
 		// Verifikasi email dan pasang profil untuk semua penulis feed,
@@ -827,6 +960,46 @@ async function main() {
 				SELECT id FROM public_entries WHERE user_id = ${userId} AND title = ${c.judul}
 			`;
 			if (sudah) continue;
+
+			const page = halaman[c.pen];
+			if (page) {
+				let berhasil = false;
+				for (let coba = 0; coba < 3 && !berhasil; coba++) {
+					try {
+						await terbitkanLewatBrowser(page, c, keTanggal(terbit));
+						berhasil = true;
+					} catch (err) {
+						console.warn(`Ulang "${c.judul}" (${coba + 1}): ${String(err.message).slice(0, 90)}`);
+						await page.reload().catch(() => {});
+						await page.waitForTimeout(4000);
+					}
+				}
+				if (!berhasil) throw new Error(`Gagal menerbitkan "${c.judul}" setelah 3 percobaan`);
+				const [baris] = await sql`
+					SELECT id FROM public_entries WHERE user_id = ${userId} AND title = ${c.judul}
+					ORDER BY published_at DESC LIMIT 1
+				`;
+				if (!baris) {
+					console.warn(`Gagal menemukan hasil terbit "${c.judul}"`);
+					continue;
+				}
+				await sql`
+					UPDATE public_entries
+					SET entry_date = ${keTanggal(terbit)}, published_at = ${terbit}, updated_at = ${terbit},
+					    view_count = ${c.dibaca}, reaction_count = ${c.reaksi}, moderation_state = 'ok'
+					WHERE id = ${baris.id}
+				`;
+				for (let i = 0; i < c.reaksi; i++) {
+					await sql`
+						INSERT INTO reactions (public_entry_id, actor_hash, kind)
+						VALUES (${baris.id}, ${randomBytes(16).toString('hex')}, ${KINDS[i % KINDS.length]})
+						ON CONFLICT DO NOTHING
+					`;
+				}
+				dibuat++;
+				console.log(`Terbit lewat aplikasi: "@${c.pen}" — ${c.judul}`);
+				continue;
+			}
 
 			await sql`
 				INSERT INTO public_entries
@@ -892,27 +1065,14 @@ async function main() {
 		console.log(`\n${dibuat} catatan publik dibuat.`);
 
 		if (kredensial.length) {
-			const blok = kredensial
-				.map((k) =>
-					[
-						'',
-						`AKUN PENULIS FEED — @${k.penName}`,
-						'-'.repeat(50),
-						`Email    : ${k.email}`,
-						`Sandi    : ${k.sandi}`,
-						'24 kata  : ' + k.frasa.join(' '),
-						''
-					].join('\n')
-				)
-				.join('\n');
-			appendFileSync('AKUN-CONTOH.txt', blok);
-			console.log(
-				existsSync('AKUN-CONTOH.txt')
-					? 'Kredensial penulis ditambahkan ke AKUN-CONTOH.txt.'
-					: 'AKUN-CONTOH.txt dibuat.'
-			);
+			console.log(`Kredensial ${kredensial.length} penulis ada di AKUN-CONTOH.txt.`);
 		}
 	} finally {
+		for (const page of Object.values(halaman)) {
+			await page.goto(`${URL}/app`).catch(() => {});
+			await page.waitForTimeout(3000);
+			await page.close().catch(() => {});
+		}
 		await browser.close();
 		await sql.end({ timeout: 5 });
 	}

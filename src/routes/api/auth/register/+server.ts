@@ -9,6 +9,7 @@ import { hashAuthKey, sha256, randomToken, sixDigitCode } from '$lib/server/cryp
 import { rateLimit, LIMITS, clientIp } from '$lib/server/ratelimit.ts';
 import { issueSession, setRefreshCookie, audit, assertSameOrigin } from '$lib/server/auth.ts';
 import { mail } from '$lib/server/email.ts';
+import { verifikasiCaptcha } from '$lib/server/captcha.ts';
 import { fromB64 } from '$crypto/bytes.ts';
 
 const schema = v.object({
@@ -24,7 +25,9 @@ const schema = v.object({
 	recoveryAuthKey: b64Exact(32, 'recoveryAuthKey'),
 	deviceName: v.pipe(v.string(), v.maxLength(120)),
 	platform: v.optional(v.pipe(v.string(), v.maxLength(80)), ''),
-	locale: v.optional(v.picklist(['id', 'en']), 'id')
+	locale: v.optional(v.picklist(['id', 'en']), 'id'),
+	captcha: v.optional(v.unknown()),
+	situs: v.optional(v.pipe(v.string(), v.maxLength(200)), '')
 });
 
 export const POST: RequestHandler = async (event) =>
@@ -34,6 +37,7 @@ export const POST: RequestHandler = async (event) =>
 		await rateLimit('register', ip, LIMITS.register);
 
 		const b = await parseBody(event.request, schema);
+		verifikasiCaptcha(b.captcha, b.situs);
 
 		const [existing] = await db
 			.select({ id: users.id })

@@ -24,8 +24,8 @@
 </script>
 
 <div
-	class="kertas"
-	style="background-image:var(--paper-fill), linear-gradient({g.paper},{g.paper});padding:var(--s-5);transform:rotate({g.rot /
+	class="kertas kertas-warna"
+	style="--kertas:{g.paper};padding:var(--s-5);transform:rotate({g.rot /
 		2}deg);display:flex;flex-direction:column;gap:var(--s-3)"
 >
 	<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">

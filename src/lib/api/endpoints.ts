@@ -57,6 +57,9 @@ export const authApi = {
 		deviceId?: string;
 		deviceName?: string;
 		platform?: string;
+		tiketPasskey?: string;
+		captcha?: unknown;
+		situs?: string;
 	}) =>
 		api<{
 			userId: string;

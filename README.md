@@ -245,13 +245,22 @@ pemilih suasana hati, tag, lampiran terenkripsi dengan EXIF dibuang yang bisa di
 (`lampiran:id`, diresolusi ke hasil dekripsi saat render), lokasi dan cuaca opsional, prompt
 harian. Catatan lama berformat markdown dikonversi otomatis saat dibuka.
 
-**Navigasi** — tampilan tahun berupa 12 map bulan, papan flanel per bulan dengan kartu terpaku,
-linimasa dengan peta panas dan "di tanggal ini", pencarian full-text lokal, benang tag yang
-terentang ke kartu lain dengan tag serupa.
+**Navigasi** — tampilan tahun berupa 12 map bulan (bulan berjalan selalu ditandai, ikon folder
+bisa dipilih dari ratusan emoji), papan flanel per bulan dengan kartu terpaku, **folder Tersemat**
+untuk jurnal yang disematkan dari bulan dan tahun mana pun (tombol pin di editor dan mode baca,
+status pin ikut terenkripsi dan tersinkron), lencana "terbit di publik" pada kartu, linimasa
+dengan peta panas dan "di tanggal ini", pencarian full-text lokal, benang tag yang terentang ke
+kartu lain dengan tag serupa. Semua konfirmasi (hapus, cabut perangkat, tarik dari publik) memakai
+dialog kustom yang konsisten, bukan `confirm()` browser.
 
 **Keamanan** — 24 kata pemulihan BIP-39, ganti sandi tanpa menyentuh catatan, rotasi kunci utama,
 passkey sebagai faktor kedua, kunci ruang dengan PIN lokal, Mode Diperkuat yang membuat server
 tidak menyimpan kunci terbungkus sama sekali, jalan keluar "mulai dari nol" saat semua kunci hilang.
+Formulir masuk dan daftar dilindungi **captcha bukti-kerja buatan sendiri** (SHA-256 dengan
+sejumlah bit nol di depan, tantangan ditandatangani HMAC, sekali pakai, kedaluwarsa 10 menit; tanpa
+layanan pihak ketiga, tanpa cookie pelacak; kesulitan diatur `CAPTCHA_BITS`) plus **honeypot**
+tersembunyi yang langsung menolak bot pengisi formulir. Tombol tampilkan/sembunyikan sandi tersedia
+di semua field sandi.
 
 **Sinkronisasi** — delta sync dengan Lamport counter, resolusi konflik yang tidak pernah menimpa
 diam-diam, penyambungan perangkat baru lewat QR dan PIN enam digit, kode manual sebagai alternatif

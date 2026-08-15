@@ -14,6 +14,8 @@
 	import { metaRepo } from '$lib/db/local/repo.ts';
 	import { deviceIdUntuk, namaPerangkat, platformPerangkat } from '$lib/utils/perangkat.ts';
 	import { verifikasiPasskey } from '$lib/auth/passkey.ts';
+	import BuktiManusia from '$components/auth/BuktiManusia.svelte';
+	import type { Jawaban } from '$lib/captcha/klien.ts';
 
 	let email = $state('');
 	let sandi = $state('');
@@ -21,11 +23,20 @@
 	let langkahKunci = $state(0);
 	let kdf = $state<KdfParams>(KDF_DEFAULT);
 	let langkah = $state<'kunci' | 'passkey'>('kunci');
+	let bukti = $state<BuktiManusia | null>(null);
+	let captcha = $state<Jawaban | null>(null);
+	let situs = $state('');
 
 	const bisa = $derived(email.includes('@') && sandi.length > 0 && !sibuk);
 
 	async function masuk() {
 		if (!bisa) return;
+		try {
+			await bukti?.tunggu();
+		} catch {
+			toast.bahaya('Verifikasi bukan-robot gagal. Coba lagi.');
+			return;
+		}
 		sibuk = true;
 		langkahKunci = 0;
 		const tik = setInterval(() => (langkahKunci = Math.min(2, langkahKunci + 1)), 700);
@@ -47,13 +58,16 @@
 
 			const deviceId =
 				deviceIdUntuk(email) ?? (await metaRepo.get<string | null>('deviceId', null));
+			const jawaban = captcha;
 			const res = await authApi.login({
 				email,
 				authKey,
 				...(deviceId ? { deviceId } : {}),
 				...(tiketPasskey ? { tiketPasskey } : {}),
 				deviceName: namaPerangkat(),
-				platform: platformPerangkat()
+				platform: platformPerangkat(),
+				captcha: jawaban ?? undefined,
+				situs
 			});
 
 			tokenStore.set(res.accessToken);
@@ -72,6 +86,7 @@
 			await goto('/sambung');
 		} catch (err) {
 			toast.bahaya(err instanceof ApiError ? err.message : 'Email atau sandi salah');
+			captcha = null;
 		} finally {
 			clearInterval(tik);
 			sibuk = false;
@@ -111,6 +126,8 @@
 					autocomplete="current-password"
 					onenter={masuk}
 				/>
+
+				<BuktiManusia bind:this={bukti} bind:jawaban={captcha} bind:situs />
 
 				<button type="button" class="tbl" disabled={!bisa} onclick={masuk}>
 					{i18n.t.auth.masuk}

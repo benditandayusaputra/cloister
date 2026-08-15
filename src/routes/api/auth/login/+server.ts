@@ -9,6 +9,7 @@ import { verifyAuthKey } from '$lib/server/crypto.ts';
 import { rateLimit, LIMITS, clientIp } from '$lib/server/ratelimit.ts';
 import { issueSession, setRefreshCookie, audit, assertSameOrigin } from '$lib/server/auth.ts';
 import { pakaiTiket } from '$lib/server/webauthn.ts';
+import { verifikasiCaptcha } from '$lib/server/captcha.ts';
 import { toB64 } from '$crypto/bytes.ts';
 
 const schema = v.object({
@@ -18,7 +19,9 @@ const schema = v.object({
 	deviceName: v.optional(v.pipe(v.string(), v.maxLength(120)), 'Perangkat'),
 	platform: v.optional(v.pipe(v.string(), v.maxLength(80)), ''),
 	/** Tiket dari verifikasi passkey, wajib kalau akun punya passkey terdaftar. */
-	tiketPasskey: v.optional(v.pipe(v.string(), v.maxLength(64)))
+	tiketPasskey: v.optional(v.pipe(v.string(), v.maxLength(64))),
+	captcha: v.optional(v.unknown()),
+	situs: v.optional(v.pipe(v.string(), v.maxLength(200)), '')
 });
 
 export const POST: RequestHandler = async (event) =>
@@ -28,6 +31,7 @@ export const POST: RequestHandler = async (event) =>
 		await rateLimit('login', ip, LIMITS.login);
 
 		const b = await parseBody(event.request, schema);
+		verifikasiCaptcha(b.captcha, b.situs);
 		await rateLimit('login-email', b.email, LIMITS.loginEmail);
 
 		const [user] = await db.select().from(users).where(eq(users.email, b.email)).limit(1);

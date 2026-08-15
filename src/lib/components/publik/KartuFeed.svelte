@@ -20,9 +20,9 @@
 </script>
 
 <article
-	class="kartu-feed kertas angkat"
+	class="kartu-feed kertas kertas-warna angkat"
 	class:seragam
-	style="--kertas:{g.paper};--rot:{g.rot / 2}deg;background-image:var(--paper-fill), linear-gradient({g.paper},{g.paper})"
+	style="--kertas:{g.paper};--rot:{g.rot / 2}deg"
 >
 	<span aria-hidden="true" class="pin" style="background:{pinOf(item.mood)}"></span>
 	<span aria-hidden="true" class="lipat"></span>
