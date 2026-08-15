@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Ikon from '$components/dasar/Ikon.svelte';
 	import AmanMarkdown from '$components/markdown/AmanMarkdown.svelte';
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import { geometri, pinOf, moodLabel } from '$lib/utils/kertas.ts';
@@ -30,8 +31,8 @@
 </script>
 
 <article
-	class="kertas kertas-angkat"
-	style="--kertas:{g.paper};background-image:var(--paper-fill), linear-gradient({g.paper},{g.paper});padding:{mobile
+	class="kertas kertas-warna kertas-angkat"
+	style="--kertas:{g.paper};padding:{mobile
 		? 'var(--s-6) var(--s-5) var(--s-5)'
 		: 'var(--s-8) var(--s-8) var(--s-7)'}"
 >
@@ -56,6 +57,16 @@
 				</span>
 				{#if entri.weather}<span>{entri.weather.tempC}°C</span>{/if}
 				{#if entri.location}<span>{entri.location.label}</span>{/if}
+				{#if entri.publicId}
+					<span class="tag-cip" style="cursor:default;display:inline-flex;align-items:center;gap:5px;color:var(--ok);border-color:currentColor">
+						<Ikon nama="tunas" ukuran={12} /> Terbit di publik
+					</span>
+				{/if}
+				{#if entri.pinned}
+					<span class="tag-cip" style="cursor:default;display:inline-flex;align-items:center;gap:5px">
+						<Ikon nama="pin" ukuran={12} /> Tersemat
+					</span>
+				{/if}
 			</div>
 		</div>
 		{#if !mobile}

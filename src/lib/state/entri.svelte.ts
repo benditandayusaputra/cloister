@@ -10,6 +10,7 @@ class EntriState {
 	jumlahPerBulan = $state<number[]>(new Array(12).fill(0));
 	tagTersedia = $state<string[]>([]);
 	tahunTersedia = $state<number[]>([]);
+	tersemat = $state<LocalEntry[]>([]);
 	memuat = $state(true);
 
 	async muatBulan(tahun: number, bulan: number) {
@@ -35,10 +36,15 @@ class EntriState {
 		this.tagTersedia = await entriesRepo.allTags();
 	}
 
+	async muatTersemat() {
+		this.tersemat = await entriesRepo.tersemat();
+	}
+
 	async segarkan() {
 		await this.muatBulan(this.tahunAktif, this.bulanAktif);
 		await this.muatTahun(this.tahunAktif);
 		await this.muatTag();
+		await this.muatTersemat();
 		await sync.hitungAntre();
 	}
 }

@@ -21,7 +21,7 @@ function entri(patch: Partial<LocalEntry> = {}): LocalEntry {
 		deletedAt: null,
 		conflictOf: null,
 		conflictLabel: null,
-		publicId: null,
+		publicId: null, pinned: false,
 		...patch
 	};
 }
@@ -97,7 +97,7 @@ describe('gabung tidak boleh menjatuhkan konteks', () => {
 			deletedAt: null,
 			conflictOf: null,
 			conflictLabel: null,
-			publicId: null,
+			publicId: null, pinned: false,
 			...p
 		}) as LocalEntry;
 

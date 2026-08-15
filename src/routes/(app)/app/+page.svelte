@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import KepalaAplikasi from '$components/nav/KepalaAplikasi.svelte';
 	import RakTahun from '$components/tahun/RakTahun.svelte';
+	import MapTersemat from '$components/tahun/MapTersemat.svelte';
 	import TiraiCari from '$components/cari/TiraiCari.svelte';
 	import TutorialAwal from '$components/dasar/TutorialAwal.svelte';
 	import PeringatanPasskey from '$components/dasar/PeringatanPasskey.svelte';
@@ -27,6 +28,7 @@
 	$effect(() => {
 		void sync.putaran;
 		void entri.muatTahun(tahun);
+		void entri.muatTersemat();
 	});
 
 	async function gantiTahun(t: number) {
@@ -68,6 +70,8 @@
 			{mobile}
 			onbuka={(bulan) => pindah(() => goto(`/app/${tahun}/${String(bulan).padStart(2, '0')}`))}
 		/>
+
+		<MapTersemat jumlah={entri.tersemat.length} {mobile} onbuka={() => pindah(() => goto('/app/tersemat'))} />
 
 
 	</div>

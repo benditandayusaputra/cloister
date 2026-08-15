@@ -17,6 +17,7 @@ export function emptyEntry(entryDate: string): LocalEntry {
 		weather: null,
 		location: null,
 		attachments: [],
+		pinned: false,
 		createdAt: now,
 		updatedAt: now,
 		rev: 0,
@@ -72,6 +73,12 @@ export const entriesRepo = {
 
 	async all() {
 		return (await localDb().entries.toArray()).filter((e) => !e.deletedAt);
+	},
+
+	async tersemat() {
+		return (await localDb().entries.toArray())
+			.filter((e) => !e.deletedAt && e.pinned === true)
+			.sort((a, b) => b.entryDate.localeCompare(a.entryDate) || b.updatedAt.localeCompare(a.updatedAt));
 	},
 
 	async years(): Promise<number[]> {

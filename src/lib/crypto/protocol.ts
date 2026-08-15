@@ -10,6 +10,8 @@ export interface EntryPayload {
 	weather?: { code: number; tempC: number } | null;
 	location?: { lat: number; lon: number; label: string } | null;
 	attachments?: AttachmentMeta[];
+	pinned?: boolean;
+	publicId?: string | null;
 	createdAt: string;
 	updatedAt: string;
 }

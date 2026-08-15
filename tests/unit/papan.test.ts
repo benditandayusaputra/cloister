@@ -25,7 +25,7 @@ const buatEntri = (tanggal: string, tags: string[] = []): LocalEntry => ({
 	deletedAt: null,
 	conflictOf: null,
 	conflictLabel: null,
-	publicId: null
+	publicId: null, pinned: false
 });
 
 describe('geometri kartu', () => {

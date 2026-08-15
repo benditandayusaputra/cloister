@@ -10,6 +10,7 @@ export interface LocalEntry {
 	weather: { code: number; tempC: number } | null;
 	location: { lat: number; lon: number; label: string } | null;
 	attachments: AttachmentMeta[];
+	pinned: boolean;
 	createdAt: string;
 	updatedAt: string;
 

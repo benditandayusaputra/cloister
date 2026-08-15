@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Paku from './Paku.svelte';
+	import Ikon from '$components/dasar/Ikon.svelte';
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import { geometri } from '$lib/utils/kertas.ts';
 	import { namaHari, parseIso } from '$lib/utils/tanggal.ts';
@@ -18,6 +19,7 @@
 		washi?: boolean;
 		sisi?: 'flex-start' | 'flex-end' | null;
 		tagAktif?: string | null;
+		penuh?: boolean;
 		onbuka: (id: string) => void;
 		ontagmasuk?: (tag: string, id: string) => void;
 		ontagkeluar?: () => void;
@@ -34,6 +36,7 @@
 		washi = false,
 		sisi = null,
 		tagAktif = null,
+		penuh = false,
 		onbuka,
 		ontagmasuk,
 		ontagkeluar
@@ -47,7 +50,7 @@
 	);
 	const posisi = $derived(
 		x === null || y === null
-			? `position:relative;width:78%;align-self:${sisi ?? 'flex-start'}`
+			? `position:relative;width:${penuh ? '100%' : '78%'};align-self:${sisi ?? 'flex-start'}`
 			: `position:absolute;left:${x}px;top:${y}px;width:var(--card-w);z-index:${z}`
 	);
 </script>
@@ -73,7 +76,19 @@
 		>
 			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
 				<span class="t-hand" style="font-size:2.5rem;line-height:0.82">{hari}</span>
-				<span class="t-data t-data-ink">{namaSingkat}</span>
+				<span style="display:inline-flex;align-items:center;gap:6px">
+					{#if entri.publicId}
+						<span class="lencana-terbit" title="Sudah terbit di halaman publik" aria-label="Sudah terbit di halaman publik">
+							<Ikon nama="tunas" ukuran={11} tebal={2.2} />
+						</span>
+					{/if}
+					{#if entri.pinned}
+						<span class="lencana-semat" title="Tersemat" aria-label="Tersemat">
+							<Ikon nama="pin" ukuran={11} tebal={2.2} />
+						</span>
+					{/if}
+					<span class="t-data t-data-ink">{namaSingkat}</span>
+				</span>
 			</div>
 
 			<button
@@ -117,3 +132,26 @@
 		</article>
 	</div>
 </li>
+
+<style>
+	.lencana-terbit {
+		display: inline-grid;
+		place-items: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: var(--ok);
+		color: #f6f2e6;
+		box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+	}
+	.lencana-semat {
+		display: inline-grid;
+		place-items: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: var(--pin-mood-1);
+		color: #f6ecd9;
+		box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+	}
+</style>

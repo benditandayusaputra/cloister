@@ -12,6 +12,8 @@ export function keEntryPayload(e: LocalEntry): EntryPayload {
 		weather: e.weather,
 		location: e.location,
 		attachments: e.attachments,
+		pinned: e.pinned || undefined,
+		publicId: e.publicId ?? undefined,
 		createdAt: e.createdAt,
 		updatedAt: e.updatedAt
 	};

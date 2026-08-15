@@ -372,6 +372,9 @@
 .kertas-angkat {
 	box-shadow: var(--sh-contact), var(--sh-lifted);
 }
+.kertas-warna {
+	background-image: var(--paper-fill), linear-gradient(var(--kertas), var(--kertas));
+}
 .kertas-manila {
 	background-image: var(--paper-fill), linear-gradient(var(--paper-manila), var(--paper-manila));
 }
@@ -687,6 +690,23 @@ button:hover > .lubang-pin {
 	flex-direction: column;
 	justify-content: space-between;
 }
+.map-bulan[data-kini='1'] .map-badan {
+	box-shadow:
+		var(--sh-contact),
+		var(--sh-hover),
+		0 0 0 2px var(--pin-brass),
+		0 0 0 6px rgb(192 138 46 / 0.18);
+}
+.map-bulan[data-kini='1'] .map-lidah {
+	background-image: var(--tex-grain), linear-gradient(160deg, #eed9a9, #d9bd82);
+	background-blend-mode: multiply, normal;
+}
+.map-bulan[data-kini='1'] {
+	translate: 0 -3px;
+}
+[data-gaya='line-art'] .map-bulan[data-kini='1'] .map-badan {
+	box-shadow: 0 0 0 2px var(--ink-on-board);
+}
 .map-label {
 	align-self: flex-start;
 	padding: 4px 10px;
@@ -956,6 +976,7 @@ button:hover > .lubang-pin {
 	--kaca-garis: 1px solid rgb(255 255 255 / 0.65);
 }
 [data-gaya='liquid-glass'] .kertas,
+[data-gaya='liquid-glass'] .kertas-warna,
 [data-gaya='liquid-glass'] .kartu-papan,
 [data-gaya='liquid-glass'] .kartu-indeks,
 [data-gaya='liquid-glass'] .toast,
@@ -1043,6 +1064,7 @@ button:hover > .lubang-pin {
 	background-color: var(--room-wall);
 }
 [data-gaya='line-art'] .kertas,
+[data-gaya='line-art'] .kertas-warna,
 [data-gaya='line-art'] .kartu-papan,
 [data-gaya='line-art'] .kartu-indeks,
 [data-gaya='line-art'] .toast,
