@@ -25,24 +25,24 @@
 		{ ikon: 'dokumen', teks: 'Sumber terbuka' }
 	];
 
-	const bukti: Array<{ ikon: NamaIkon; angka: string; label: string; ket: string }> = [
+	const bukti: Array<{ ikon: NamaIkon; judul: string; isi: string; teknis: string }> = [
 		{
-			ikon: 'cip',
-			angka: 'XChaCha20',
-			label: 'Poly1305 + Argon2id',
-			ket: 'Enkripsi ujung ke ujung. Kunci diturunkan dari sandimu dan tidak pernah meninggalkan perangkat.'
+			ikon: 'gembok',
+			judul: 'Dikunci di perangkatmu',
+			isi: 'Catatan dikunci di HP atau laptopmu sebelum dikirim. Kuncinya dibuat dari sandimu dan tidak pernah keluar dari perangkat.',
+			teknis: 'XChaCha20-Poly1305 · Argon2id'
 		},
 		{
 			ikon: 'labu',
-			angka: '500+',
-			label: 'tes otomatis',
-			ket: '520 tes unit dan 19 skenario end-to-end berjalan di setiap perubahan, termasuk uji XSS dan vektor kriptografi.'
+			judul: 'Diuji lebih dari 500 kali',
+			isi: 'Setiap perubahan kode diperiksa ratusan tes otomatis, termasuk tes yang memastikan tidak ada tulisan asli yang bocor ke server.',
+			teknis: '520 tes unit · 19 skenario end-to-end'
 		},
 		{
 			ikon: 'mata-tutup',
-			angka: '0',
-			label: 'teks privat di server',
-			ket: 'Isi, judul, tag, mood, dan lampiran tersimpan sebagai gumpalan acak. Server hanya tahu ada sesuatu, bukan apa.'
+			judul: 'Server tidak bisa membaca',
+			isi: 'Yang tersimpan di server hanya huruf acak. Server tahu ada catatan, tapi tidak tahu isinya, judulnya, atau siapa yang disebut.',
+			teknis: '0 teks privat di database'
 		}
 	];
 
@@ -167,27 +167,23 @@
 	</div>
 </section>
 
-<section class="bukti" aria-label="Bukti teknis">
-	{#each bukti as b, i (b.angka)}
+<section class="bukti kertas" aria-label="Kenapa bisa dipercaya" use:reveal>
+	{#each bukti as b, i (b.judul)}
 		<div class="bukti-item" use:reveal={{ tunda: i * 90 }}>
 			<span class="bukti-ikon"><Ikon nama={b.ikon} ukuran={22} /></span>
-			<div>
-				<span class="bukti-angka">{b.angka}</span>
-				<span class="bukti-label">{b.label}</span>
-				<p class="muka-p kecil">{b.ket}</p>
-			</div>
+			<h3 class="t-judul bukti-judul">{b.judul}</h3>
+			<p class="bukti-isi">{b.isi}</p>
+			<span class="bukti-teknis">{b.teknis}</span>
 		</div>
 	{/each}
 	<a href="/bukti" class="bukti-item bukti-tautan" use:reveal={{ tunda: 270 }}>
 		<span class="bukti-ikon"><Ikon nama="dokumen" ukuran={22} /></span>
-		<div>
-			<span class="bukti-angka">Periksa sendiri</span>
-			<span class="bukti-label">halaman Bukti</span>
-			<p class="muka-p kecil">
-				Lihat apa yang benar-benar tersimpan di server untuk akunmu, bandingkan dengan yang kamu tulis.
-			</p>
-		</div>
-		<span class="bukti-panah"><Ikon nama="panah-kanan" ukuran={20} /></span>
+		<h3 class="t-judul bukti-judul">Lihat buktinya sendiri <Ikon nama="panah-kanan" ukuran={18} /></h3>
+		<p class="bukti-isi">
+			Halaman Bukti memperlihatkan langsung baris yang tersimpan di server. Bisa dilihat tanpa akun;
+			kalau sudah masuk, kamu bisa mencocokkannya dengan catatanmu sendiri.
+		</p>
+		<span class="bukti-teknis">Buka halaman Bukti</span>
 	</a>
 </section>
 
@@ -324,27 +320,18 @@
 </section>
 
 <style>
-	:global(.ruangan-muka) {
-		--accent: #9b3b2f;
-		--accent-hi: #b5493a;
-		--accent-ink: #f6ecd9;
-	}
 	.muka-p {
 		margin: 0;
 		font-family: var(--f-read);
 		font-size: var(--text-md);
 		line-height: 1.72;
-		color: #b9c4b9;
+		color: var(--muka-teks);
 		max-width: 60ch;
 		text-wrap: pretty;
 	}
 	.muka-p.besar {
 		font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
 		max-width: 56ch;
-	}
-	.muka-p.kecil {
-		font-size: var(--text-sm);
-		line-height: 1.6;
 	}
 	.eyebrow {
 		display: inline-flex;
@@ -354,7 +341,7 @@
 		font-size: var(--text-2xs);
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
-		color: var(--pin-brass);
+		color: var(--muka-emas);
 	}
 	.eyebrow.gelap {
 		color: var(--accent);
@@ -429,7 +416,7 @@
 		color: var(--ink-on-board);
 	}
 	.janji li :global(svg) {
-		color: var(--pin-brass);
+		color: var(--muka-emas);
 	}
 	.hero-flanel {
 		padding: 30px 26px 34px;
@@ -508,70 +495,85 @@
 
 	.bukti {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
-		gap: var(--s-4);
+		grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+		gap: 0;
+		padding: 0;
+		margin-bottom: var(--s-9);
+		transform: rotate(-0.25deg);
 	}
 	.bukti-item {
-		position: relative;
-		display: flex;
-		gap: 14px;
-		align-items: flex-start;
-		padding: var(--s-5) var(--s-4);
-		border: 1px solid var(--garis-ruang);
-		border-radius: var(--r-control);
-		background: var(--isi-ruang);
-		color: inherit;
-		text-decoration: none;
-	}
-	.bukti-item > div {
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 10px;
+		padding: var(--s-5) var(--s-5) var(--s-5);
+		border-right: 1px solid rgb(27 27 23 / 0.14);
+		color: var(--ink);
+		text-decoration: none;
+	}
+	.bukti-item:last-child {
+		border-right: none;
+	}
+	@media (max-width: 900px) {
+		.bukti-item {
+			border-right: none;
+			border-bottom: 1px solid rgb(27 27 23 / 0.14);
+		}
+		.bukti-item:last-child {
+			border-bottom: none;
+		}
 	}
 	.bukti-ikon {
-		flex-shrink: 0;
 		width: 42px;
 		height: 42px;
 		display: grid;
 		place-items: center;
 		border-radius: 50%;
-		background: rgb(192 138 46 / 0.14);
-		color: var(--pin-brass);
+		background: rgb(27 27 23 / 0.07);
+		color: var(--accent);
 	}
-	.bukti-angka {
-		font-family: var(--f-display);
-		font-variation-settings: 'wdth' 85;
-		font-weight: 600;
-		font-size: var(--text-lg);
-		line-height: 1;
-		color: var(--ink-on-board);
+	.bukti-judul {
+		color: var(--ink);
+		font-size: var(--text-md);
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex-wrap: wrap;
 	}
-	.bukti-label {
+	.bukti-isi {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: var(--text-sm);
+		line-height: 1.62;
+		color: var(--ink-soft);
+		text-wrap: pretty;
+	}
+	.bukti-teknis {
+		margin-top: auto;
+		padding-top: 4px;
 		font-family: var(--f-data);
 		font-size: var(--text-2xs);
-		letter-spacing: 0.08em;
+		letter-spacing: 0.07em;
 		text-transform: uppercase;
-		color: var(--pin-brass);
-	}
-	.bukti-item .muka-p {
-		margin-top: 6px;
+		color: var(--ink-faint);
 	}
 	.bukti-tautan {
-		border-color: rgb(192 138 46 / 0.55);
-		background: rgb(192 138 46 / 0.08);
-		transition:
-			translate var(--dur-base) var(--ease-lift),
-			border-color var(--dur-fast);
+		background: rgb(155 59 47 / 0.07);
+		transition: background var(--dur-fast);
+	}
+	.bukti-tautan .bukti-ikon {
+		background: var(--accent);
+		color: var(--accent-ink);
+	}
+	.bukti-tautan .bukti-judul,
+	.bukti-tautan .bukti-teknis {
+		color: var(--accent);
 	}
 	.bukti-tautan:hover {
-		translate: 0 -3px;
-		border-color: var(--pin-brass);
+		background: rgb(155 59 47 / 0.13);
 	}
-	.bukti-panah {
-		position: absolute;
-		right: 14px;
-		top: 14px;
-		color: var(--pin-brass);
+	.bukti-tautan:hover .bukti-judul {
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 
 	.blok-terang {

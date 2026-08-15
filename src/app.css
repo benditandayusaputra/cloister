@@ -38,6 +38,17 @@
 	position: relative;
 	isolation: isolate;
 	overflow-x: clip;
+	--accent: #9b3b2f;
+	--accent-hi: #b5493a;
+	--accent-ink: #f6ecd9;
+	--muka-teks: #b9c4b9;
+	--muka-emas: var(--pin-brass);
+	--muka-emas-latar: rgb(192 138 46 / 0.14);
+}
+[data-mode='siang'] .ruangan-muka {
+	--muka-teks: #2f3833;
+	--muka-emas: #7a5314;
+	--muka-emas-latar: rgb(122 83 20 / 0.12);
 }
 .ruangan-muka::before,
 .ruangan-muka::after {

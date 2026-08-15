@@ -7,6 +7,8 @@
 	import TombolTulis from '$components/nav/TombolTulis.svelte';
 	import { sesi } from '$lib/state/sesi.svelte.ts';
 	import { kunci } from '$lib/state/kunci.svelte.ts';
+	import { tema, type Mode } from '$lib/state/tema.svelte.ts';
+	import { accountApi } from '$lib/api/endpoints.ts';
 	import { sync } from '$lib/sync/mesin.svelte.ts';
 	import { entri } from '$lib/state/entri.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
@@ -14,6 +16,19 @@
 	import { daftarkanSW, mintaPersistensi } from '$lib/pwa/daftar.ts';
 
 	let { children } = $props();
+	let modeTersimpan: Mode | null = null;
+
+	$effect(() => {
+		const m = tema.mode;
+		if (sesi.fase !== 'siap') return;
+		if (modeTersimpan === null) {
+			modeTersimpan = m;
+			return;
+		}
+		if (m === modeTersimpan) return;
+		modeTersimpan = m;
+		void accountApi.updateProfile({ mode: m }).catch(() => {});
+	});
 
 	onMount(async () => {
 		await sesi.bangun();

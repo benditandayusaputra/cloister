@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Kertas from '$components/dasar/Kertas.svelte';
+	import Medan from '$components/dasar/Medan.svelte';
 	import JendelaSync from '$components/pengaturan/JendelaSync.svelte';
 	import PulihkanArsip from '$components/pengaturan/PulihkanArsip.svelte';
 	import { eksporSemua } from '$lib/data/ekspor.ts';
@@ -138,10 +139,9 @@
 			/>
 		</label>
 
-		<label class="label-medan" style="max-width:340px">
-			<span class="t-data t-data-ink">Sandi untuk konfirmasi</span>
-			<input type="password" bind:value={sandiHapus} class="isian isian-data" />
-		</label>
+		<div style="max-width:340px">
+			<Medan label="Sandi untuk konfirmasi" bind:value={sandiHapus} type="password" mono autocomplete="current-password" />
+		</div>
 
 		<button
 			type="button"
