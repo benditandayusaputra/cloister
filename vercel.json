@@ -2,7 +2,7 @@
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"crons": [
 		{ "path": "/api/cron/purge", "schedule": "0 3 * * *" },
-		{ "path": "/api/cron/pengingat", "schedule": "0 * * * *" }
+		{ "path": "/api/cron/pengingat", "schedule": "0 13 * * *" }
 	],
 	"headers": [
 		{

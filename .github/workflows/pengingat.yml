@@ -1,0 +1,38 @@
+name: Pengingat harian
+
+# Vercel paket Hobby hanya mengizinkan cron sekali sehari, sedangkan endpoint
+# pengingat perlu dijalankan tiap jam supaya bisa mencocokkan jam lokal tiap
+# pengguna. Penjadwalnya dipindah ke sini; endpointnya tetap dilindungi
+# CRON_SECRET, dan pengiriman ganda dicegah oleh kolom pengingat_terakhir.
+#
+# Perlu dua secret di Settings → Secrets and variables → Actions:
+#   CRON_URL      https://<domain-produksi>/api/cron/pengingat
+#   CRON_SECRET   sama persis dengan yang dipasang di environment Vercel
+#
+# Selama kedua secret itu belum diisi, workflow ini berhenti tanpa gagal.
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  panggil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Panggil endpoint pengingat
+        env:
+          CRON_URL: ${{ secrets.CRON_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "CRON_URL atau CRON_SECRET belum diisi — dilewati."
+            exit 0
+          fi
+          kode=$(curl -sS -o respons.txt -w '%{http_code}' \
+            -H "Authorization: Bearer $CRON_SECRET" "$CRON_URL")
+          echo "HTTP $kode"
+          cat respons.txt
+          echo
+          [ "$kode" = "200" ]
