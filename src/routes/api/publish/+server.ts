@@ -13,7 +13,7 @@ import { makeSlug } from '$lib/server/slug.ts';
 const schema = v.object({
 	sourceEntryId: v.optional(v.pipe(v.string(), v.uuid())),
 	title: v.pipe(v.string(), v.trim(), v.minLength(1, 'Judul wajib'), v.maxLength(160)),
-	bodyMd: v.pipe(v.string(), v.minLength(1, 'Isi wajib'), v.maxLength(200_000)),
+	bodyMd: v.pipe(v.string(), v.minLength(1, 'Isi wajib'), v.maxLength(1_500_000)),
 	entryDate: dateSchema,
 	mood: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(5)))),
 	tags: v.optional(v.pipe(v.array(v.pipe(v.string(), v.maxLength(32))), v.maxLength(8)), []),

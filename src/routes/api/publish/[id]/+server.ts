@@ -9,7 +9,7 @@ import { sanitizeMarkdown, excerptOf } from '$lib/server/sanitize.ts';
 
 const schema = v.object({
 	title: v.optional(v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(160))),
-	bodyMd: v.optional(v.pipe(v.string(), v.minLength(1), v.maxLength(200_000))),
+	bodyMd: v.optional(v.pipe(v.string(), v.minLength(1), v.maxLength(1_500_000))),
 	tags: v.optional(v.pipe(v.array(v.pipe(v.string(), v.maxLength(32))), v.maxLength(8))),
 	visibility: v.optional(v.picklist(['public', 'unlisted']))
 });

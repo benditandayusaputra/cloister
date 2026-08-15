@@ -1,4 +1,4 @@
-export const BUCKETS = [256, 1024, 4096, 16384, 65536, 131072] as const;
+export const BUCKETS = [256, 1024, 4096, 16384, 65536, 131072, 262144, 524288, 1048576] as const;
 export type Bucket = (typeof BUCKETS)[number];
 
 export function pickBucket(len: number): Bucket {

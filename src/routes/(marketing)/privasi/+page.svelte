@@ -6,7 +6,7 @@
 		['Kapan entri dibuat dan diubah', 'Judul'],
 		['Tanggal entri (entry_date)', 'Mood'],
 		['Berapa banyak entri yang dimiliki', 'Nama tag'],
-		['Bucket ukuran ciphertext (256B–128K)', 'Isi lampiran'],
+		['Bucket ukuran ciphertext (256B–1M)', 'Isi lampiran'],
 		['Jumlah dan bucket ukuran lampiran', 'Lokasi'],
 		['Alamat IP dan user agent (log 7 hari, disimpan sebagai HMAC)', 'Sandi atau kata pemulihan'],
 		['Daftar perangkat dan kapan terakhir sync', 'Isi catatan yang belum pernah disinkronkan'],

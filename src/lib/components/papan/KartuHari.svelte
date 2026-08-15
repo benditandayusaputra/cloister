@@ -5,6 +5,7 @@
 	import { namaHari, parseIso } from '$lib/utils/tanggal.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 	import { tema } from '$lib/state/tema.svelte.ts';
+	import { plainTeks } from '$lib/utils/teks.ts';
 
 	interface Props {
 		entri: LocalEntry;
@@ -42,7 +43,7 @@
 	const hari = $derived(parseIso(entri.entryDate).day);
 	const namaSingkat = $derived(namaHari(entri.entryDate, i18n.locale).slice(0, 3));
 	const cuplikan = $derived(
-		(entri.title ? entri.title + '. ' : '') + entri.body.replace(/[#*_>`]/g, '').trim()
+		(entri.title ? entri.title + '. ' : '') + plainTeks(entri.body)
 	);
 	const posisi = $derived(
 		x === null || y === null

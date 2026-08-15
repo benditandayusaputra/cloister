@@ -16,15 +16,22 @@
 
 	onNavigate((navigasi) => {
 		const doc = document as Document & {
-			startViewTransition?: (cb: () => Promise<void>) => void;
+			startViewTransition?: (cb: () => Promise<void>) => {
+				finished: Promise<void>;
+				ready: Promise<void>;
+				updateCallbackDone: Promise<void>;
+			};
 		};
 		if (!doc.startViewTransition) return;
 		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		return new Promise((resolve) => {
-			doc.startViewTransition!(async () => {
+			const transisi = doc.startViewTransition!(async () => {
 				resolve();
 				await navigasi.complete;
 			});
+			transisi.finished.catch(() => {});
+			transisi.ready.catch(() => {});
+			transisi.updateCallbackDone.catch(() => {});
 		});
 	});
 </script>

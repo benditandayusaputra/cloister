@@ -111,3 +111,33 @@ export function terapkanKeMarkdown(
 	}
 	return hasil;
 }
+
+export function terapkanKeHtml(html: string, temuan: Temuan[], keputusan: Keputusan[]): string {
+	if (typeof DOMParser === 'undefined') return terapkanKeMarkdown(html, temuan, keputusan);
+	const peta = new Map(keputusan.map((k) => [k.temuanId, k.tindakan]));
+	const urut = [...temuan]
+		.filter((t) => {
+			const k = peta.get(t.id);
+			return !!t.teks && !!k && k !== 'biarkan';
+		})
+		.sort((a, b) => b.teks.length - a.teks.length);
+	if (urut.length === 0) return html;
+
+	const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+	const jalan = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+	const simpul: Text[] = [];
+	while (jalan.nextNode()) simpul.push(jalan.currentNode as Text);
+	for (const n of simpul) {
+		let nilai = n.data;
+		for (const t of urut) {
+			if (!nilai.includes(t.teks)) continue;
+			nilai = nilai.split(t.teks).join(terapkanSatu(t, peta.get(t.id) as Tindakan));
+		}
+		if (nilai !== n.data) n.data = nilai;
+	}
+	return doc.body.innerHTML;
+}
+
+export function terapkanKeBadan(body: string, temuan: Temuan[], keputusan: Keputusan[]): string {
+	return /^\s*</.test(body) ? terapkanKeHtml(body, temuan, keputusan) : terapkanKeMarkdown(body, temuan, keputusan);
+}

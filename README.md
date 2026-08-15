@@ -177,7 +177,8 @@ Langkah lengkapnya di [`docs/SELF-HOSTING.md`](docs/SELF-HOSTING.md).
 | ORM | Drizzle | Type-safe, SQL-first, migrasi berbasis file, runtime kecil |
 | Database lokal | Dexie 4 (IndexedDB) | API bersih, transaksi, cocok dengan runes |
 | Validasi | Valibot | Lebih kecil dari Zod. `strictObject` menolak properti tak dikenal — ini yang menegakkan batas plaintext |
-| Sanitasi | `isomorphic-dompurify` + `marked` | Satu-satunya `{@html}` di seluruh basis kode ada di `AmanMarkdown.svelte` |
+| Editor | TipTap 3 (ProseMirror) | WYSIWYG: tabel disunting di tempat, gambar base64 bisa digeser dan diubah ukurannya, H1–H6, ukuran huruf. Keluarannya HTML yang lewat sanitizer yang sama dengan render |
+| Sanitasi | `isomorphic-dompurify` + `marked` | Satu kebijakan allowlist untuk HTML editor maupun markdown lama; satu-satunya `{@html}` di seluruh basis kode ada di `AmanMarkdown.svelte` |
 | Penyaring Identitas | Regex tervalidasi + pengenal entitas berbasis leksikon, di Web Worker | Nol unduhan, nol request jaringan, berjalan penuh offline. Alasan tidak memakai ONNX ada di [`docs/REDACTION.md`](docs/REDACTION.md) |
 | Auth | `jose` (JWT) + `@simplewebauthn` (passkey) | Access token 15 menit di memori saja, refresh token opaque di cookie `HttpOnly` |
 | Pengujian | Vitest + Playwright | 342 unit dan vektor kripto, 31 skenario E2E |
@@ -214,6 +215,7 @@ permintaan di sesi berjalan.
 | [`tests/e2e/no-plaintext-on-server.spec.ts`](tests/e2e/no-plaintext-on-server.spec.ts) | Menulis catatan berisi frasa penanda, memicu sinkronisasi, lalu memindai seluruh isi tabel `entries` **langsung dari Postgres** dan memastikan frasa itu tidak muncul dalam bentuk apa pun — utf8, base64, maupun hex |
 | [`tests/unit/validasi.test.ts`](tests/unit/validasi.test.ts) | Skema rute privat menolak bidang `title`, `body`, dan `content` |
 | [`tests/unit/markdown-aman.test.ts`](tests/unit/markdown-aman.test.ts) | Pipeline render markdown menolak payload XSS sungguhan: `<script>`, `javascript:`, `data:text/html` di gambar, handler event, injeksi lewat teks alternatif — diuji pada fungsi yang sama persis dengan yang dipakai aplikasi |
+| [`tests/unit/editor-html.test.ts`](tests/unit/editor-html.test.ts) | Badan HTML dari editor kaya: `onerror`, `javascript:`, SVG base64, `style` dengan `url()`/`position`, `<iframe>`, `<form>`, kelas sembarang, `srcset` ditolak; gambar raster base64 dengan lebar/perataan, tabel dengan `colspan`, daftar centang, ukuran huruf, dan `text-align` dipertahankan; skema `lampiran:` hanya lolos di jalur penyimpanan |
 | [`tests/unit/redact-offline.test.ts`](tests/unit/redact-offline.test.ts) | Penyaring Identitas tidak memuat satu pun jalur jaringan, diperiksa dari sumbernya **dan** dengan menjalankannya sambil menjebak `fetch`, `XMLHttpRequest`, `WebSocket`, dan `sendBeacon` |
 | [`tests/crypto-vectors/`](tests/crypto-vectors/) | Vektor uji tetap untuk KDF, AEAD, pembungkusan kunci, dan rotasi, supaya refactor tidak diam-diam mengubah format |
 | [`tests/unit/kontras.test.ts`](tests/unit/kontras.test.ts) | Tujuh tema x dua mode lolos kontras WCAG AA |
@@ -232,12 +234,16 @@ absolut. Semuanya ditulis lengkap di [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.
 
 ## Fitur
 
-**Menulis** — editor markdown dengan bilah alat format (tebal, miring, judul, kutipan, daftar,
-tautan), tiga mode tampilan (tulis, berdampingan, preview), pintasan keyboard, dan autosave
-debounce tanpa tombol simpan; satu atau lebih catatan per tanggal, pemilih suasana hati, tag,
-lampiran gambar terenkripsi dengan EXIF dibuang, **penempatan gambar bebas di posisi mana pun di
-teks** lewat sintaks `![alt](lampiran:id)` yang diresolusi ke hasil dekripsi saat render, lokasi
-dan cuaca opsional, prompt harian.
+**Menulis** — editor WYSIWYG (TipTap/ProseMirror) dengan bilah alat lengkap: judul H1–H6, ukuran
+huruf, tebal/miring/garis bawah/coret/kode, perataan, daftar, daftar berangka, daftar centang,
+kutipan, blok kode, tautan, emoji, dan **tabel yang disunting langsung di tempat** (tambah/hapus
+baris dan kolom, gabung sel, baris judul, lebar kolom bisa ditarik). Unggah foto dari toolbar,
+tempel, atau seret: gambar dijadikan base64 di dalam badan catatan, bisa **digeser, diubah
+ukurannya dengan pegangan, dan diratakan** seperti di CKEditor. Autosave debounce tanpa tombol
+simpan, mode preview memakai pipeline render publik yang sama; satu atau lebih catatan per tanggal,
+pemilih suasana hati, tag, lampiran terenkripsi dengan EXIF dibuang yang bisa disisipkan ke teks
+(`lampiran:id`, diresolusi ke hasil dekripsi saat render), lokasi dan cuaca opsional, prompt
+harian. Catatan lama berformat markdown dikonversi otomatis saat dibuka.
 
 **Navigasi** — tampilan tahun berupa 12 map bulan, papan flanel per bulan dengan kartu terpaku,
 linimasa dengan peta panas dan "di tanggal ini", pencarian full-text lokal, benang tag yang

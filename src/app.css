@@ -743,7 +743,7 @@ button:hover > .lubang-pin {
 	border: 2px solid var(--warn);
 }
 
-.prosa :where(h1, h2, h3) {
+.prosa :where(h1, h2, h3, h4, h5, h6) {
 	font-family: var(--f-display);
 	font-variation-settings: 'wdth' 85;
 	font-weight: 600;
@@ -760,6 +760,84 @@ button:hover > .lubang-pin {
 }
 .prosa h3 {
 	font-size: var(--text-md);
+}
+.prosa h4 {
+	font-size: var(--text-base);
+}
+.prosa h5 {
+	font-size: var(--text-sm);
+	letter-spacing: 0;
+}
+.prosa h6 {
+	font-family: var(--f-data);
+	font-size: var(--text-2xs);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
+}
+.prosa u {
+	text-decoration-color: var(--thread);
+	text-underline-offset: 3px;
+}
+.prosa mark {
+	background: rgb(255 214 102 / 0.55);
+	color: inherit;
+	padding: 0 2px;
+}
+.prosa span[data-ukuran='12'] { font-size: 12px; }
+.prosa span[data-ukuran='14'] { font-size: 14px; }
+.prosa span[data-ukuran='16'] { font-size: 16px; }
+.prosa span[data-ukuran='18'] { font-size: 18px; }
+.prosa span[data-ukuran='20'] { font-size: 20px; }
+.prosa span[data-ukuran='24'] { font-size: 24px; }
+.prosa span[data-ukuran='28'] { font-size: 28px; }
+.prosa span[data-ukuran='32'] { font-size: 32px; }
+.prosa span[data-ukuran='40'] { font-size: 40px; }
+.prosa span[data-ukuran='48'] { font-size: 48px; }
+.prosa span[data-ukuran] {
+	line-height: 1.3;
+}
+.prosa img[data-rata='tengah'] {
+	margin-left: auto;
+	margin-right: auto;
+}
+.prosa img[data-rata='kanan'] {
+	margin-left: auto;
+}
+.prosa ul[data-type='taskList'] {
+	list-style: none;
+	padding-left: 0;
+}
+.prosa li[data-type='taskItem'] {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+.prosa li[data-type='taskItem'] > label {
+	flex-shrink: 0;
+	margin-top: 0.42em;
+	display: inline-flex;
+}
+.prosa li[data-type='taskItem'] > label input {
+	accent-color: var(--accent);
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+.prosa li[data-type='taskItem'] > div {
+	flex: 1;
+	min-width: 0;
+}
+.prosa li[data-type='taskItem'] > div > p {
+	margin: 0;
+}
+.prosa li[data-type='taskItem'][data-checked='true'] > div {
+	text-decoration: line-through;
+	color: var(--ink-faint);
+}
+.prosa td > p,
+.prosa th > p {
+	margin: 0;
 }
 .prosa p,
 .prosa li {

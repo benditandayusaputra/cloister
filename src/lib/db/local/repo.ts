@@ -3,6 +3,7 @@ import { localDb } from './db.ts';
 import type { LocalEntry, QueueItem } from './types.ts';
 import { tokenize } from '$lib/utils/search.ts';
 import { polos } from '$lib/utils/polos.ts';
+import { teksPolos } from '$lib/utils/markdown-aman.ts';
 
 export function emptyEntry(entryDate: string): LocalEntry {
 	const now = new Date().toISOString();
@@ -36,7 +37,7 @@ async function reindex(e: LocalEntry) {
 	}
 	await db.searchIndex.put({
 		id: e.id,
-		tokens: tokenize(`${e.title} ${e.body} ${e.tags.join(' ')}`),
+		tokens: tokenize(`${e.title} ${teksPolos(e.body)} ${e.tags.join(' ')}`),
 		entryDate: e.entryDate
 	});
 }
@@ -136,7 +137,7 @@ export const entriesRepo = {
 		const q = query.trim().toLowerCase();
 		return all
 			.filter((e) => {
-				const hay = `${e.title} ${e.body} ${e.tags.join(' ')}`.toLowerCase();
+				const hay = `${e.title} ${teksPolos(e.body)} ${e.tags.join(' ')}`.toLowerCase();
 				return hay.includes(q) || tokens.every((t) => hay.includes(t));
 			})
 			.sort((a, b) => b.entryDate.localeCompare(a.entryDate))

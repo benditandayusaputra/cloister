@@ -115,7 +115,7 @@ ciphertext = XChaCha20Poly1305(DEK, nonce_e, padded, aad = entryId)
 wrappedDEK = XChaCha20Poly1305(MK,  nonce_d, DEK,    aad = entryId)
 ```
 
-Bucket ukuran: 256, 1024, 4096, 16384, 65536, 131072 byte. Padding memakai byte `0x80` diikuti nol.
+Bucket ukuran: 256, 1024, 4096, 16384, 65536, 131072, 262144, 524288, 1048576 byte (bucket besar untuk catatan bergambar). Padding memakai byte `0x80` diikuti nol.
 
 `entryId` sebagai AAD mengikat ciphertext ke entrinya, sehingga server tidak bisa menukar isi antar
 entri tanpa terdeteksi.

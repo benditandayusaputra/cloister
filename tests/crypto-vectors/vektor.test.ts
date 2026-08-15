@@ -176,7 +176,8 @@ describe('padding ISO 7816-4', () => {
 	});
 
 	it('menolak pesan terlalu besar', () => {
-		expect(() => pad(new Uint8Array(200_000))).toThrow();
+		expect(() => pad(new Uint8Array(1_100_000))).toThrow();
+		expect(pad(new Uint8Array(200_000)).bucket).toBe(262144);
 	});
 });
 

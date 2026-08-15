@@ -57,7 +57,7 @@ test('ganti akun di perangkat yang sama tidak membocorkan data antar akun', asyn
 	await page.goto('/app/hari-ini');
 	await page.waitForURL(/\/app\/\d{4}\/\d{2}\/\d{2}/);
 	await page.getByLabel('Isi tulisan').fill(`${penandaA}. Dengan gambar sisipan.`);
-	await page.locator('input[type="file"]').setInputFiles({
+	await page.locator('input[type="file"][accept="image/*,audio/*"]').setInputFiles({
 		name: 'logo.png',
 		mimeType: 'image/png',
 		buffer: PNG

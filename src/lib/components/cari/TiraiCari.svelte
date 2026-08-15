@@ -6,7 +6,9 @@
 	import { parseIso } from '$lib/utils/tanggal.ts';
 	import { highlight } from '$lib/utils/search.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
+	import { pinOf, moodLabel } from '$lib/utils/kertas.ts';
 	import { entri } from '$lib/state/entri.svelte.ts';
+	import { plainTeks } from '$lib/utils/teks.ts';
 	import { tema } from '$lib/state/tema.svelte.ts';
 
 	interface Props {
@@ -78,9 +80,17 @@
 					<button
 						type="button"
 						class="tbl-papan {filterMood === m ? 'tbl-papan-aktif' : ''}"
-						style="min-height:32px;padding:0 10px"
-						onclick={() => (filterMood = filterMood === m ? null : m)}>{m}</button
+						style="min-height:32px;padding:0 10px;display:inline-flex;align-items:center;gap:7px"
+						title={moodLabel(m, i18n.locale)}
+						aria-pressed={filterMood === m}
+						onclick={() => (filterMood = filterMood === m ? null : m)}
 					>
+						<span
+							aria-hidden="true"
+							style="width:11px;height:11px;border-radius:var(--r-pin);background:{pinOf(m)}"
+						></span>
+						{moodLabel(m, i18n.locale)}
+					</button>
 				{/each}
 			</div>
 
@@ -113,7 +123,7 @@
 						<span class="t-hand" style="font-size:1.9rem;line-height:0.85">{parseIso(r.entryDate).day}</span>
 						<span
 							style="display:block;font-family:var(--f-read);font-size:0.9rem;line-height:1.45;color:var(--ink-soft);overflow:hidden;max-height:4.35em"
-							>{highlight(r.title ? r.title + '. ' + r.body : r.body, kueri)}</span
+							>{highlight(r.title ? r.title + '. ' + plainTeks(r.body) : plainTeks(r.body), kueri)}</span
 						>
 					</button>
 				{/each}

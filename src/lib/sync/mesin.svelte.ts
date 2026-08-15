@@ -2,7 +2,7 @@ import { browser } from '$app/environment';
 import { uuidv7 } from 'uuidv7';
 import { crypto } from '$crypto/client.ts';
 import type { EntryPayload } from '$crypto/protocol.ts';
-import { syncApi, type RemoteEntry } from '$lib/api/endpoints.ts';
+import { syncApi, type RemoteEntry, type PushResult } from '$lib/api/endpoints.ts';
 import { entriesRepo, metaRepo, queueRepo } from '$lib/db/local/repo.ts';
 import { localDb } from '$lib/db/local/db.ts';
 import type { LocalEntry } from '$lib/db/local/types.ts';
@@ -169,7 +169,31 @@ class MesinSync {
 		}
 
 		if (batch.length === 0) return;
-		const res = await syncApi.push(batch);
+
+		const BATAS_BYTE = 2_500_000;
+		const kelompok: unknown[][] = [];
+		let sekarang: unknown[] = [];
+		let ukuran = 0;
+		for (const item of batch) {
+			const byte = ((item as { ciphertext: string }).ciphertext.length * 3) / 4;
+			if (sekarang.length > 0 && ukuran + byte > BATAS_BYTE) {
+				kelompok.push(sekarang);
+				sekarang = [];
+				ukuran = 0;
+			}
+			sekarang.push(item);
+			ukuran += byte;
+		}
+		if (sekarang.length > 0) kelompok.push(sekarang);
+
+		const hasil: PushResult[] = [];
+		let revTerakhir = 0;
+		for (const k of kelompok) {
+			const res = await syncApi.push(k);
+			hasil.push(...res.results);
+			revTerakhir = Math.max(revTerakhir, res.serverRev);
+		}
+		const res = { results: hasil, serverRev: revTerakhir };
 
 		for (const r of res.results) {
 			const lokal = await entriesRepo.get(r.id);

@@ -148,7 +148,7 @@ Batas platform yang membentuk desain:
 
 - Fungsi Node Vercel Hobby mati di 10 detik — batch push dibatasi 100 item, batch rotasi 200
 - Neon wajib memakai pooled connection string untuk runtime
-- Ciphertext dibatasi 128 KB per catatan lewat CHECK constraint di database
+- Ciphertext dibatasi 1 MiB per catatan (validasi server); push sinkronisasi dipecah otomatis per ~2,5 MB
 
 Kalau biaya membengkak, jalan keluarnya adalah self-host. `docker-compose.yml` menyediakan Postgres,
 MinIO, Redis, dan aplikasi Node.

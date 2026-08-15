@@ -2,7 +2,7 @@
 	import type { LocalEntry } from '$lib/db/local/types.ts';
 	import type { AttachmentMeta } from '$crypto/protocol.ts';
 	import { tambahLampiran, hapusLampiran } from '$lib/lampiran/simpan.ts';
-	import { dirujukDiBadan } from '$lib/utils/markdown-aman.ts';
+	import { buangRujukan, dirujukDiBadan } from '$lib/utils/markdown-aman.ts';
 	import { ukuranManusia } from '$lib/lampiran/gambar.ts';
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
@@ -38,11 +38,7 @@
 
 	async function buang(id: string) {
 		await hapusLampiran(id);
-		// Referensi di badan ikut dibersihkan supaya tidak ada gambar yatim.
-		const body = entri.body
-			.replace(new RegExp(`!\\[[^\\]\\n]*\\]\\(lampiran:${id}\\)\\n?`, 'g'), '')
-			.replace(/\n{3,}/g, '\n\n');
-		onubah({ attachments: entri.attachments.filter((a) => a.id !== id), body });
+		onubah({ attachments: entri.attachments.filter((a) => a.id !== id), body: buangRujukan(entri.body, id) });
 	}
 </script>
 

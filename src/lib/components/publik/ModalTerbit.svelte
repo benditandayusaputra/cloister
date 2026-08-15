@@ -8,7 +8,7 @@
 	import { stempelTanggal } from '$lib/utils/tanggal.ts';
 	import { plainRingkas } from '$lib/utils/teks.ts';
 	import PenyaringIdentitas from './PenyaringIdentitas.svelte';
-	import { terapkanKeMarkdown } from '$lib/redact/sunting.ts';
+	import { terapkanKeBadan } from '$lib/redact/sunting.ts';
 	import { buangLampiranPrivat } from '$lib/utils/markdown-aman.ts';
 	import type { HasilPindai, Keputusan } from '$lib/redact/tipe.ts';
 	import { penyaring } from '$lib/state/penyaring.svelte.ts';
@@ -41,7 +41,7 @@
 		// lampiran terenkripsi, jadi salinan publik tidak boleh membawa rujukan
 		// yang pasti patah.
 		buangLampiranPrivat(
-			hasilSaring ? terapkanKeMarkdown(entri.body, hasilSaring.temuan, keputusan) : entri.body
+			hasilSaring ? terapkanKeBadan(entri.body, hasilSaring.temuan, keputusan) : entri.body
 		)
 	);
 	const adaSuntingan = $derived(keputusan.some((k) => k.tindakan !== 'biarkan'));

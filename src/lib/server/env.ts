@@ -23,7 +23,7 @@ export const CFG = {
 
 export const QUOTA = {
 	maxEntries: 20_000,
-	maxCiphertextBytes: 131_072,
+	maxCiphertextBytes: 1_048_576 + 16,
 	maxAttachmentBytes: 25 * 1024 * 1024,
 	maxAttachmentTotal: 2 * 1024 * 1024 * 1024,
 	pushBatch: 100,

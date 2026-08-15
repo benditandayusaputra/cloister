@@ -99,9 +99,14 @@ Pada aplikasi E2EE berbasis web, XSS menghapus seluruh jaminan keamanan.
    pernah menerima kunci. XSS masih bisa meminta dekripsi semua entri, tapi tidak bisa mengekstrak
    kunci untuk eksfiltrasi permanen.
 3. Satu-satunya `{@html}` di seluruh basis kode ada di `AmanMarkdown.svelte`, dan isinya selalu
-   lewat DOMPurify dengan allowlist ketat.
-4. `javascript:`, `data:` non-gambar, atribut `on*`, `<iframe>`, `<object>`, `<embed>`, `<form>`
-   diblokir di renderer markdown. Tautan eksternal otomatis `rel="noopener noreferrer nofollow"`.
+   lewat DOMPurify dengan allowlist ketat. Kebijakan yang sama berlaku untuk HTML keluaran editor
+   kaya (disanitasi saat disimpan **dan** saat dirender) maupun markdown lama.
+4. `javascript:`, `data:` non-gambar (termasuk `data:image/svg+xml`), atribut `on*`, `srcset`,
+   `<iframe>`, `<object>`, `<embed>`, `<form>`, `<style>`, `<meta>`, `<base>` diblokir. Atribut
+   `style` hanya lolos untuk deklarasi numerik/kata kunci tertentu (`text-align`, `font-size`
+   8–64px, `width`/`height`/`min-width`), `class` hanya untuk nama yang didaftar, `width`,
+   `colspan`, `data-ukuran`, `data-rata` divalidasi per nilai. Tempelan HTML dibersihkan sebelum
+   masuk ke ProseMirror. Tautan eksternal otomatis `rel="noopener noreferrer nofollow"`.
 5. Header pendukung dipasang di `hooks.server.ts`.
 
 **Sisa risiko:** XSS pada halaman aplikasi tetap berbahaya. Pemisahan origin penuh untuk `/baca`
