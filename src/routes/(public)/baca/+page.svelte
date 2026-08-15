@@ -72,6 +72,7 @@
 			tagAktif={data.tagAktif}
 			moodAktif={data.moodAktif}
 			penulisAktif={data.penulisAktif}
+			gambarAktif={data.gambarAktif}
 			cari={data.cari}
 		/>
 	</header>

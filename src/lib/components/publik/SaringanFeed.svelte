@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Ikon from '$components/dasar/Ikon.svelte';
 	import { pinOf, moodLabel } from '$lib/utils/kertas.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 
@@ -8,10 +9,11 @@
 		tagAktif: string | null;
 		moodAktif: number | null;
 		penulisAktif: string | null;
+		gambarAktif?: boolean;
 		cari: string;
 	}
 
-	let { sort, tags, tagAktif, moodAktif, penulisAktif, cari }: Props = $props();
+	let { sort, tags, tagAktif, moodAktif, penulisAktif, gambarAktif = false, cari }: Props = $props();
 
 
 	/** Ganti satu saringan tanpa menjatuhkan yang lain; cursor selalu direset. */
@@ -22,6 +24,7 @@
 			tag: tagAktif,
 			mood: moodAktif,
 			penulis: penulisAktif,
+			gambar: gambarAktif ? 1 : null,
 			q: cari || null
 		};
 		for (const [k, v] of Object.entries({ ...dasar, ...ubah })) {
@@ -32,7 +35,7 @@
 	}
 
 	const adaSaringan = $derived(
-		Boolean(cari || tagAktif || moodAktif || penulisAktif || sort === 'populer')
+		Boolean(cari || tagAktif || moodAktif || penulisAktif || gambarAktif || sort === 'populer')
 	);
 </script>
 
@@ -62,6 +65,7 @@
 		{#if tagAktif}<input type="hidden" name="tag" value={tagAktif} />{/if}
 		{#if moodAktif}<input type="hidden" name="mood" value={moodAktif} />{/if}
 		{#if penulisAktif}<input type="hidden" name="penulis" value={penulisAktif} />{/if}
+		{#if gambarAktif}<input type="hidden" name="gambar" value="1" />{/if}
 
 		<button type="submit" class="tbl" style="min-height:44px;align-self:flex-end">Cari</button>
 		{#if adaSaringan}
@@ -101,6 +105,18 @@
 				{moodLabel(m, i18n.locale)}
 			</a>
 		{/each}
+
+		<span aria-hidden="true" style="width:1px;height:24px;background:rgb(232 223 201 / 0.22)"></span>
+
+		<a
+			href={tautan({ gambar: gambarAktif ? null : 1 })}
+			class="tbl-papan {gambarAktif ? 'tbl-papan-aktif' : ''}"
+			style="min-height:38px;text-decoration:none;display:inline-flex;align-items:center;gap:7px"
+			aria-current={gambarAktif ? 'true' : undefined}
+		>
+			<Ikon nama="gambar" ukuran={15} />
+			Ada foto
+		</a>
 	</div>
 
 	{#if tags.length > 0}

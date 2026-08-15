@@ -15,6 +15,22 @@ export interface FeedItem {
 	viewCount: number;
 	reactionCount: number;
 	tags: string[];
+	gambar: string | null;
+	jumlahGambar: number;
+}
+
+const RE_GAMBAR_MD = /!\[[^\]]*\]\(([^)\s]+)[^)]*\)/g;
+const RE_GAMBAR_HTML = /<img\b[^>]*\bsrc="([^"]+)"/gi;
+
+export function gambarDariBadan(body: string): { gambar: string | null; jumlah: number } {
+	const src: string[] = [];
+	for (const re of [RE_GAMBAR_MD, RE_GAMBAR_HTML]) {
+		re.lastIndex = 0;
+		let m: RegExpExecArray | null;
+		while ((m = re.exec(body ?? '')) !== null) if (m[1]) src.push(m[1]);
+	}
+	const gambar = src.find((u) => /^(https?:\/\/|\/(?!\/))/i.test(u)) ?? null;
+	return { gambar, jumlah: src.length };
 }
 
 export type Urutan = 'terbaru' | 'populer';
@@ -28,6 +44,7 @@ export interface FeedQuery {
 	q?: string | undefined;
 	/** 1 sampai 5, sesuai warna paku pin. */
 	mood?: number | undefined;
+	gambar?: boolean | undefined;
 	limit?: number;
 	/** Halaman bernomor (mulai 1). Kalau diisi, kursor diabaikan. */
 	hal?: number | undefined;
@@ -64,6 +81,7 @@ export function bacaParamFeed(url: URL): FeedQuery & { sort: Urutan; q: string }
 		q: (p.get('q') ?? '').trim().slice(0, 120),
 		mood:
 			Number.isInteger(moodAngka) && moodAngka >= 1 && moodAngka <= 5 ? moodAngka : undefined,
+		gambar: p.get('gambar') === '1' ? true : undefined,
 		cursor: p.get('cursor') ?? undefined,
 		hal: (() => {
 			const n = Number(p.get('hal'));
@@ -93,6 +111,11 @@ export async function loadFeed(q: FeedQuery): Promise<HasilFeed> {
 	}
 	if (q.penName) filters.push(eq(publicEntries.penName, q.penName));
 	if (q.mood) filters.push(eq(publicEntries.mood, q.mood));
+	if (q.gambar) {
+		filters.push(
+			sql`(${publicEntries.bodyMd} LIKE '%![%' OR ${publicEntries.bodyMd} ILIKE '%<img%')`
+		);
+	}
 
 	const kata = q.q?.trim();
 	if (kata && kata.length >= 2) {
@@ -156,21 +179,26 @@ export async function loadFeed(q: FeedQuery): Promise<HasilFeed> {
 	const adaLagi = rows.length > limit && akhir !== undefined;
 
 	return {
-		items: page.map((r) => ({
-			id: r.id,
-			slug: r.slug,
-			title: r.title,
-			excerpt: r.excerpt,
-			entryDate: r.entryDate,
-			mood: r.mood,
-			penName: r.penName,
-			terverifikasi: !r.isAnonymous && terverifikasi.has(r.userId),
-			isAnonymous: r.isAnonymous,
-			publishedAt: r.publishedAt.toISOString(),
-			viewCount: r.viewCount,
-			reactionCount: r.reactionCount,
-			tags: byEntry.get(r.id) ?? []
-		})),
+		items: page.map((r) => {
+			const g = gambarDariBadan(r.bodyMd);
+			return {
+				id: r.id,
+				slug: r.slug,
+				title: r.title,
+				excerpt: r.excerpt,
+				entryDate: r.entryDate,
+				mood: r.mood,
+				penName: r.penName,
+				terverifikasi: !r.isAnonymous && terverifikasi.has(r.userId),
+				isAnonymous: r.isAnonymous,
+				publishedAt: r.publishedAt.toISOString(),
+				viewCount: r.viewCount,
+				reactionCount: r.reactionCount,
+				tags: byEntry.get(r.id) ?? [],
+				gambar: g.gambar,
+				jumlahGambar: g.jumlah
+			};
+		}),
 		nextCursor: !adaLagi
 			? null
 			: sort === 'populer'

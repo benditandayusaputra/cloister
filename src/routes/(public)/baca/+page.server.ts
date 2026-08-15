@@ -23,6 +23,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 		tagAktif: param.tag ?? null,
 		penulisAktif: param.penName ?? null,
 		moodAktif: param.mood ?? null,
+		gambarAktif: param.gambar === true,
 		cari: param.q
 	};
 };

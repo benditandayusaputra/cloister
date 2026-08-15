@@ -27,6 +27,15 @@
 	<span aria-hidden="true" class="pin" style="background:{pinOf(item.mood)}"></span>
 	<span aria-hidden="true" class="lipat"></span>
 
+	{#if item.gambar}
+		<a href={tautan} class="foto" tabindex="-1" aria-hidden="true">
+			<img src={item.gambar} alt="" loading="lazy" decoding="async" />
+			{#if item.jumlahGambar > 1}
+				<span class="foto-jumlah"><Ikon nama="gambar" ukuran={12} /> {item.jumlahGambar}</span>
+			{/if}
+		</a>
+	{/if}
+
 	<div class="meta">
 		<span class="nama">
 			{nama}
@@ -44,6 +53,9 @@
 
 	<div class="kaki">
 		<div class="tag">
+			{#if item.jumlahGambar > 0 && !item.gambar}
+				<span class="tag-cip lencana-foto"><Ikon nama="gambar" ukuran={12} /> {item.jumlahGambar} foto</span>
+			{/if}
 			{#each item.tags.slice(0, 3) as t (t)}
 				<a href="/baca?tag={encodeURIComponent(t)}" class="tag-cip" style="text-decoration:none">{t}</a>
 			{/each}
@@ -90,6 +102,46 @@
 			1px 2px 3px rgb(0 0 0 / 0.45),
 			inset -2px -2px 3px rgb(0 0 0 / 0.25);
 		z-index: 2;
+	}
+	.foto {
+		position: relative;
+		display: block;
+		margin: calc(-1 * var(--s-6) + 6px) calc(-1 * var(--s-5) + 6px) 2px;
+		aspect-ratio: 16 / 7;
+		overflow: hidden;
+		border-radius: 1px;
+		box-shadow: inset 0 0 0 1px rgb(27 27 23 / 0.12);
+	}
+	.foto img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: saturate(0.92);
+		transition: transform var(--dur-base) var(--ease-lift);
+	}
+	.kartu-feed:hover .foto img {
+		transform: scale(1.03);
+	}
+	.foto-jumlah {
+		position: absolute;
+		right: 8px;
+		bottom: 8px;
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 2px 7px;
+		border-radius: 999px;
+		background: rgb(27 27 23 / 0.7);
+		color: #ede7d6;
+		font-family: var(--f-data);
+		font-size: 0.68rem;
+	}
+	.lencana-foto {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		cursor: default;
 	}
 	.lipat {
 		position: absolute;

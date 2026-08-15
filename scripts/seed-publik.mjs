@@ -34,8 +34,7 @@ const arg = (nama, bawaan) => {
 const URL = arg('url', 'http://localhost:4820');
 const DB = process.env.DATABASE_URL ?? 'postgres://localhost:5432/cloister';
 
-const sandiAcak = () =>
-	'Demo-' + randomBytes(9).toString('base64url').replace(/[-_]/g, 'x') + '-7!';
+const SANDI_DEMO = 'Demo-Cloister-2026!';
 
 /* ------------------------------------------------------------------ *
  * Penulis
@@ -44,7 +43,7 @@ const sandiAcak = () =>
 const PENULIS = [
 	{
 		email: 'arunika@contoh.id',
-		sandi: sandiAcak(),
+		sandi: SANDI_DEMO,
 		penName: 'arunika',
 		displayName: 'Arunika',
 		bio: 'Menulis tiap malam, menerbitkan yang sudah dingin. Sebagian besar tetap di balik dinding.',
@@ -71,7 +70,7 @@ const PENULIS = [
 	},
 	{
 		email: 'kelana@contoh.id',
-		sandi: sandiAcak(),
+		sandi: SANDI_DEMO,
 		penName: 'kelana',
 		displayName: 'Kelana',
 		bio: 'Jalan kaki, kereta pagi, dan catatan pendek-pendek tentang kota.',
@@ -98,7 +97,7 @@ const PENULIS = [
 	}
 	,{
 		email: 'saraswati@contoh.id',
-		sandi: sandiAcak(),
+		sandi: SANDI_DEMO,
 		penName: 'saraswati',
 		displayName: 'Saraswati',
 		bio: 'Guru SD yang menulis untuk mengingat, bukan untuk dikenang.',
@@ -474,6 +473,174 @@ _Foto: Hersy ardianty a, Wikimedia Commons, CC BY-SA 4.0._`,
 	}
 );
 
+PUBLIK.push(
+	{
+		pen: 'kelana',
+		mundur: 9,
+		mood: 4,
+		tags: ['perjalanan', 'kereta', 'panjang'],
+		judul: 'Sehari penuh di kereta ke timur',
+		isi: `Aku selalu bilang ingin naik kereta ekonomi jarak jauh sekali seumur hidup, bukan pesawat, bukan kereta eksekutif yang jendelanya tidak bisa dibuka. Minggu lalu akhirnya kulakukan: sepuluh jam dari stasiun kota ke ujung timur pulau, satu tas punggung, satu buku yang akhirnya tidak terbaca sama sekali.
+
+![Kereta commuter melaju di jalur rel dengan langit cerah](/demo/kereta.webp)
+
+## Jam lima pagi
+
+Stasiun jam lima pagi punya suaranya sendiri. Bukan sepi, tapi belum ramai: roda koper di lantai, pengumuman yang terdengar seperti diucapkan dari dalam kaleng, penjual kopi sachet yang sudah hafal peron mana yang menunggu paling lama. Aku duduk di kursi nomor 12A, dekat jendela, di sebelah bapak-bapak yang membawa dua kardus rambutan yang katanya untuk cucunya.
+
+Kereta berangkat tepat waktu. Aku sempat kaget, karena entah kenapa aku selalu mengira kereta ekonomi itu identik dengan terlambat. Ternyata yang terlambat itu aku, yang masih membawa gambaran kereta dari dua puluh tahun lalu.
+
+## Yang kupelajari dari sepuluh jam duduk
+
+Beberapa hal yang tidak akan kudapat kalau naik pesawat:
+
+1. Sawah berganti warna setiap satu jam. Hijau muda, hijau tua, kuning, lalu tanah gembur yang baru dibajak. Kalau kamu duduk cukup lama, kamu bisa melihat kalender bertani satu provinsi lewat dari jendela.
+2. Orang di kereta ekonomi mengobrol. Bukan basa-basi: bapak sebelahku bercerita tentang cucunya yang baru bisa berdiri, ibu di seberang bercerita tentang toko kelontongnya yang tutup dan buka lagi. Aku tidak bertanya apa-apa; cerita itu datang sendiri, seperti stasiun kecil yang dilewati tanpa berhenti.
+3. Ada jam-jam yang benar-benar kosong. Sekitar jam sebelas siang, semua orang tertidur, kereta berjalan pelan, dan aku sadar sudah setahun lebih aku tidak pernah benar-benar tidak melakukan apa-apa selama satu jam penuh.
+
+## Bekal yang berguna dan yang tidak
+
+| Barang | Berguna? | Catatan |
+| --- | --- | --- |
+| Buku tebal | Tidak | Jendela lebih menarik dari halaman mana pun |
+| Botol minum 1 liter | Sangat | Air di kereta ada, tapi antre |
+| Jaket tipis | Sangat | AC ekonomi sekarang dingin sekali |
+| Powerbank | Lumayan | Colokan ada, tapi direbutkan |
+| Kacang rebus dari peron | Sangat | Jadi alasan mengobrol dengan tetangga kursi |
+
+## Sampai di ujung timur
+
+Kereta masuk stasiun terakhir jam empat sore. Kakiku pegal, punggungku pegal, tapi ada perasaan yang tidak pernah kudapat dari bandara: aku benar-benar merasa sudah *menempuh* jarak, bukan sekadar berpindah. Sepuluh jam itu terasa seperti sepuluh jam, dan itu justru hadiahnya.
+
+Malamnya aku menulis catatan ini di kamar penginapan sambil mendengar suara kereta lain lewat, dan aku sudah tahu: tahun depan aku akan naik yang lebih jauh lagi.
+
+_Foto: Muhammad Pascal Fajrin, Wikimedia Commons, CC BY-SA 4.0._`,
+		dibaca: 412,
+		reaksi: 47
+	},
+	{
+		pen: 'saraswati',
+		mundur: 12,
+		mood: 4,
+		tags: ['sekolah', 'mengajar', 'panjang'],
+		judul: 'Setahun mengajar tiga puluh anak: yang tidak diajarkan di kampus',
+		isi: `Tahun ajaran baru saja tutup. Rapor sudah dibagikan, bangku sudah ditumpuk di pojok, papan tulis sudah dihapus untuk terakhir kalinya oleh anak yang paling suka menghapus papan tulis. Aku duduk sendirian di kelas yang kosong dan mencoba menulis apa yang sebenarnya kupelajari setahun ini, karena kalau tidak ditulis sekarang, minggu depan semuanya akan terasa biasa saja.
+
+## 1. Anak yang paling ribut biasanya paling takut ketinggalan
+
+Bulan pertama aku menghabiskan tenaga untuk menenangkan satu anak yang tidak bisa diam. Bulan ketiga aku sadar dia ribut persis di saat pelajaran mulai sulit. Ributnya bukan tantangan, tapi cara dia bilang "aku tidak paham" tanpa harus mengucapkannya di depan teman-temannya. Begitu aku duduk di sebelahnya lima menit sebelum pelajaran mulai, ributnya berkurang setengah. Bukan hilang, tapi setengah itu sudah mengubah suasana satu kelas.
+
+## 2. Pujian yang spesifik lebih awet daripada pujian yang besar
+
+"Bagus sekali!" hilang dalam sepuluh detik. "Kamu tadi mengecek ulang jawabanmu sebelum dikumpulkan, itu kebiasaan yang bagus" masih diingat anak itu tiga bulan kemudian, dan dia melakukannya lagi. Aku belajar berhemat dengan kata "hebat" dan boros dengan kalimat yang menyebut persis apa yang dilakukan.
+
+## 3. Orang tua tidak butuh laporan, mereka butuh satu cerita
+
+Setiap pertemuan orang tua aku dulu menyiapkan angka: nilai rata-rata, kehadiran, ranking. Yang mereka tanyakan setelah itu selalu sama: "Anak saya di kelas gimana, Bu?" Sekarang aku menyiapkan satu cerita kecil per anak. Bukan yang dramatis, cukup satu momen yang kulihat sendiri. Pertemuan yang tadinya lima menit dan kaku jadi lima belas menit dan hangat.
+
+## 4. Kelas punya cuaca
+
+Ada hari-hari ketika seluruh kelas berat tanpa alasan yang jelas: hujan sejak subuh, ada anak yang orang tuanya bertengkar, ada ulangan di jam sebelumnya. Aku dulu melawan cuaca itu dengan menaikkan suara. Sekarang aku menurunkan target: hari berat, materinya setengah, sisanya bercerita. Anehnya, materi yang setengah itu justru lebih nempel.
+
+## 5. Yang kuingat dari setahun ini bukan pelajarannya
+
+Yang kuingat adalah:
+
+- Anak yang membawa bekal dua porsi karena tahu temannya sering tidak bawa.
+- Hari ketika seluruh kelas diam-diam belajar lagu untuk ulang tahunku, dan menyanyikannya dengan nada yang salah semua.
+- Kalimat di rapor yang kutulis ulang tiga kali supaya tidak menyakiti tapi tetap jujur.
+- Anak paling pendiam yang di hari terakhir menyodorkan surat, lalu lari sebelum aku sempat membukanya.
+
+## Catatan untuk diriku tahun depan
+
+Kelas baru, tiga puluh nama baru. Aku akan lupa sebagian besar yang kutulis di atas, karena begitulah otak bekerja. Jadi kutulis di sini, kuterbitkan, dan kutandai supaya bisa kubaca lagi bulan Juli tahun depan, sehari sebelum masuk sekolah.
+
+Untuk yang juga mengajar dan membaca ini: tahunmu bagaimana?`,
+		dibaca: 389,
+		reaksi: 52
+	},
+	{
+		pen: 'arunika',
+		mundur: 6,
+		mood: 3,
+		tags: ['tidur', 'refleksi', 'panjang'],
+		judul: 'Surat untuk diriku yang belum bisa tidur',
+		isi: `Aku menulis ini jam setengah dua pagi, dan kalau kamu membacanya, kemungkinan besar kamu juga sedang tidak bisa tidur. Jadi ini bukan tulisan tentang tips tidur. Tulisan tentang tips tidur biasanya ditulis orang yang bisa tidur.
+
+## Apa yang sebenarnya terjadi jam segini
+
+Kepala yang tidak mau berhenti bukan kepala yang rusak. Ia sedang melakukan pekerjaannya: menyortir hari yang belum selesai disortir. Masalahnya, siang hari kita tidak memberinya waktu. Rapat, pesan, jalanan, layar. Kepala baru dapat giliran bicara ketika semua yang lain akhirnya diam, dan itu jam segini.
+
+Aku dulu memusuhi jam-jam ini. Sekarang aku mencoba memperlakukannya seperti tamu yang datang terlalu malam: tidak kuusir, tapi juga tidak kubuatkan kopi. Cukup kudengarkan sebentar, kutulis apa yang dia bawa, lalu kubilang, "Sudah kucatat. Besok kita bahas."
+
+## Tiga hal yang selalu kutulis
+
+Setiap kali terbangun seperti ini, aku menulis tiga hal saja. Bukan jurnal panjang, cuma tiga baris:
+
+1. **Apa yang membuatku terjaga.** Kadang jelas (pekerjaan besok), kadang bukan apa-apa yang bisa disebut. Kalau bukan apa-apa, kutulis "bukan apa-apa" dan anehnya itu menenangkan.
+2. **Satu hal yang hari ini berjalan cukup baik.** Kecil saja. Bus datang tepat waktu. Nasi tidak gosong. Ada teman yang membalas pesan dengan emoji yang tepat.
+3. **Satu hal yang boleh menunggu sampai besok.** Ini yang paling penting. Menuliskannya seperti memberi izin pada kepala untuk berhenti mengingatkan.
+
+Setelah tiga baris itu, aku menutup catatan. Kadang lima belas menit kemudian aku tidur. Kadang tidak, dan aku membaca buku sampai jendela terang. Keduanya tidak apa-apa. Yang berubah bukan durasi tidurnya, tapi rasa bersalah karena tidak tidur, dan ternyata rasa bersalah itulah yang paling melelahkan.
+
+## Kenapa kutulis di sini, bukan di kepala
+
+Karena kepala tidak punya tombol simpan. Ia akan memutar hal yang sama sampai yakin kamu tidak akan lupa, dan satu-satunya cara meyakinkannya adalah menuliskannya di tempat yang benar-benar aman, yang tidak akan dibaca siapa pun, yang tidak perlu dirapikan dulu supaya pantas dibaca. Catatan jam dua pagi memang tidak pernah pantas dibaca. Justru itu gunanya.
+
+## Untuk kamu yang membaca ini jam segini
+
+Tidak ada yang salah denganmu. Malam ini panjang, tapi ia akan selesai seperti semua malam sebelumnya. Kalau mau, tulis tiga barismu sekarang. Lalu matikan layar ini, dan biarkan besok jadi urusan besok.
+
+Selamat malam, atau selamat pagi. Yang mana pun yang datang lebih dulu.`,
+		dibaca: 527,
+		reaksi: 61
+	},
+	{
+		pen: 'bendi',
+		mundur: 5,
+		mood: 4,
+		tags: ['produktivitas', 'otak-kedua', 'panjang'],
+		judul: 'Cara aku memakai catatan ini sebagai otak kedua',
+		isi: `Beberapa orang bertanya bagaimana aku memakai Cloister selain untuk buku harian. Jawabannya: sebagian besar catatanku justru bukan buku harian. Ini sistem yang kupakai setahun terakhir, kutulis di sini supaya bisa kubaca ulang setiap kali sistemnya mulai berantakan (dan pasti berantakan lagi).
+
+## Prinsipnya satu: semua masuk dulu, dirapikan belakangan
+
+Otak kedua yang gagal biasanya gagal karena terlalu rapi di awal. Folder, sub-folder, tag yang harus dipilih sebelum boleh menulis. Akhirnya menulis jadi pekerjaan, dan pekerjaan ditunda.
+
+Di sini aku cuma punya satu aturan: kalau ada yang lewat di kepala dan sayang kalau hilang, buka hari ini, tulis, tutup. Tag boleh diisi nanti, atau tidak sama sekali. Pencarian sudah cukup pintar untuk menemukannya lagi.
+
+## Empat jenis catatan yang kupelihara
+
+| Jenis | Contoh | Seberapa sering dibaca ulang |
+| --- | --- | --- |
+| Harian | Apa yang terjadi, apa yang terasa | Jarang, tapi paling berharga setahun kemudian |
+| Kutipan & ide | Kalimat dari buku, ide proyek, pertanyaan | Tiap minggu, saat mencari bahan |
+| Referensi | Nomor penting, langkah setup, resep | Saat butuh saja, tapi harus cepat ketemu |
+| Ulasan | Ulasan bulanan dan tahunan | Tiap awal bulan |
+
+Yang membuat empat jenis ini bisa hidup di satu tempat: semuanya terenkripsi. Aku tidak perlu berpikir dua kali menaruh nomor rekening di sebelah catatan tentang hari yang buruk. Keduanya sama-sama tidak bisa dibaca siapa pun selain aku.
+
+## Ritual mingguan lima belas menit
+
+Setiap Minggu malam:
+
+- [x] Buka papan bulan ini, lihat warna pin. Kalau merah semua, itu sinyal, bukan kebetulan.
+- [x] Cari tag \`ide\` dari minggu ini, pindahkan satu yang paling menarik ke daftar "coba bulan depan".
+- [x] Baca satu catatan acak dari setahun lalu. Ini bagian favoritku; hampir selalu ada yang lucu.
+- [ ] Bersihkan tag yang cuma dipakai sekali. (Yang ini sering kulewati, dan tidak apa-apa.)
+
+## Yang kuterbitkan dan yang tidak
+
+Dari ratusan catatan, yang kuterbitkan bisa dihitung jari. Sisanya bukan rahasia besar; hanya belum selesai, atau memang cuma untukku. Penyaring Identitas membantu di sini: setiap kali mau menerbitkan, ia mengingatkan nama siapa yang ikut terseret. Kadang aku baru sadar sebuah cerita bukan sepenuhnya milikku untuk dibagikan.
+
+## Kalau mau mencoba
+
+Mulai dari satu jenis saja. Kalau kamu tipe yang suka mengumpulkan kutipan, mulai dari itu. Kalau kamu tipe yang butuh tempat menaruh nomor dan kata sandi, mulai dari tabel referensi. Buku hariannya akan datang sendiri, biasanya di malam yang aneh, ketika kamu sudah terbiasa membuka aplikasi ini untuk hal lain.`,
+		dibaca: 301,
+		reaksi: 38
+	}
+);
+
 const KOMENTAR = [
 	{
 		judul: 'Tiga puluh nama',
@@ -537,6 +704,10 @@ function excerptOf(md, len = 220) {
 	const t = md
 		.replace(/!\[[^\]]*\]\([^)]*\)/g, '')
 		.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+		.replace(/^\s*\|?\s*:?-{2,}.*$/gm, '')
+		.replace(/^\s*_Foto:.*$/gm, '')
+		.replace(/(^|\n)\s*(?:[-*+]\s+\[[ xX]\]|[-*+]|\d+\.)\s+/g, '$1')
+		.replace(/\|/g, ' ')
 		.replace(/[#>*_`~]/g, '')
 		.replace(/\s+/g, ' ')
 		.trim();

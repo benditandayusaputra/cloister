@@ -18,7 +18,8 @@ export const CFG = {
 	blobDir: env.BLOB_LOCAL_DIR ?? '.blobstore',
 	redisUrl: env.UPSTASH_REDIS_REST_URL ?? '',
 	redisToken: env.UPSTASH_REDIS_REST_TOKEN ?? '',
-	readOrigin: env.PUBLIC_READ_ORIGIN ?? ''
+	readOrigin: env.PUBLIC_READ_ORIGIN ?? '',
+	demoEmail: env.DEMO_EMAIL ?? 'benditandayusaputra@gmail.com'
 };
 
 export const QUOTA = {
