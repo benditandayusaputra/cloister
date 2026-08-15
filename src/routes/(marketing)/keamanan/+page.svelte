@@ -76,7 +76,8 @@ Master Key 32B acak
 				</li>
 				<li>
 					<strong>XSS</strong> — ancaman paling serius. CSP ketat, kunci di Web Worker, semua
-					markdown lewat DOMPurify, halaman publik dipisah dari bundle aplikasi.
+					isi catatan (HTML editor maupun markdown lama) lewat DOMPurify dengan allowlist ketat,
+					halaman publik dipisah dari bundle aplikasi.
 				</li>
 				<li>
 					<strong>Perangkat dicuri</strong> — kunci aplikasi dengan PIN lokal, kunci dibuang dari

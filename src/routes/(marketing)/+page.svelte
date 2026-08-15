@@ -1,32 +1,48 @@
 <script lang="ts">
-	import Kertas from '$components/dasar/Kertas.svelte';
+	import Ikon from '$components/dasar/Ikon.svelte';
+	import type { NamaIkon } from '$components/dasar/ikon-peta.ts';
 	import KartuFeed from '$components/publik/KartuFeed.svelte';
+	import DemoPenyaring from '$components/muka/DemoPenyaring.svelte';
+	import LayarAplikasi from '$components/muka/LayarAplikasi.svelte';
+	import Faq from '$components/muka/Faq.svelte';
 	import { PAPERS, PIN_GRADIENT } from '$lib/utils/kertas.ts';
 	import { reveal } from '$lib/utils/reveal.ts';
-	import { LABEL_JENIS, LABEL_KATEGORI, PAKU_KATEGORI } from '$lib/redact/skor.ts';
-	import type { HasilPindai } from '$lib/redact/tipe.ts';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	const contoh = [
-		{ hari: 16, mood: 5, teks: 'Hari ini aku tidak menghindar dari satu pun percakapan.', rot: -2.4 },
-		{ hari: 19, mood: 4, teks: 'Beli kembang sepatu di depan pasar.', rot: 1.8 },
-		{ hari: 22, mood: 3, teks: 'Minggu. Tidur siang dua jam, bangun bingung ini hari apa.', rot: -1.2 }
+	const kartuHero = [
+		{ hari: 16, mood: 5, teks: 'Hari ini aku tidak menghindar dari satu pun percakapan.', rot: -2.4, kertas: 0 },
+		{ hari: 19, mood: 4, teks: 'Beli kembang sepatu di depan pasar. Penjualnya hafal pesananku.', rot: 1.8, kertas: 1 },
+		{ hari: 22, mood: 3, teks: 'Minggu. Tidur siang dua jam, bangun bingung ini hari apa.', rot: -1.2, kertas: 3 },
+		{ hari: 27, mood: 4, teks: 'Target bulan depan: satu halaman tiap malam.', rot: 2.2, kertas: 2 }
 	];
 
-	const kenapa = [
+	const janji: Array<{ ikon: NamaIkon; teks: string }> = [
+		{ ikon: 'gembok', teks: 'Dienkripsi di perangkatmu' },
+		{ ikon: 'luring', teks: 'Jalan tanpa jaringan' },
+		{ ikon: 'ponsel', teks: 'Bisa dipasang di HP' },
+		{ ikon: 'dokumen', teks: 'Sumber terbuka' }
+	];
+
+	const bukti: Array<{ ikon: NamaIkon; angka: string; label: string; ket: string }> = [
 		{
-			judul: 'Dienkripsi di perangkatmu',
-			isi: 'Catatan dikunci di ponsel atau laptopmu sebelum dikirim. Server hanya menyimpan huruf acak, dan kuncinya tidak pernah ikut menyeberang.'
+			ikon: 'cip',
+			angka: 'XChaCha20',
+			label: 'Poly1305 + Argon2id',
+			ket: 'Enkripsi ujung ke ujung. Kunci diturunkan dari sandimu dan tidak pernah meninggalkan perangkat.'
 		},
 		{
-			judul: 'Jalan penuh tanpa jaringan',
-			isi: 'Tulis, baca, sunting, cari, ganti tema — semuanya tetap bisa saat tidak ada internet. Begitu tersambung, tulisanmu menyusul sendiri.'
+			ikon: 'labu',
+			angka: '500+',
+			label: 'tes otomatis',
+			ket: '520 tes unit dan 19 skenario end-to-end berjalan di setiap perubahan, termasuk uji XSS dan vektor kriptografi.'
 		},
 		{
-			judul: 'Penyaring Identitas',
-			isi: 'Sebelum sebuah catatan terbit, Cloister memindainya di perangkatmu dan menandai hal yang bisa mengarah ke orang tertentu. Tanpa mengirim teks ke mana pun.'
+			ikon: 'mata-tutup',
+			angka: '0',
+			label: 'teks privat di server',
+			ket: 'Isi, judul, tag, mood, dan lampiran tersimpan sebagai gumpalan acak. Server hanya tahu ada sesuatu, bukan apa.'
 		}
 	];
 
@@ -34,375 +50,711 @@
 		{
 			nomor: '01',
 			judul: 'Tulis seperti biasa',
-			isi: 'Editor markdown dengan autosave — tanpa tombol simpan. Sisipkan gambar, tabel, daftar centang, di posisi mana pun.'
+			isi: 'Editor dengan autosave, tanpa tombol simpan. Judul, tabel, daftar centang, foto yang bisa digeser dan diubah ukurannya.',
+			kertas: 0,
+			rot: -1.6,
+			mood: 4
 		},
 		{
 			nomor: '02',
 			judul: 'Terkunci sebelum berangkat',
-			isi: 'Setiap catatan dienkripsi XChaCha20-Poly1305 di perangkatmu. Yang tersimpan di server hanya replika acak.'
+			isi: 'Setiap catatan dienkripsi di perangkatmu sebelum sinkron. Yang sampai ke server hanya replika acak yang tidak bisa dibaca siapa pun.',
+			kertas: 3,
+			rot: 1.4,
+			mood: 3
 		},
 		{
 			nomor: '03',
 			judul: 'Terbitkan yang kamu pilih',
-			isi: 'Sebagian tulisan layak dibagikan. Penyaring Identitas berjaga di perbatasan supaya tidak ada orang lain yang ikut terpapar.'
+			isi: 'Sebagian tulisan layak dibaca orang. Penyaring Identitas berjaga di perbatasan supaya tidak ada orang lain yang ikut terpapar.',
+			kertas: 1,
+			rot: -0.8,
+			mood: 5
 		}
 	];
 
-	const persona = [
+	const kegunaan: Array<{ ikon: NamaIkon; nama: string; isi: string }> = [
 		{
-			ikon: '📓',
-			nama: 'Diary harian',
-			isi: 'Tempat yang cepat dibuka dari HP kapan pun, terasa seperti buku catatan pribadi — dan yang kamu tulis benar-benar cuma kamu yang bisa baca.'
+			ikon: 'buku',
+			nama: 'Buku harian',
+			isi: 'Cepat dibuka dari HP kapan pun, terasa seperti buku catatan pribadi. Yang kamu tulis benar-benar cuma kamu yang bisa baca.'
 		},
 		{
-			ikon: '🧠',
-			nama: 'Second brain',
+			ikon: 'otak',
+			nama: 'Otak kedua',
 			isi: 'Ide, kutipan, hasil bacaan, hal yang mau kamu ingat lima tahun lagi. Cari cepat, kelompokkan dengan tag, semuanya tetap milikmu.'
 		},
 		{
-			ikon: '🔑',
+			ikon: 'kunci',
 			nama: 'Brankas catatan penting',
-			isi: 'Nomor rekening, akun, PIN, dokumen — dalam tabel yang rapi. Server tidak bisa membacanya, jadi tidak ada yang bocor walau server dibobol.'
+			isi: 'Nomor rekening, akun, PIN, dokumen, tersusun dalam tabel yang rapi. Server tidak bisa membacanya, jadi tidak ada yang bocor walau server dibobol.'
 		},
 		{
-			ikon: '📝',
+			ikon: 'catatan',
 			nama: 'Catatan sehari-hari',
-			isi: 'Daftar belanja, resep, rencana perjalanan, daftar centang. Sederhana, offline, tersinkron ke semua perangkatmu.'
+			isi: 'Daftar belanja, resep, rencana perjalanan, daftar centang. Sederhana, jalan tanpa jaringan, tersinkron ke semua perangkatmu.'
 		},
 		{
-			ikon: '🌱',
+			ikon: 'tunas',
 			nama: 'Berbagi yang layak dibagi',
-			isi: 'Sebagian tulisan pantas dibaca orang. Terbitkan yang kamu pilih ke halaman publik dengan nama pena — sisanya tetap di balik dinding.'
+			isi: 'Sebagian tulisan pantas dibaca orang. Terbitkan yang kamu pilih ke halaman publik dengan nama pena. Sisanya tetap di balik dinding.'
 		},
 		{
-			ikon: '🧑‍💻',
-			nama: 'Untuk yang mau memeriksa',
-			isi: 'Kode terbuka, bisa dijalankan sendiri, dan klaim enkripsinya bisa kamu uji langsung di halaman Bukti. Bukan sekadar janji.'
+			ikon: 'target',
+			nama: 'Rencana dan target',
+			isi: 'Resolusi tahunan, target bulanan, daftar centang kebiasaan. Lihat lagi bulan depan, dan lihat seberapa jauh kamu sudah berjalan.'
 		}
 	];
-
-	const CONTOH_SARING =
-		'Kemarin ketemu Rina di kosnya di Jl. Kaliurang No. 14, Sleman. Dia cerita soal utangnya, nomor rekeningnya 1234567897 kalau mau transfer. WA dia 081234567890.';
-
-	let teksSaring = $state('');
-	let hasilSaring = $state<HasilPindai | null>(null);
-	let memindai = $state(false);
-
-	async function pindaiDemo() {
-		if (!teksSaring.trim() || memindai) return;
-		memindai = true;
-		try {
-			const { saring } = await import('$lib/redact/klien.ts');
-			hasilSaring = await saring(teksSaring);
-		} finally {
-			memindai = false;
-		}
-	}
-
-	const statistik = $derived([
-		{ nilai: data.statistik.catatan, label: 'catatan terbit' },
-		{ nilai: data.statistik.penulis, label: 'penulis' },
-		{ nilai: data.statistik.reaksi, label: 'reaksi' },
-		{ nilai: data.statistik.komentar, label: 'komentar' }
-	]);
 </script>
 
 <svelte:head>
 	<title>Cloister: Jurnal Pribadi dengan Privasi Kriptografis</title>
 	<meta
 		name="description"
-		content="Jurnal pribadi dengan privasi kriptografis. Catatan privat dienkripsi di perangkat sebelum sinkronisasi, jadi server menyimpan replika terenkripsi, bukan isi yang dapat dibaca."
+		content="Cloister adalah aplikasi jurnal dan catatan pribadi yang dienkripsi di perangkatmu sebelum tersimpan. Jalan tanpa jaringan, bisa dipasang di HP, dan hanya kamu yang bisa membaca isinya."
 	/>
 </svelte:head>
 
-<section
-	style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:var(--s-8);align-items:center;padding:var(--s-6) 0 var(--s-8)"
->
-	<div class="muncul" style="display:flex;flex-direction:column;gap:var(--s-5)">
-		<h1 class="t-judul" style="font-size:var(--text-2xl);line-height:1">
-			Ditulis di dalam.<br />Tidak terbaca dari luar.
-		</h1>
-		<p
-			style="margin:0;font-family:var(--f-read);font-size:var(--text-md);line-height:1.72;color:var(--ink-on-board-dim);max-width:52ch;text-wrap:pretty"
-		>
-			Cloister adalah ruang berdinding tempat orang menulis. Catatan privat dienkripsi di ponsel
-			atau laptopmu sebelum meninggalkan browser — dan yang layak dibagikan, kamu terbitkan dengan
-			sadar ke halaman publik.
+<section class="hero">
+	<div class="hero-teks muncul">
+		<span class="eyebrow">
+			<Ikon nama="pin" ukuran={14} />
+			Jurnal &amp; catatan pribadi · terenkripsi di perangkat
+		</span>
+		<h1 class="t-judul judul-utama">Ditulis di dalam.<br />Tidak terbaca dari luar.</h1>
+		<p class="muka-p besar">
+			Cloister adalah tempat menulis buku harian, catatan, dan hal-hal penting. Semua yang kamu tulis
+			dikunci di HP atau laptopmu <em>sebelum</em> tersimpan, jadi server, dan siapa pun selain kamu,
+			hanya melihat huruf acak. Kalau ada yang ingin dibagikan, kamu terbitkan sendiri ke halaman
+			publik.
 		</p>
-		<div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
-			<a href="/daftar" class="tbl" style="text-decoration:none">Mulai menulis</a>
-			<a href="/tentang" class="tbl-papan" style="text-decoration:none">Tentang aplikasi</a>
+		<div class="cta">
+			<a href="/daftar" class="tbl tbl-besar">Mulai menulis</a>
+			<a href="#cara-kerja" class="tbl-papan tbl-besar">Lihat cara kerjanya</a>
 		</div>
-		<p
-			style="margin:0;font-family:var(--f-read);font-size:var(--text-sm);color:var(--ink-on-board-dim);max-width:44ch"
-		>
-			Dienkripsi sebelum sinkronisasi. Tetap berfungsi tanpa jaringan. Dipulihkan oleh pengguna.
-			Server tidak dapat membaca isi privat.
-		</p>
+		<ul class="janji">
+			{#each janji as j (j.teks)}
+				<li><Ikon nama={j.ikon} ukuran={16} /> {j.teks}</li>
+			{/each}
+		</ul>
 	</div>
 
-	<div class="bingkai-kayu muncul" style="--tunda:120ms">
-		<div class="papan-flanel" style="padding:34px">
-			<ul
-				style="margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:20px;justify-content:center"
-			>
-				{#each contoh as c, i (c.hari)}
-					<li class="hero-jatuh" style="position:relative;width:150px;--tunda:{200 + i * 160}ms">
+	<div class="bingkai-kayu hero-papan muncul" style="--tunda:120ms">
+		<div class="papan-flanel hero-flanel">
+			<ul class="hero-kartu">
+				{#each kartuHero as c, i (c.hari)}
+					<li class="hero-jatuh" style="--tunda:{220 + i * 150}ms">
 						<span
 							aria-hidden="true"
-							class="pin-bulat"
-							style="position:absolute;left:50%;top:-9px;z-index:4;transform:translateX(-50%);width:17px;height:17px;background:{PIN_GRADIENT[
-								c.mood
-							]}"
+							class="pin-bulat pin-hero"
+							style="background:{PIN_GRADIENT[c.mood]}"
 						></span>
-						<div
-							class="kartu-papan"
-							style="--kertas:{PAPERS[i % 5]};transform:rotate({c.rot}deg);height:150px;cursor:default"
-						>
-							<span class="t-hand" style="font-size:2.2rem;line-height:0.82">{c.hari}</span>
-							<p
-								style="margin:0;font-family:var(--f-read);font-size:0.9rem;line-height:1.5;color:var(--ink-soft)"
-							>
-								{c.teks}
-							</p>
+						<div class="kartu-papan kartu-hero" style="--kertas:{PAPERS[c.kertas]};transform:rotate({c.rot}deg)">
+							<span class="t-hand hari">{c.hari}</span>
+							<p>{c.teks}</p>
 						</div>
 					</li>
 				{/each}
+				<li class="hero-jatuh foto" style="--tunda:820ms">
+					<span aria-hidden="true" class="pin-bulat pin-hero" style="background:{PIN_GRADIENT[3]}"></span>
+					<figure class="polaroid">
+						<img src="/demo/kopi.webp" alt="Secangkir kopi di pagi hari" width="640" height="427" loading="eager" decoding="async" />
+						<figcaption class="t-hand">pagi, sebelum siapa pun bangun</figcaption>
+					</figure>
+				</li>
 			</ul>
 		</div>
 	</div>
 </section>
 
-{#if data.statistik.catatan > 0}
-	<section
-		aria-label="Statistik ruang publik"
-		style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:var(--s-4);padding-bottom:var(--s-8)"
-	>
-		{#each statistik as st, i (st.label)}
-			<div
-				use:reveal={{ tunda: i * 90 }}
-				style="display:flex;flex-direction:column;gap:2px;padding:var(--s-4);border:1px solid var(--garis-ruang);border-radius:var(--r-control)"
-			>
-				<span class="t-hand" style="font-size:2.2rem;line-height:1;color:var(--ink-on-board)"
-					>{st.nilai}</span
-				>
-				<span class="t-data" style="color:var(--ink-on-board-dim)">{st.label}</span>
+<section class="bukti" aria-label="Bukti teknis">
+	{#each bukti as b, i (b.angka)}
+		<div class="bukti-item" use:reveal={{ tunda: i * 90 }}>
+			<span class="bukti-ikon"><Ikon nama={b.ikon} ukuran={22} /></span>
+			<div>
+				<span class="bukti-angka">{b.angka}</span>
+				<span class="bukti-label">{b.label}</span>
+				<p class="muka-p kecil">{b.ket}</p>
 			</div>
-		{/each}
-	</section>
-{/if}
+		</div>
+	{/each}
+	<a href="/bukti" class="bukti-item bukti-tautan" use:reveal={{ tunda: 270 }}>
+		<span class="bukti-ikon"><Ikon nama="dokumen" ukuran={22} /></span>
+		<div>
+			<span class="bukti-angka">Periksa sendiri</span>
+			<span class="bukti-label">halaman Bukti</span>
+			<p class="muka-p kecil">
+				Lihat apa yang benar-benar tersimpan di server untuk akunmu, bandingkan dengan yang kamu tulis.
+			</p>
+		</div>
+		<span class="bukti-panah"><Ikon nama="panah-kanan" ukuran={20} /></span>
+	</a>
+</section>
+
+<section id="layar" class="blok-terang" use:reveal>
+	<div class="kepala-blok">
+		<span class="eyebrow gelap"><Ikon nama="ponsel" ukuran={14} /> Begini rupanya di dalam</span>
+		<h2 class="t-judul judul-blok">Papan, kartu, dan pin. Bukan daftar tak berujung.</h2>
+		<p class="isi-blok">
+			Setiap bulan adalah satu papan flanel. Setiap hari adalah kartu yang tertancap pin. Kamu bisa
+			melihat sebulan sekaligus, membuka satu hari, dan menulis di editor yang mengerti tabel, foto,
+			dan daftar centang.
+		</p>
+	</div>
+	<LayarAplikasi />
+</section>
+
+<section id="cara-kerja" class="langkah">
+	<div class="kepala" use:reveal>
+		<span class="eyebrow"><Ikon nama="sinkron" ukuran={14} /> Cara kerjanya</span>
+		<h2 class="t-judul judul-bagian">Tiga langkah, satu janji</h2>
+		<p class="muka-p">
+			Kamu menulis, perangkatmu mengunci, server hanya menyimpan. Yang keluar dari balik dinding cuma
+			yang kamu putuskan sendiri.
+		</p>
+	</div>
+	<div class="bingkai-kayu" use:reveal={{ tunda: 80 }}>
+		<div class="papan-flanel strip-flanel">
+			<ol class="langkah-daftar">
+				{#each caraKerja as c, i (c.nomor)}
+					<li class="langkah-item" use:reveal={{ tunda: 120 + i * 130 }}>
+						<span aria-hidden="true" class="pin-bulat pin-hero" style="background:{PIN_GRADIENT[c.mood]}"></span>
+						<div class="kartu-papan kartu-langkah" style="--kertas:{PAPERS[c.kertas]};transform:rotate({c.rot}deg)">
+							<span class="t-hand nomor">{c.nomor}</span>
+							<h3 class="t-judul">{c.judul}</h3>
+							<p>{c.isi}</p>
+						</div>
+					</li>
+				{/each}
+			</ol>
+		</div>
+	</div>
+</section>
+
+<section id="penyaring" class="penyaring">
+	<div class="kepala" use:reveal>
+		<span class="eyebrow"><Ikon nama="perisai" ukuran={14} /> Fitur pembeda</span>
+		<h2 class="t-judul judul-bagian">Penyaring Identitas: sebelum terbit, ada yang berjaga di perbatasan</h2>
+		<p class="muka-p">
+			Saat kamu memutuskan menerbitkan sebuah catatan, Cloister memindainya lebih dulu <strong>di
+			perangkatmu</strong> dan menandai hal yang bisa mengarah ke orang tertentu: nama, alamat, nomor
+			rekening, nomor HP, email. Kamu yang memutuskan mau disensor, dijadikan inisial, atau dibiarkan.
+			Tidak ada satu huruf pun yang dikirim ke server untuk diperiksa. Buka tab Network kalau mau
+			membuktikannya.
+		</p>
+	</div>
+	<div use:reveal={{ tunda: 100 }}>
+		<DemoPenyaring />
+	</div>
+</section>
 
 {#if data.terbaru.length > 0}
-	<section style="display:flex;flex-direction:column;gap:var(--s-4);padding-bottom:var(--s-8)">
-		<div use:reveal style="display:flex;align-items:baseline;gap:var(--s-4);flex-wrap:wrap">
-			<h2 class="t-judul t-lg">Baru terbit dari balik dinding</h2>
-			<a href="/baca" class="t-data" style="margin-left:auto;color:var(--ink-on-board-dim)"
-				>Lihat semua &rarr;</a
-			>
+	<section id="terbaru" class="terbaru">
+		<div class="kepala baris" use:reveal>
+			<div>
+				<span class="eyebrow"><Ikon nama="tunas" ukuran={14} /> Ruang publik</span>
+				<h2 class="t-judul judul-bagian">Baru terbit dari balik dinding</h2>
+				<p class="muka-p">
+					Tulisan yang sengaja dikeluarkan dari enkripsi oleh penulisnya. Sisanya, sebagian besar,
+					tetap tertutup.
+				</p>
+			</div>
+			<a href="/baca" class="tbl-papan tbl-besar">Lihat semua tulisan publik <Ikon nama="panah-kanan" ukuran={16} /></a>
 		</div>
-		<p
-			use:reveal
-			style="margin:0;font-family:var(--f-read);font-size:var(--text-sm);color:var(--ink-on-board-dim);max-width:64ch"
-		>
-			Tulisan yang sengaja dikeluarkan dari enkripsi oleh penulisnya. Sisanya — sebagian besar —
-			tetap tertutup di balik dinding.
-		</p>
-		<div
-			style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:var(--s-5);align-items:start"
-		>
-			{#each data.terbaru as item, i (item.id)}
-				<div use:reveal={{ tunda: (i % 3) * 90 }}>
-					<KartuFeed {item} />
+		<div class="bingkai-kayu" use:reveal={{ tunda: 60 }}>
+			<div class="papan-flanel papan-terbaru">
+				<div class="grid-terbaru">
+					{#each data.terbaru as item, i (item.id)}
+						<div use:reveal={{ tunda: (i % 3) * 90 }} class="sel-terbaru">
+							<KartuFeed {item} seragam />
+						</div>
+					{/each}
 				</div>
-			{/each}
+			</div>
 		</div>
 	</section>
 {/if}
 
-<section style="display:flex;flex-direction:column;gap:var(--s-4);padding-bottom:var(--s-8)">
-	<h2 class="t-judul t-lg" use:reveal>Coba penyaringnya. Di sini. Tanpa akun.</h2>
-	<p
-		use:reveal
-		style="margin:0;font-family:var(--f-read);font-size:var(--text-sm);color:var(--ink-on-board-dim);max-width:66ch"
-	>
-		Ini fitur yang berjaga sebelum catatan diterbitkan: menandai hal yang bisa mengarah ke orang
-		tertentu. Semuanya berjalan di perangkatmu — buka tab Network kalau mau membuktikan tidak ada
-		satu pun teks yang dikirim.
-	</p>
-	<div use:reveal={{ tunda: 100 }}>
-		<Kertas warna="bone" rot={-0.3} padding="var(--s-5)">
-			<div style="display:flex;flex-direction:column;gap:var(--s-3)">
-				<textarea
-					bind:value={teksSaring}
-					rows="4"
-					maxlength="2000"
-					placeholder="Tempel tulisan apa pun di sini — atau pakai contoh."
-					aria-label="Teks untuk dipindai"
-					style="width:100%;resize:vertical;border:1px solid rgb(27 27 23 / 0.22);border-radius:var(--r-control);padding:12px 14px;background:transparent;font-family:var(--f-read);font-size:var(--text-sm);line-height:1.6;color:var(--ink)"
-				></textarea>
-				<div style="display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
-					<button
-						type="button"
-						class="tbl"
-						disabled={memindai || !teksSaring.trim()}
-						onclick={pindaiDemo}
-					>
-						{memindai ? 'Memindai…' : 'Pindai di perangkat ini'}
-					</button>
-					<button
-						type="button"
-						class="tbl-garis"
-						onclick={() => {
-							teksSaring = CONTOH_SARING;
-							void pindaiDemo();
-						}}>Pakai contoh</button
-					>
-					{#if hasilSaring}
-						<span
-							style="display:inline-flex;align-items:center;gap:8px;margin-left:auto;font-family:var(--f-data);font-size:var(--text-2xs);letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-soft)"
-						>
-							<span
-								style="width:12px;height:12px;border-radius:50%;background:{PAKU_KATEGORI[
-									hasilSaring.kategori
-								]}"
-							></span>
-							{LABEL_KATEGORI[hasilSaring.kategori]} · skor {hasilSaring.skor}
-						</span>
-					{/if}
-				</div>
-				{#if hasilSaring}
-					{#if hasilSaring.temuan.length > 0}
-						<div style="display:flex;flex-wrap:wrap;gap:8px">
-							{#each hasilSaring.temuan as t (t.id)}
-								<span
-									class="tag-cip"
-									style="cursor:default;display:inline-flex;gap:6px;align-items:baseline"
-								>
-									<strong
-										style="font-family:var(--f-data);font-size:0.66rem;letter-spacing:0.06em;text-transform:uppercase"
-										>{LABEL_JENIS[t.jenis]}</strong
-									>
-									<span
-										style="max-width:22ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-										>{t.teks}</span
-									>
-								</span>
-							{/each}
-						</div>
-					{:else}
-						<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">
-							Bersih — tidak ditemukan hal yang mengarah ke orang tertentu.
-						</p>
-					{/if}
-					<p
-						style="margin:0;font-family:var(--f-data);font-size:var(--text-2xs);color:var(--ink-faint)"
-					>
-						Pemindaian berjalan {hasilSaring.durasiMs} ms di perangkat ini. Tidak ada teks yang
-						meninggalkan halaman.
-					</p>
-				{/if}
-			</div>
-		</Kertas>
+<section id="kegunaan" class="kegunaan">
+	<div class="kepala" use:reveal>
+		<span class="eyebrow"><Ikon nama="kilau" ukuran={14} /> Untuk apa saja</span>
+		<h2 class="t-judul judul-bagian">Satu ruang, banyak kegunaan</h2>
+		<p class="muka-p">
+			Apa pun yang terlalu pribadi untuk ditaruh di aplikasi catatan biasa, di sini tempatnya.
+		</p>
 	</div>
-</section>
-
-<section style="display:flex;flex-direction:column;gap:var(--s-4);padding-bottom:var(--s-8)">
-	<h2 class="t-judul t-lg" use:reveal>Tiga langkah, satu janji</h2>
-	<div
-		style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:var(--s-4)"
-	>
-		{#each caraKerja as c, i (c.nomor)}
-			<div use:reveal={{ tunda: i * 110 }}>
-				<Kertas warna={i === 1 ? 'biru' : 'bone'} rot={i % 2 === 0 ? -0.6 : 0.6} padding="var(--s-5)">
-					<span class="t-hand" style="font-size:2rem;line-height:1;color:var(--ink-faint)"
-						>{c.nomor}</span
-					>
-					<h3 class="t-judul" style="color:var(--ink);font-size:var(--text-md);margin:8px 0 8px">
-						{c.judul}
-					</h3>
-					<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">{c.isi}</p>
-				</Kertas>
+	<div class="grid-kegunaan">
+		{#each kegunaan as k, i (k.nama)}
+			<div use:reveal={{ tunda: (i % 3) * 100 }} class="kartu-kegunaan kertas {i % 3 === 1 ? 'kertas-manila' : i % 3 === 2 ? 'kertas-buram' : ''}" style="--rot:{i % 2 === 0 ? 0.5 : -0.5}deg">
+				<span class="ikon-kegunaan"><Ikon nama={k.ikon} ukuran={24} tebal={1.6} /></span>
+				<h3 class="t-judul">{k.nama}</h3>
+				<p>{k.isi}</p>
 			</div>
 		{/each}
 	</div>
 </section>
 
-<section style="display:flex;flex-direction:column;gap:var(--s-4);padding-bottom:var(--s-8)">
-	<h2 class="t-judul t-lg" use:reveal>Kenapa Cloister</h2>
-	<div
-		style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:var(--s-5)"
-	>
-		{#each kenapa as k, i (k.judul)}
-			<div use:reveal={{ tunda: i * 110 }}>
-				<Kertas
-					kelas="angkat"
-					warna={i % 2 === 0 ? 'bone' : 'buram'}
-					rot={i % 2 === 0 ? -0.8 : 0.9}
-					padding="var(--s-5)"
-				>
-					<h3 class="t-judul" style="color:var(--ink);font-size:var(--text-md);margin-bottom:10px">
-						{k.judul}
-					</h3>
-					<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">{k.isi}</p>
-				</Kertas>
-			</div>
-		{/each}
+<section id="faq" class="blok-terang faq-blok" use:reveal>
+	<div class="kepala-blok">
+		<span class="eyebrow gelap"><Ikon nama="tanya" ukuran={14} /> Yang sering ditanyakan</span>
+		<h2 class="t-judul judul-blok">Kalau lupa sandi, hilang semua?</h2>
+		<p class="isi-blok">
+			Pertanyaan paling penting untuk aplikasi terenkripsi, dan jawabannya ada di urutan pertama.
+		</p>
 	</div>
-	<p
-		use:reveal
-		style="margin:0;font-family:var(--f-read);font-size:var(--text-sm);color:var(--ink-on-board-dim)"
-	>
-		Arsitektur lengkapnya — hierarki kunci, model ancaman, dan apa yang tetap kami ketahui — ada di
-		<a href="/tentang">halaman tentang</a>, dan buktinya bisa diperiksa langsung di
-		<a href="/bukti">halaman Bukti</a>.
-	</p>
+	<Faq />
 </section>
 
-<section style="display:flex;flex-direction:column;gap:var(--s-4);padding-bottom:var(--s-8)">
-	<h2 class="t-judul t-lg" use:reveal>Satu ruang, banyak kegunaan</h2>
-	<p
-		use:reveal
-		style="margin:0;font-family:var(--f-read);font-size:var(--text-sm);color:var(--ink-on-board-dim);max-width:64ch"
-	>
-		Cloister bukan cuma buat curhat malam hari. Apa pun yang terlalu pribadi untuk ditaruh di
-		aplikasi catatan biasa, di sini tempatnya.
-	</p>
-	<div
-		style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:var(--s-4)"
-	>
-		{#each persona as p, i (p.nama)}
-			<div use:reveal={{ tunda: (i % 3) * 110 }}>
-				<Kertas
-					kelas="angkat"
-					warna={i % 3 === 1 ? 'manila' : i % 3 === 2 ? 'bone' : 'buram'}
-					rot={i % 2 === 0 ? 0.5 : -0.5}
-					padding="var(--s-5)"
-				>
-					<span aria-hidden="true" style="font-size:1.6rem;line-height:1">{p.ikon}</span>
-					<h3 class="t-judul" style="color:var(--ink);font-size:var(--text-base);margin:10px 0 8px">
-						{p.nama}
-					</h3>
-					<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">{p.isi}</p>
-				</Kertas>
-			</div>
-		{/each}
-	</div>
-</section>
-
-<section use:reveal>
-	<Kertas warna="manila" rot={-0.4} padding="var(--s-6)">
-		<div
-			style="display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between"
-		>
-			<div style="display:flex;flex-direction:column;gap:8px;max-width:52ch">
-				<h2 class="t-judul t-lg" style="color:var(--ink)">Mulai menulis kapan saja</h2>
-				<p class="t-baca" style="font-size:var(--text-sm);color:var(--ink-soft)">
-					Gratis, tanpa iklan, dan kodenya terbuka untuk diperiksa siapa pun. Pagi, siang, atau
-					malam — ruangnya selalu siap. Kalau sandimu hilang, 24 kata pemulihan adalah satu-satunya
-					jalan kembali, karena kami memang tidak menyimpan apa pun yang bisa membuka tulisanmu.
-				</p>
-			</div>
-			<a href="/daftar" class="tbl" style="text-decoration:none;white-space:nowrap">Buat akun</a>
+<section class="penutup" use:reveal>
+	<div class="kertas kertas-manila kartu-penutup">
+		<span aria-hidden="true" class="pin-bulat pin-hero" style="background:{PIN_GRADIENT[5]}"></span>
+		<div>
+			<h2 class="t-judul">Mulai menulis</h2>
+			<p>
+				Gratis, tanpa iklan, kodenya terbuka. Pagi, siang, atau malam, ruangnya selalu siap. Kalau
+				sandimu hilang, 24 kata pemulihan adalah jalan kembali, karena kami memang tidak menyimpan
+				apa pun yang bisa membuka tulisanmu.
+			</p>
 		</div>
-	</Kertas>
+		<div class="cta">
+			<a href="/daftar" class="tbl tbl-besar">Mulai menulis</a>
+			<a href="/masuk" class="tbl-garis tbl-besar">Sudah punya akun</a>
+		</div>
+	</div>
 </section>
+
+<style>
+	:global(.ruangan-muka) {
+		--accent: #9b3b2f;
+		--accent-hi: #b5493a;
+		--accent-ink: #f6ecd9;
+	}
+	.muka-p {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: var(--text-md);
+		line-height: 1.72;
+		color: #b9c4b9;
+		max-width: 60ch;
+		text-wrap: pretty;
+	}
+	.muka-p.besar {
+		font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+		max-width: 56ch;
+	}
+	.muka-p.kecil {
+		font-size: var(--text-sm);
+		line-height: 1.6;
+	}
+	.eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-family: var(--f-data);
+		font-size: var(--text-2xs);
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--pin-brass);
+	}
+	.eyebrow.gelap {
+		color: var(--accent);
+	}
+	.tbl-besar {
+		min-height: 50px;
+		padding: 0 24px;
+		font-size: var(--text-base);
+		text-decoration: none;
+	}
+	.cta {
+		display: flex;
+		gap: var(--s-3);
+		flex-wrap: wrap;
+	}
+	.kepala {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-bottom: var(--s-5);
+	}
+	.kepala.baris {
+		flex-direction: row;
+		align-items: flex-end;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: var(--s-4);
+	}
+	.kepala.baris > div {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	.judul-bagian {
+		font-size: var(--text-xl);
+		max-width: 26ch;
+	}
+	section {
+		padding-bottom: var(--s-9);
+	}
+
+	.hero {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+		gap: var(--s-8);
+		align-items: center;
+		padding: var(--s-5) 0 var(--s-8);
+	}
+	.hero-teks {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-5);
+	}
+	.judul-utama {
+		font-size: var(--text-2xl);
+		line-height: 0.98;
+	}
+	.janji {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 18px;
+	}
+	.janji li {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		font-family: var(--f-display);
+		font-size: var(--text-sm);
+		color: var(--ink-on-board);
+	}
+	.janji li :global(svg) {
+		color: var(--pin-brass);
+	}
+	.hero-flanel {
+		padding: 30px 26px 34px;
+	}
+	.hero-kartu {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 22px 16px;
+	}
+	.hero-kartu li {
+		position: relative;
+	}
+	.hero-kartu li.foto {
+		grid-column: 2 / span 2;
+		justify-self: end;
+	}
+	.pin-hero {
+		position: absolute;
+		left: 50%;
+		top: -9px;
+		z-index: 4;
+		transform: translateX(-50%);
+		width: 17px;
+		height: 17px;
+	}
+	.kartu-hero {
+		min-height: 138px;
+		cursor: default;
+	}
+	.kartu-hero .hari {
+		font-size: 2rem;
+		line-height: 0.85;
+	}
+	.kartu-hero p {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: 0.86rem;
+		line-height: 1.45;
+		color: var(--ink-soft);
+	}
+	.polaroid {
+		margin: 0;
+		width: 190px;
+		padding: 8px 8px 6px;
+		background: #f4f1e8;
+		box-shadow: var(--sh-pinned);
+		transform: rotate(3deg);
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.polaroid img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 3 / 2;
+		object-fit: cover;
+	}
+	.polaroid figcaption {
+		font-size: 0.95rem;
+		text-align: center;
+		color: var(--ink-soft);
+	}
+	@media (max-width: 520px) {
+		.hero-kartu {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.hero-kartu li.foto {
+			grid-column: 1 / span 2;
+			justify-self: center;
+		}
+	}
+
+	.bukti {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+		gap: var(--s-4);
+	}
+	.bukti-item {
+		position: relative;
+		display: flex;
+		gap: 14px;
+		align-items: flex-start;
+		padding: var(--s-5) var(--s-4);
+		border: 1px solid var(--garis-ruang);
+		border-radius: var(--r-control);
+		background: var(--isi-ruang);
+		color: inherit;
+		text-decoration: none;
+	}
+	.bukti-item > div {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.bukti-ikon {
+		flex-shrink: 0;
+		width: 42px;
+		height: 42px;
+		display: grid;
+		place-items: center;
+		border-radius: 50%;
+		background: rgb(192 138 46 / 0.14);
+		color: var(--pin-brass);
+	}
+	.bukti-angka {
+		font-family: var(--f-display);
+		font-variation-settings: 'wdth' 85;
+		font-weight: 600;
+		font-size: var(--text-lg);
+		line-height: 1;
+		color: var(--ink-on-board);
+	}
+	.bukti-label {
+		font-family: var(--f-data);
+		font-size: var(--text-2xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--pin-brass);
+	}
+	.bukti-item .muka-p {
+		margin-top: 6px;
+	}
+	.bukti-tautan {
+		border-color: rgb(192 138 46 / 0.55);
+		background: rgb(192 138 46 / 0.08);
+		transition:
+			translate var(--dur-base) var(--ease-lift),
+			border-color var(--dur-fast);
+	}
+	.bukti-tautan:hover {
+		translate: 0 -3px;
+		border-color: var(--pin-brass);
+	}
+	.bukti-panah {
+		position: absolute;
+		right: 14px;
+		top: 14px;
+		color: var(--pin-brass);
+	}
+
+	.blok-terang {
+		position: relative;
+		margin: 0 calc(-1 * var(--s-5));
+		padding: var(--s-8) var(--s-6);
+		background-image: var(--paper-fill), linear-gradient(var(--paper-bone), var(--paper-bone));
+		background-blend-mode: multiply, normal, normal;
+		color: var(--ink);
+		box-shadow: var(--sh-contact), var(--sh-lifted);
+		border-radius: 2px;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-6);
+	}
+	.blok-terang::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: -10px;
+		width: 120px;
+		height: 30px;
+		transform: translateX(-50%) rotate(-1.5deg);
+		background: rgb(255 240 200 / 0.55);
+		box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+	}
+	@media (max-width: 480px) {
+		.blok-terang {
+			margin: 0 calc(-1 * var(--s-4));
+			padding: var(--s-6) var(--s-4);
+		}
+	}
+	section.blok-terang {
+		margin-bottom: var(--s-9);
+		padding-bottom: var(--s-8);
+	}
+	.kepala-blok {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	.judul-blok {
+		color: var(--ink);
+		font-size: var(--text-xl);
+		max-width: 26ch;
+	}
+	.isi-blok {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: var(--text-md);
+		line-height: 1.72;
+		color: var(--ink-soft);
+		max-width: 62ch;
+		text-wrap: pretty;
+	}
+
+	.strip-flanel {
+		padding: 44px 32px 36px;
+	}
+	.langkah-daftar {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+		gap: 28px 22px;
+	}
+	.langkah-item {
+		position: relative;
+	}
+	.kartu-langkah {
+		min-height: 200px;
+		cursor: default;
+		gap: 8px;
+	}
+	.kartu-langkah .nomor {
+		font-size: 2rem;
+		line-height: 1;
+		color: var(--ink-faint);
+	}
+	.kartu-langkah h3 {
+		color: var(--ink);
+		font-size: var(--text-md);
+	}
+	.kartu-langkah p {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: var(--text-sm);
+		line-height: 1.6;
+		color: var(--ink-soft);
+	}
+
+	.papan-terbaru {
+		padding: 40px 30px 34px;
+	}
+	.grid-terbaru {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+		gap: 30px 24px;
+		align-items: stretch;
+	}
+	.sel-terbaru {
+		display: flex;
+	}
+	.sel-terbaru > :global(*) {
+		flex: 1;
+	}
+	@media (max-width: 520px) {
+		.papan-terbaru,
+		.strip-flanel,
+		.hero-flanel {
+			padding: 30px 16px 26px;
+		}
+	}
+
+	.grid-kegunaan {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+		gap: var(--s-4);
+	}
+	.kartu-kegunaan {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: var(--s-5);
+		transform: rotate(var(--rot));
+		transition:
+			translate var(--dur-base) var(--ease-lift),
+			box-shadow var(--dur-base) var(--ease-lift);
+	}
+	.kartu-kegunaan:hover {
+		translate: 0 -4px;
+		box-shadow: var(--sh-hover);
+	}
+	.ikon-kegunaan {
+		width: 44px;
+		height: 44px;
+		display: grid;
+		place-items: center;
+		border-radius: 50%;
+		background: rgb(27 27 23 / 0.07);
+		color: var(--accent);
+	}
+	.kartu-kegunaan h3 {
+		color: var(--ink);
+		font-size: var(--text-md);
+	}
+	.kartu-kegunaan p {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: var(--text-sm);
+		line-height: 1.65;
+		color: var(--ink-soft);
+	}
+
+	.penutup {
+		padding-bottom: 0;
+	}
+	.kartu-penutup {
+		position: relative;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-5);
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--s-6);
+		transform: rotate(-0.4deg);
+	}
+	.kartu-penutup > div:first-of-type {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		max-width: 54ch;
+	}
+	.kartu-penutup h2 {
+		color: var(--ink);
+		font-size: var(--text-xl);
+	}
+	.kartu-penutup p {
+		margin: 0;
+		font-family: var(--f-read);
+		font-size: var(--text-base);
+		line-height: 1.7;
+		color: var(--ink-soft);
+	}
+</style>
