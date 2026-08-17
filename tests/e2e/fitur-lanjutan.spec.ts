@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
+import { isiKodeGambar } from './bantu.ts';
 
 test.describe.configure({ timeout: 240_000 });
 
@@ -28,6 +29,7 @@ async function daftar(page: Page): Promise<{ email: string; frasa: string[] }> {
 
 	const uji = page.locator('input[type="text"]');
 	for (const [i, n] of [4, 11, 19].entries()) await uji.nth(i).fill(frasa[n - 1] ?? '');
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Selesai' }).click();
 	await page.waitForURL(/\/(verifikasi|app)/, { timeout: 120_000 });
 
@@ -58,8 +60,8 @@ test('rotasi kunci master menjaga isi tulisan tetap terbaca', async ({ browser }
 	await page.getByLabel('Ulangi sandi').fill(SANDI_BARU);
 	await page.getByLabel('Ketik ROTASI untuk mengonfirmasi').fill('ROTASI');
 
-	page.once('dialog', (d) => void d.accept());
 	await page.getByRole('button', { name: 'Ganti kunci master sekarang' }).click();
+	await page.getByRole('button', { name: 'Ya, ganti kunci' }).click();
 
 	// Frasa pemulihan baru muncul setelah rotasi selesai.
 	await expect(page.getByTestId('frasa-kata').first()).toBeVisible({ timeout: 180_000 });
@@ -81,8 +83,8 @@ test('sandi lama tidak berlaku lagi setelah rotasi, sandi baru berlaku', async (
 	await page.getByLabel('Sandi baru', { exact: true }).fill(SANDI_BARU);
 	await page.getByLabel('Ulangi sandi').fill(SANDI_BARU);
 	await page.getByLabel('Ketik ROTASI untuk mengonfirmasi').fill('ROTASI');
-	page.once('dialog', (d) => void d.accept());
 	await page.getByRole('button', { name: 'Ganti kunci master sekarang' }).click();
+	await page.getByRole('button', { name: 'Ya, ganti kunci' }).click();
 	await expect(page.getByTestId('frasa-kata').first()).toBeVisible({ timeout: 180_000 });
 
 	// Perangkat baru dengan sandi lama harus ditolak.
@@ -90,12 +92,14 @@ test('sandi lama tidak berlaku lagi setelah rotasi, sandi baru berlaku', async (
 	await lain.goto('/masuk');
 	await lain.locator('input[type="email"]').fill(email);
 	await lain.locator('input[type="password"]').fill(SANDI);
+	await isiKodeGambar(lain);
 	await lain.getByRole('button', { name: 'Masuk' }).click();
 	await expect(lain.locator('.toast')).toBeVisible({ timeout: 90_000 });
 	expect(lain.url()).toContain('/masuk');
 
 	// Sandi baru diterima.
 	await lain.locator('input[type="password"]').fill(SANDI_BARU);
+	await isiKodeGambar(lain);
 	await lain.getByRole('button', { name: 'Masuk' }).click();
 	await lain.waitForURL(/\/(app|sambung|verifikasi)/, { timeout: 120_000 });
 	expect(lain.url()).not.toContain('/masuk');
