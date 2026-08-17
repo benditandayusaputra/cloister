@@ -42,6 +42,7 @@ dikelompokkan dalam map manila per bulan, dengan tujuh tema yang bisa diganti.
 - [Fitur](#fitur)
 - [Arsitektur](#arsitektur)
 - [Struktur repositori](#struktur-repositori)
+- [Peta navigasi](#peta-navigasi)
 - [Perintah](#perintah)
 - [Dokumentasi](#dokumentasi)
 - [Penggunaan AI dalam pengembangan](#penggunaan-ai-dalam-pengembangan)
@@ -327,16 +328,20 @@ cloister/
 │  │  ├─ bukti/        instrumentasi byte plaintext untuk halaman Bukti
 │  │  ├─ db/local/     skema Dexie dan repositori
 │  │  ├─ db/server/    skema Drizzle per domain
-│  │  ├─ sync/         mesin sinkronisasi dan resolusi konflik
+│  │  ├─ sync/         mesin sinkronisasi, resolusi konflik, payload
 │  │  ├─ state/        store berbasis runes Svelte 5
+│  │  ├─ editor/       ekstensi TipTap: ukuran huruf, gambar yang bisa digeser
+│  │  ├─ captcha/      klien captcha gambar
 │  │  ├─ components/   per domain: dasar, papan, tahun, entri, nav, auth, pengaturan, publik
-│  │  ├─ server/       auth, rate limit, sanitasi, blob, feed
+│  │  ├─ server/       auth, rate limit, sanitasi, captcha, blob, feed, bukti, env
+│  │  ├─ utils/        markdown aman, tanggal, teks, kertas
 │  │  └─ i18n/         kamus ID dan EN
 │  ├─ routes/
-│  │  ├─ (marketing)/  halaman muka, privasi, keamanan
-│  │  ├─ (auth)/       daftar, masuk, pulih, verifikasi, sambung
-│  │  ├─ (app)/        aplikasi, pengaturan, dan /bukti (butuh auth)
+│  │  ├─ (marketing)/  halaman muka, tentang, privasi, keamanan
+│  │  ├─ (auth)/       daftar, masuk, pulih, verifikasi, sambung, mulai baru
+│  │  ├─ (app)/        papan, jurnal, pengaturan (butuh sesi)
 │  │  ├─ (public)/     /baca feed publik dan /s tautan rahasia, SSR
+│  │  ├─ bukti/        halaman verifikasi, terbuka tanpa akun
 │  │  └─ api/          kontrak API
 │  ├─ hooks.server.ts  header keamanan
 │  └─ service-worker.ts
@@ -350,6 +355,57 @@ cloister/
 ├─ scripts/            seed data contoh, manifest build, verify.sh
 └─ docker-compose.yml
 ```
+
+---
+
+## Peta navigasi
+
+Seluruh rute aplikasi, dari halaman terbuka sampai yang butuh kunci terbuka.
+
+```
+/                        Landing
+├── /tentang             Tentang aplikasi dan arsitekturnya
+├── /keamanan            Model ancaman versi ringkas
+├── /privasi             Data apa yang disimpan
+├── /bukti               Verifikasi mandiri, terbuka tanpa akun
+├── /baca                Ruang baca publik
+│   ├── /baca/@pena              Profil penulis
+│   ├── /baca/@pena/judul-slug   Satu tulisan + komentar + reaksi
+│   └── /baca/entri/[id]         Tulisan anonim
+├── /s/[id]              Tautan rahasia (unlisted)
+│
+├── /masuk · /daftar     Autentikasi
+├── /pulih               Pemulihan dengan 24 kata
+├── /sambung             Sambungkan perangkat baru
+├── /mulai-baru          Jalan terakhir kalau semua kunci hilang
+├── /verifikasi          Verifikasi email
+│
+└── /app                 Rak tahun  ← butuh sesi + kunci terbuka
+    ├── /app/2026/08                 Papan bulan
+    ├── /app/2026/08/15              Baca / sunting satu jurnal
+    ├── /app/hari-ini                Pintasan menulis hari ini
+    ├── /app/tersemat                Folder jurnal yang disematkan
+    ├── /app/linimasa                Peta panas sepanjang tahun
+    ├── /app/cari                    Pencarian full-text lokal
+    └── /pengaturan
+        ├── /akun          Nama pena, bio, avatar, bahasa
+        ├── /keamanan      Sandi, 24 kata, passkey, Mode Diperkuat, rotasi kunci
+        ├── /perangkat     Daftar perangkat, cabut akses
+        ├── /tampilan      8 tema, 3 gaya, mode siang/malam
+        ├── /publik        Catatan publik dan tautan rahasia
+        ├── /data          Ekspor, impor, jendela sinkronisasi, hapus akun
+        ├── /sambungkan    Tampilkan QR + PIN untuk perangkat baru
+        └── /moderasi      Antrean laporan (khusus moderator)
+```
+
+| Kelompok | Layar | Catatan UI |
+|---|---|---|
+| Publik | Landing, Tentang, Keamanan, Privasi, Bukti | Metafora papan gabus konsisten sampai kaki halaman |
+| Baca | Feed, profil penulis, satu tulisan, tautan rahasia | Filter mood berlabel, filter "Ada foto", pagination |
+| Auth | Masuk, Daftar, 24 kata, Konfirmasi, Pulih, Sambung, Mulai baru, Verifikasi | Captcha gambar dengan tombol ganti gambar, tombol lihat sandi |
+| Aplikasi | Rak tahun, papan bulan, baca jurnal, editor, tersemat, linimasa, cari | Bulan berjalan ditandai; ikon folder bisa dipilih dari 196 emoji |
+| Pengaturan | 8 halaman | Navigasi samping di desktop, tumpukan di mobile |
+| Overlay | Tirai cari, modal terbit, modal tautan rahasia, dialog konfirmasi, tutorial awal | Semua konfirmasi memakai dialog aplikasi, bukan `confirm()` browser |
 
 ---
 
