@@ -13,8 +13,8 @@
 	import { sesi } from '$lib/state/sesi.svelte.ts';
 	import { toast } from '$lib/state/toast.svelte.ts';
 	import { i18n } from '$lib/state/i18n.svelte.ts';
-	import BuktiManusia from '$components/auth/BuktiManusia.svelte';
-	import { ambilTantangan, pecahkan, type Jawaban } from '$lib/captcha/klien.ts';
+	import KodeGambar from '$components/auth/KodeGambar.svelte';
+	import type { Jawaban } from '$lib/captcha/klien.ts';
 	import { sandiCukup } from '$lib/utils/sandi.ts';
 	import { namaPerangkat, platformPerangkat } from '$lib/utils/perangkat.ts';
 	import { unduhTeks } from '$lib/utils/unduh.ts';
@@ -84,25 +84,18 @@
 		);
 	}
 
+	let kodeGambar = $state<KodeGambar | null>(null);
 	let captcha = $state<Jawaban | null>(null);
 	let situs = $state('');
 
-	async function pastikanCaptcha(): Promise<Jawaban> {
-		if (captcha && captcha.exp * 1000 > Date.now() + 5000) return captcha;
-		const t = await ambilTantangan();
-		captcha = await pecahkan(t);
-		return captcha;
-	}
-
 	async function selesaikan() {
-		if (!semuaCocok || !pending || sibuk) return;
+		if (!semuaCocok || !captcha || !pending || sibuk) return;
 		sibuk = true;
 		layar = 'kunci';
 		const tik = setInterval(() => (langkahKunci = Math.min(2, langkahKunci + 1)), 700);
 		try {
-			const jawaban = await pastikanCaptcha();
 			const res = await authApi.register({
-				captcha: jawaban,
+				captcha,
 				situs,
 				email,
 				authKey: pending.authKey,
@@ -127,7 +120,7 @@
 		} catch (err) {
 			clearInterval(tik);
 			layar = 'konfirmasi';
-			captcha = null;
+			void kodeGambar?.segarkan();
 			toast.bahaya(err instanceof ApiError ? err.message : 'Pendaftaran gagal');
 		} finally {
 			clearInterval(tik);
@@ -180,8 +173,6 @@
 					pesan={ulangi.length > 0 && !cocokSandi ? i18n.t.auth.sandiTidakSama : ''}
 					onenter={buatKunci}
 				/>
-
-				<BuktiManusia bind:jawaban={captcha} bind:situs />
 
 				<button type="button" class="tbl" disabled={!bisaLanjut} onclick={buatKunci}>
 					{sibuk ? i18n.t.umum.memuat : i18n.t.auth.mulaiMenulis}
@@ -244,7 +235,14 @@
 					{/each}
 				</div>
 
-				<button type="button" class="tbl" disabled={!semuaCocok || sibuk} onclick={selesaikan}>
+				<KodeGambar bind:this={kodeGambar} bind:jawaban={captcha} bind:situs />
+
+				<button
+					type="button"
+					class="tbl"
+					disabled={!semuaCocok || !captcha || sibuk}
+					onclick={selesaikan}
+				>
 					{i18n.t.app.selesai}
 				</button>
 				<button

@@ -256,10 +256,11 @@ dialog kustom yang konsisten, bukan `confirm()` browser.
 **Keamanan** — 24 kata pemulihan BIP-39, ganti sandi tanpa menyentuh catatan, rotasi kunci utama,
 passkey sebagai faktor kedua, kunci ruang dengan PIN lokal, Mode Diperkuat yang membuat server
 tidak menyimpan kunci terbungkus sama sekali, jalan keluar "mulai dari nol" saat semua kunci hilang.
-Formulir masuk dan daftar dilindungi **captcha bukti-kerja buatan sendiri** (SHA-256 dengan
-sejumlah bit nol di depan, tantangan ditandatangani HMAC, sekali pakai, kedaluwarsa 10 menit; tanpa
-layanan pihak ketiga, tanpa cookie pelacak; kesulitan diatur `CAPTCHA_BITS`) plus **honeypot**
-tersembunyi yang langsung menolak bot pengisi formulir. Tombol tampilkan/sembunyikan sandi tersedia
+Formulir masuk dan daftar dilindungi **captcha gambar buatan sendiri** (lima huruf digambar
+langsung oleh server sebagai PNG, tiap huruf diputar dan dilengkungkan, tanpa teks yang bisa dibaca
+mesin dari sumber halaman; jawabannya hanya disimpan sebagai tanda tangan HMAC di dalam token,
+sekali pakai, kedaluwarsa 10 menit; tanpa layanan pihak ketiga dan tanpa cookie pelacak) plus
+**honeypot** tersembunyi yang langsung menolak bot pengisi formulir. Tombol tampilkan/sembunyikan sandi tersedia
 di semua field sandi.
 
 **Sinkronisasi** — delta sync dengan Lamport counter, resolusi konflik yang tidak pernah menimpa

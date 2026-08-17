@@ -15,6 +15,9 @@
  *
  * bergantung pada kotak masuk sungguhan.
  *
+ *   Jalankan server dev dengan CAPTCHA_DISABLED=1 supaya kode gambar tidak
+ *   menghalangi pendaftaran otomatis, lalu:
+ *
  *   node scripts/seed-publik.mjs [--url http://localhost:4820]
  *
  * Seluruh isi sintetis. Tidak ada data orang sungguhan, dan tidak ada PII di

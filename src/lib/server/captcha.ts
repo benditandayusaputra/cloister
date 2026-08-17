@@ -1,51 +1,49 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import * as v from 'valibot';
 import { CFG } from './env.ts';
 import { hmac, randomToken } from './crypto.ts';
 import { bad } from './problem.ts';
+import { buatKode, gambarKode, PANJANG_KODE } from './captcha-gambar.ts';
 
-export const CAPTCHA_BITS = Math.min(24, Math.max(8, Number(env.CAPTCHA_BITS ?? 15)));
 export const CAPTCHA_TTL_DETIK = 10 * 60;
+export { PANJANG_KODE };
 const NONAKTIF = env.CAPTCHA_DISABLED === '1' && !import.meta.env.PROD;
 
 export interface Tantangan {
-	salt: string;
-	bits: number;
+	token: string;
+	gambar: string;
 	exp: number;
-	sig: string;
+	panjang: number;
 }
 
 export const jawabanSchema = v.object({
-	salt: v.pipe(v.string(), v.minLength(16), v.maxLength(64), v.regex(/^[A-Za-z0-9_-]+$/)),
-	bits: v.pipe(v.number(), v.integer(), v.minValue(8), v.maxValue(24)),
-	exp: v.pipe(v.number(), v.integer()),
-	sig: v.pipe(v.string(), v.length(64), v.regex(/^[a-f0-9]+$/)),
-	nonce: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(2 ** 40))
+	token: v.pipe(v.string(), v.minLength(24), v.maxLength(160), v.regex(/^[A-Za-z0-9_-]+\.\d+\.[a-f0-9]+$/)),
+	teks: v.pipe(v.string(), v.minLength(1), v.maxLength(24))
 });
 export type JawabanCaptcha = v.InferOutput<typeof jawabanSchema>;
 
-function tandaTangan(salt: string, bits: number, exp: number): string {
-	return hmac(CFG.jwtSecret, `captcha|${salt}|${bits}|${exp}`).toString('hex');
+function tandaTangan(kode: string, nonce: string, exp: number): string {
+	return hmac(CFG.jwtSecret, `captcha|${kode}|${nonce}|${exp}`).toString('hex').slice(0, 32);
+}
+
+function normalkan(teks: string): string {
+	return teks.toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
 
 export function buatTantangan(): Tantangan {
-	const salt = randomToken(18);
-	const exp = Math.floor(Date.now() / 1000) + CAPTCHA_TTL_DETIK;
-	return { salt, bits: CAPTCHA_BITS, exp, sig: tandaTangan(salt, CAPTCHA_BITS, exp) };
+	return buatTantanganUntuk(buatKode());
 }
 
-export function nolDiDepan(digest: Uint8Array): number {
-	let n = 0;
-	for (const b of digest) {
-		if (b === 0) {
-			n += 8;
-			continue;
-		}
-		n += Math.clz32(b) - 24;
-		break;
-	}
-	return n;
+export function buatTantanganUntuk(kode: string): Tantangan {
+	const nonce = randomToken(12);
+	const exp = Math.floor(Date.now() / 1000) + CAPTCHA_TTL_DETIK;
+	return {
+		token: `${nonce}.${exp}.${tandaTangan(kode, nonce, exp)}`,
+		gambar: gambarKode(kode),
+		exp,
+		panjang: PANJANG_KODE
+	};
 }
 
 const terpakai = new Map<string, number>();
@@ -58,20 +56,24 @@ function bersihkanTerpakai() {
 export function verifikasiCaptcha(jawaban: unknown, honeypot: unknown): void {
 	if (typeof honeypot === 'string' && honeypot.trim().length > 0) throw bad('Permintaan tidak valid');
 	if (NONAKTIF) return;
+
 	const cek = v.safeParse(jawabanSchema, jawaban);
-	if (!cek.success) throw bad('Verifikasi bukan-robot belum selesai. Coba lagi.');
-	const j = cek.output;
+	if (!cek.success) throw bad('Kode gambar belum diisi.');
+
+	const bagian = cek.output.token.split('.');
+	const nonce = bagian[0]!;
+	const exp = Number(bagian[1]);
+	const sig = bagian[2]!;
 	const kini = Math.floor(Date.now() / 1000);
-	if (j.exp < kini) throw bad('Verifikasi bukan-robot kedaluwarsa. Muat ulang halaman.');
-	if (j.bits < CAPTCHA_BITS) throw bad('Verifikasi bukan-robot tidak valid.');
-	const sigBenar = Buffer.from(tandaTangan(j.salt, j.bits, j.exp), 'hex');
-	const sigKirim = Buffer.from(j.sig, 'hex');
-	if (sigBenar.length !== sigKirim.length || !timingSafeEqual(sigBenar, sigKirim)) {
-		throw bad('Verifikasi bukan-robot tidak valid.');
-	}
-	const digest = createHash('sha256').update(`${j.salt}:${j.nonce}`).digest();
-	if (nolDiDepan(digest) < j.bits) throw bad('Verifikasi bukan-robot tidak valid.');
+	if (!Number.isFinite(exp) || exp < kini) throw bad('Kode gambar kedaluwarsa. Ambil kode baru.');
+
 	bersihkanTerpakai();
-	if (terpakai.has(j.salt)) throw bad('Verifikasi bukan-robot sudah dipakai. Muat ulang halaman.');
-	terpakai.set(j.salt, j.exp);
+	if (terpakai.has(nonce)) throw bad('Kode gambar sudah dipakai. Ambil kode baru.');
+	terpakai.set(nonce, exp);
+
+	const harap = Buffer.from(tandaTangan(normalkan(cek.output.teks), nonce, exp), 'hex');
+	const kirim = Buffer.from(sig, 'hex');
+	if (harap.length !== kirim.length || !timingSafeEqual(harap, kirim)) {
+		throw bad('Kode gambar salah. Coba kode baru.');
+	}
 }

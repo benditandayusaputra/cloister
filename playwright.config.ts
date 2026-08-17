@@ -16,7 +16,7 @@ export default defineConfig({
 	webServer: process.env.CLOISTER_BASE_URL
 		? undefined
 		: {
-				command: 'RATELIMIT_DISABLED=1 pnpm dev',
+				command: 'RATELIMIT_DISABLED=1 CAPTCHA_DISABLED=1 pnpm dev',
 				port: 4820,
 				reuseExistingServer: true,
 				timeout: 120_000

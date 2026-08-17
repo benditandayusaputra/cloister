@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { isiKodeGambar } from './bantu.ts';
 import { execFileSync } from 'node:child_process';
 
 test.describe.configure({ timeout: 300_000 });
@@ -34,6 +35,7 @@ async function daftar(page: Page, email: string) {
 	await page.getByRole('button', { name: 'Lanjut' }).click();
 	const uji = page.locator('input[type="text"]');
 	for (const [i, n] of [4, 11, 19].entries()) await uji.nth(i).fill(frasa[n - 1] ?? '');
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Selesai' }).click();
 	await page.waitForURL(/\/(verifikasi|app)/, { timeout: 120_000 });
 }
@@ -94,6 +96,7 @@ test('ganti akun di perangkat yang sama tidak membocorkan data antar akun', asyn
 
 	await page.locator('input[type="email"]').fill(emailA);
 	await page.locator('input[type="password"]').fill(SANDI);
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Masuk' }).click();
 	await page.waitForURL(/\/app/, { timeout: 120_000 });
 	expect(page.url()).not.toContain('/sambung');

@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
+import { isiKodeGambar } from './bantu.ts';
 
 test.describe.configure({ timeout: 180_000 });
 
@@ -27,6 +28,7 @@ async function daftar(page: Page): Promise<{ email: string; frasa: string[] }> {
 
 	const uji = page.locator('input[type="text"]');
 	for (const [i, n] of [4, 11, 19].entries()) await uji.nth(i).fill(frasa[n - 1] ?? '');
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Selesai' }).click();
 	await page.waitForURL(/\/(verifikasi|app)/, { timeout: 120_000 });
 
@@ -58,6 +60,7 @@ async function masukSampaiSambung(page: Page, email: string) {
 	await page.goto('/masuk');
 	await page.locator('input[type="email"]').fill(email);
 	await page.locator('input[type="password"]').fill(SANDI);
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Masuk' }).click();
 	await page.waitForURL(/\/sambung/, { timeout: 120_000 });
 }

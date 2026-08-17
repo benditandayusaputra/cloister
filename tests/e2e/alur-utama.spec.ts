@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { isiKodeGambar } from './bantu.ts';
 
 const unik = () => Math.random().toString(36).slice(2, 10);
 const SANDI = 'Sandi-Cloister-2026!';
@@ -23,6 +24,7 @@ async function daftar(page: Page): Promise<{ email: string; frasa: string[] }> {
 	for (const [i, n] of [4, 11, 19].entries()) {
 		await uji.nth(i).fill(frasa[n - 1] ?? '');
 	}
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Selesai' }).click();
 
 	await page.waitForURL(/\/(verifikasi|app)/, { timeout: 120_000 });

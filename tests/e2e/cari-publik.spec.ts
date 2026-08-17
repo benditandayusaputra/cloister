@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
+import { isiKodeGambar } from './bantu.ts';
 import { execFileSync } from 'node:child_process';
 
 const DB_E2E = process.env.DATABASE_URL ?? 'postgresql://localhost:5432/cloister';
@@ -31,6 +32,7 @@ async function daftar(page: Page): Promise<string> {
 	await page.getByRole('button', { name: 'Lanjut' }).click();
 	const uji = page.locator('input[type="text"]');
 	for (const [i, n] of [4, 11, 19].entries()) await uji.nth(i).fill(frasa[n - 1] ?? '');
+	await isiKodeGambar(page);
 	await page.getByRole('button', { name: 'Selesai' }).click();
 	await page.waitForURL(/\/app/, { timeout: 120_000 });
 	return email;
