@@ -11,7 +11,7 @@
 	}
 	body {
 		margin: 0;
-		background: var(--room-wall);
+		background: transparent;
 		-webkit-font-smoothing: antialiased;
 		font-family: var(--f-display);
 		color: var(--ink-on-board);
@@ -92,6 +92,12 @@
 	.ruangan-muka::before,
 	.ruangan-muka::after,
 	.hero-jatuh {
+		animation: none;
+	}
+}
+@media (max-width: 900px) {
+	.ruangan-muka::before,
+	.ruangan-muka::after {
 		animation: none;
 	}
 }
@@ -289,12 +295,18 @@
 .ruangan {
 	min-height: 100vh;
 	font-family: var(--f-display);
+	color: var(--ink-on-board);
+}
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
 	background-image: var(--tex-wall), var(--room-glow),
 		linear-gradient(168deg, var(--room-wall-warm), var(--room-wall) 60%);
 	background-blend-mode: soft-light, normal, normal;
 	background-repeat: repeat, no-repeat, no-repeat;
-	background-attachment: fixed;
-	color: var(--ink-on-board);
 }
 
 .shell {
