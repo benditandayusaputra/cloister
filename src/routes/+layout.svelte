@@ -52,13 +52,14 @@
 
 <div
 	class="progress-navigasi"
-		class:aktif={navigasiAktif}
-		role="progressbar"
-		aria-label="Loading page"
-		aria-valuemin="0"
-		aria-valuemax="100"
-		aria-valuetext="Loading page"
-	></div>
+	class:aktif={navigasiAktif}
+	role="progressbar"
+	aria-label={i18n.t.umum.memuat}
+	aria-valuemin="0"
+	aria-valuemax="100"
+	aria-valuetext={i18n.t.umum.memuat}
+	aria-hidden={!navigasiAktif}
+></div>
 {@render children()}
 <Toaster />
 <DialogKonfirmasi />

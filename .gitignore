@@ -38,3 +38,9 @@ vite.config.ts.timestamp-*
 # File kredensial akun contoh
 AKUN-CONTOH.txt
 build-manifest.json
+
+# Proyek ini memakai pnpm (lihat packageManager di package.json)
+bun.lock
+bun.lockb
+package-lock.json
+yarn.lock
