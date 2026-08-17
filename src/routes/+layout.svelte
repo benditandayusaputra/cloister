@@ -8,6 +8,8 @@
 	import { i18n } from '$lib/state/i18n.svelte.ts';
 
 	let { children } = $props();
+	let navigasiAktif = $state(false);
+	let timerSelesai: ReturnType<typeof setTimeout> | undefined;
 
 	onMount(() => {
 		tema.init();
@@ -16,6 +18,17 @@
 	});
 
 	onNavigate((navigasi) => {
+		navigasiAktif = true;
+		if (timerSelesai) clearTimeout(timerSelesai);
+		void navigasi.complete.then(
+			() => {
+				timerSelesai = setTimeout(() => (navigasiAktif = false), 180);
+			},
+			() => {
+				navigasiAktif = false;
+			}
+		);
+
 		const doc = document as Document & {
 			startViewTransition?: (cb: () => Promise<void>) => {
 				finished: Promise<void>;
@@ -37,6 +50,15 @@
 	});
 </script>
 
+<div
+	class="progress-navigasi"
+		class:aktif={navigasiAktif}
+		role="progressbar"
+		aria-label="Loading page"
+		aria-valuemin="0"
+		aria-valuemax="100"
+		aria-valuetext="Loading page"
+	></div>
 {@render children()}
 <Toaster />
 <DialogKonfirmasi />
