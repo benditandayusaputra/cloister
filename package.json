@@ -62,7 +62,7 @@
 		"dexie": "^4.4.4",
 		"drizzle-orm": "^0.45.2",
 		"isomorphic-dompurify": "^3.20.0",
-		"jose": "^6.2.5",
+		"jose": "^6.2.9",
 		"libsodium-wrappers-sumo": "^0.8.4",
 		"marked": "^18.0.7",
 		"postgres": "^3.4.9",
